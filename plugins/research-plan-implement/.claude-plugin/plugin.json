@@ -1,10 +1,10 @@
 {
   "name": "research-plan-implement",
-  "version": "0.1.0",
-  "description": "AI-powered research, plan, and implement workflow generator. Analyzes your project and creates customized commands and agents in .claude/ directory.",
+  "version": "1.0.0",
+  "description": "Workflow for managing AI agent context through intentional compaction. Research codebase, create detailed plans, and implement phase-by-phase with verification. Inspired by HumanLayer.",
   "author": "Lucas Culbertson",
   "license": "MIT",
-  "repository": "https://github.com/yourusername/claude-plugins/tree/main/research-plan-implement",
+  "repository": "https://github.com/lucasnad27/claude-plugins",
   "skills": [
     {
       "name": "setup",

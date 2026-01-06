@@ -1,0 +1,19 @@
+{
+  "name": "Research-Plan-Implement Workflow Plugins",
+  "owner": {
+    "name": "Lucas Culbertson",
+    "github": "lucasnad27"
+  },
+  "plugins": [
+    {
+      "name": "research-plan-implement",
+      "displayName": "Research → Plan → Implement",
+      "description": "Workflow for managing AI agent context through intentional compaction. Research codebase, create detailed plans, and implement phase-by-phase with verification.",
+      "version": "1.0.0",
+      "source": "plugins/research-plan-implement",
+      "author": "Lucas Culbertson",
+      "tags": ["workflow", "planning", "research", "context-management", "humanlayer"],
+      "category": "Development Workflow"
+    }
+  ]
+}
