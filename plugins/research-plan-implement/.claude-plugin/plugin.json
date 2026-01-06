@@ -2,22 +2,10 @@
   "name": "research-plan-implement",
   "version": "1.0.0",
   "description": "Workflow for managing AI agent context through intentional compaction. Research codebase, create detailed plans, and implement phase-by-phase with verification. Inspired by HumanLayer.",
-  "author": "Lucas Culbertson",
+  "author": {
+    "name": "Lucas Culbertson",
+    "github": "lucasnad27"
+  },
   "license": "MIT",
-  "repository": "https://github.com/lucasnad27/claude-plugins",
-  "skills": [
-    {
-      "name": "setup",
-      "path": "skills/setup/SKILL.md",
-      "description": "Generate project-specific research/plan/implement workflow"
-    },
-    {
-      "name": "workflow-guide",
-      "path": "skills/workflow-guide/SKILL.md",
-      "description": "Learn how to use the Research → Plan → Implement workflow effectively"
-    }
-  ],
-  "requirements": {
-    "claudeCodeVersion": ">=1.0.0"
-  }
+  "repository": "https://github.com/lucasnad27/claude-plugins"
 }
