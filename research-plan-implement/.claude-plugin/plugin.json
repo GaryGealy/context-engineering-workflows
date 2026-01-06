@@ -1,0 +1,23 @@
+{
+  "name": "research-plan-implement",
+  "version": "0.1.0",
+  "description": "AI-powered research, plan, and implement workflow generator. Analyzes your project and creates customized commands and agents in .claude/ directory.",
+  "author": "Lucas Culbertson",
+  "license": "MIT",
+  "repository": "https://github.com/yourusername/claude-plugins/tree/main/research-plan-implement",
+  "skills": [
+    {
+      "name": "setup",
+      "path": "skills/setup/SKILL.md",
+      "description": "Generate project-specific research/plan/implement workflow"
+    },
+    {
+      "name": "workflow-guide",
+      "path": "skills/workflow-guide/SKILL.md",
+      "description": "Learn how to use the Research → Plan → Implement workflow effectively"
+    }
+  ],
+  "requirements": {
+    "claudeCodeVersion": ">=1.0.0"
+  }
+}
