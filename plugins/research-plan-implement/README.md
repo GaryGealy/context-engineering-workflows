@@ -1,28 +1,44 @@
-# Research-Plan-Implement Plugin
+# Research → Plan → Implement
 
-AI-powered workflow generator that analyzes your project and creates customized research, planning, and implementation commands tailored to your specific tech stack.
+**Context-aware workflow for AI-assisted development.**
 
-## What It Does
+Analyzes your codebase, creates detailed plans, and implements features with automated verification. Uses intentional compaction to manage context windows and maximize AI effectiveness.
 
-This plugin generates a complete "research → plan → implement" workflow in your project's `.claude/` directory by:
+## Installation
 
-1. **Analyzing your project** - Reads your `package.json`, `Cargo.toml`, `go.mod`, or `pyproject.toml` to understand your stack
-2. **Adapting intelligently** - Uses Claude's reasoning (not brittle templates) to customize commands for your tools
-3. **Generating workflow** - Creates commands and agents that work natively with your project's build system
+### Add the Marketplace
 
-**No templates. No hardcoded rules. Just intelligent adaptation.**
+First, add this marketplace to Claude Code:
 
-## Generated Workflow
+1. Run `/marketplace add`
+2. Enter: `lucasnad27/claude-plugins`
 
-### Commands You Get
+### Install the Plugin
 
-- `/research-codebase` - Research your codebase using parallel sub-agents, create research documents
-- `/create-plan` - Create detailed implementation plans through interactive research
-- `/iterate-plan` - Update existing plans based on feedback
-- `/implement-plan` - Execute plans with automated verification and testing checkpoints
+```bash
+/plugin add lucasnad27/claude-plugins/research-plan-implement
+```
 
-### Agents You Get
+## Quick Start
 
+1. Navigate to your project: `cd my-project`
+2. Run setup: `/setup`
+3. Learn the workflow: `/workflow-guide`
+4. Start researching: `/research-codebase "How does auth work?"`
+
+## What You Get
+
+**Skills:**
+- 🎓 `/workflow-guide` - Interactive learning guide with best practices
+- ⚙️ `/setup` - Generate project-specific workflow commands
+
+**Generated Commands** (after running `/setup`):
+- 🔍 `/research-codebase` - Research using parallel sub-agents, create research documents
+- 📋 `/create-plan` - Create detailed implementation plans through interactive research
+- ✏️ `/iterate-plan` - Update plans based on feedback or new discoveries
+- ⚡ `/implement-plan` - Execute plans with automated verification and testing checkpoints
+
+**Generated Agents** (specialized AI assistants):
 - `codebase-locator` - Find WHERE code lives (files, directories, components)
 - `codebase-analyzer` - Analyze HOW code works (data flow, implementation details)
 - `codebase-pattern-finder` - Find similar patterns and examples to model after
@@ -30,38 +46,21 @@ This plugin generates a complete "research → plan → implement" workflow in y
 - `thoughts-locator` - Find documents in thoughts/ directory (optional)
 - `thoughts-analyzer` - Extract insights from thought documents (optional)
 
-## Installation
+## Real-World Results
 
-### Option 1: Local Development (Recommended for Testing)
+- 🚀 **300k LOC Rust codebase:** 1-hour bug fix by non-expert, PR approved without revision
+- ⚡ **35k LOC feature:** 7 hours vs 3-5 days estimated, minimal PR revisions
+- ✅ **Key insight:** Upfront research investment pays off exponentially
 
-1. Clone or download this plugin:
-   ```bash
-   cd ~/your-plugins-directory
-   git clone <this-repo> research-plan-implement
-   ```
+## How It Works
 
-2. Symlink or copy to Claude's plugins directory:
-   ```bash
-   # macOS/Linux
-   ln -s ~/your-plugins-directory/research-plan-implement ~/.claude/plugins/research-plan-implement
+This plugin generates a complete "research → plan → implement" workflow in your project's `.claude/` directory by:
 
-   # Or copy directly
-   cp -r ~/your-plugins-directory/research-plan-implement ~/.claude/plugins/
-   ```
+1. **Analyzing your project** - Reads your `package.json`, `Cargo.toml`, `go.mod`, or `pyproject.toml` to understand your stack
+2. **Adapting intelligently** - Uses Claude's reasoning (not brittle templates) to customize commands for your tools
+3. **Generating workflow** - Creates commands and agents that work natively with your project's build system
 
-3. Enable the plugin in your project's `.claude/settings.json`:
-   ```json
-   {
-     "enabledPlugins": ["research-plan-implement"]
-   }
-   ```
-
-### Option 2: Claude Marketplace (Future)
-
-Once published to the marketplace:
-```bash
-claude plugins install research-plan-implement
-```
+**No templates. No hardcoded rules.**
 
 ## Usage
 
@@ -98,6 +97,7 @@ The plugin creates this structure in your project:
 ### Example: TypeScript/SvelteKit Project
 
 **Before running setup:**
+
 ```json
 // package.json
 {
@@ -113,6 +113,7 @@ The plugin creates this structure in your project:
 **After running setup:**
 
 Generated commands will use your actual scripts:
+
 - ✓ Tests: `npm run test:unit` (not generic `npm test`)
 - ✓ Linting: `npm run lint`
 - ✓ Formatting: `npm run format`
@@ -122,6 +123,7 @@ Generated commands will use your actual scripts:
 ### Example: Rust Project
 
 **Before running setup:**
+
 ```toml
 # Cargo.toml
 [package]
@@ -131,6 +133,7 @@ name = "my-api"
 **After running setup:**
 
 Generated commands will use Rust tooling:
+
 - ✓ Tests: `cargo test`
 - ✓ Linting: `cargo clippy`
 - ✓ Formatting: `cargo fmt`
@@ -139,6 +142,7 @@ Generated commands will use Rust tooling:
 ### Example: Python/Django Project
 
 **Before running setup:**
+
 ```toml
 # pyproject.toml
 [tool.poetry]
@@ -148,6 +152,7 @@ dependencies = { django = "^4.0" }
 **After running setup:**
 
 Generated commands will use Django patterns:
+
 - ✓ Tests: `pytest tests/unit`
 - ✓ Linting: `ruff check .`
 - ✓ Formatting: `black .`
@@ -176,6 +181,7 @@ This plugin implements **intentional compaction**—a strategy for managing AI a
 ```
 
 This spawns parallel agents to:
+
 - Locate auth-related files
 - Analyze how authentication is implemented
 - Find usage patterns and examples
@@ -188,6 +194,7 @@ This spawns parallel agents to:
 ```
 
 This:
+
 - Reads the ticket
 - Researches relevant code patterns
 - Asks clarifying questions
@@ -208,6 +215,7 @@ Update the plan based on feedback, new discoveries, or changed requirements.
 ```
 
 This:
+
 - Reads the plan
 - Implements each phase
 - Runs automated verification (tests, linting, builds)
@@ -219,12 +227,14 @@ This:
 Currently adapts intelligently to:
 
 ### Languages
+
 - ✅ TypeScript/JavaScript (Node.js, Deno, Bun)
 - ✅ Python
 - ✅ Go
 - ✅ Rust
 
 ### Frameworks
+
 - ✅ SvelteKit
 - ✅ Next.js
 - ✅ Django
@@ -232,6 +242,7 @@ Currently adapts intelligently to:
 - ✅ Generic frameworks (with sensible defaults)
 
 ### Build Systems
+
 - ✅ npm/yarn/pnpm scripts
 - ✅ Makefile
 - ✅ Cargo
@@ -239,6 +250,7 @@ Currently adapts intelligently to:
 - ✅ Go modules
 
 ### Databases
+
 - ✅ Prisma
 - ✅ Drizzle
 - ✅ SQLAlchemy
@@ -268,6 +280,7 @@ All generated files are standard markdown in `.claude/` - you can edit them free
 ### Preserving Customizations
 
 When you re-run `/setup`, it will:
+
 1. Detect existing `.claude/` files
 2. Ask which files to regenerate
 3. Preserve your custom sections
@@ -287,6 +300,7 @@ git push
 ### "I couldn't detect your project type"
 
 The plugin looks for:
+
 - `package.json` (Node/TypeScript)
 - `Cargo.toml` (Rust)
 - `go.mod` (Go)
@@ -297,6 +311,7 @@ If none exist, it will ask you to manually specify your stack.
 ### "Reference templates not found"
 
 This means the plugin isn't installed correctly. Ensure:
+
 1. Plugin is in Claude's plugins directory
 2. `skills/setup/reference/` directory exists
 3. Reference templates are present
@@ -304,6 +319,7 @@ This means the plugin isn't installed correctly. Ensure:
 ### Generated commands don't match my project
 
 The plugin adapts based on what it finds in config files. If it gets something wrong:
+
 1. Re-run `/setup` with correct info
 2. Manually edit the generated `.claude/` files
 3. File an issue so we can improve detection
@@ -317,6 +333,7 @@ The plugin adapts based on what it finds in config files. If it gets something w
 ```
 
 **Output:**
+
 - Research document at `thoughts/shared/research/2025-01-05-database-migrations.md`
 - Includes file references, code examples, and architecture notes
 - Documents current state without recommendations
@@ -328,6 +345,7 @@ The plugin adapts based on what it finds in config files. If it gets something w
 ```
 
 **Process:**
+
 1. Asks clarifying questions
 2. Researches existing auth code
 3. Proposes implementation phases
@@ -340,6 +358,7 @@ The plugin adapts based on what it finds in config files. If it gets something w
 ```
 
 **Process:**
+
 1. Reads plan
 2. Implements Phase 1
 3. Runs tests: `npm run test:unit`
@@ -356,10 +375,20 @@ Contributions welcome! Areas we'd love help with:
 - Better project detection heuristics
 - Documentation improvements
 
+## Attribution
+
+This workflow is inspired by and adapted from **HumanLayer's** research and implementation patterns for AI-assisted development.
+
+**Original inspiration:**
+- **Website:** [humanlayer.dev](https://humanlayer.dev)
+- **GitHub:** [humanlayer/humanlayer](https://github.com/humanlayer/humanlayer)
+- **AI Engineering Talk:** [YouTube](https://youtu.be/rmvDxxNubIg?si=WtKgAdi6MydW8u-i) - Deep dive on context engineering for coding agents
+
+**Additional resources:**
+- [Advanced Context Engineering for Coding Agents](https://github.com/humanlayer/advanced-context-engineering-for-coding-agents) - Detailed guide on the principles behind this workflow
+
+The intentional compaction strategy and research → plan → implement pattern originated from HumanLayer's work on optimizing AI agent effectiveness through context window management.
+
 ## License
 
 MIT
-
-## Credits
-
-Original workflow concept from the [HumanLayer](https://github.com/humanlayer/humanlayer) project, adapted and generalized for broader use.
