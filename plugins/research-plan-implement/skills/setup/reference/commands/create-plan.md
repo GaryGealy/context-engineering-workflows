@@ -151,8 +151,13 @@ After getting initial clarifications:
    - [Technical uncertainty]
    - [Design decision needed]
 
-   Which approach aligns best with your vision?
+   I have some open questions to help us finalize the approach. We can go through them together when you're ready.
    ```
+
+   - Wait for the user to indicate they're ready to discuss open questions
+   - Use the AskUserQuestion tool to present open questions interactively
+   - Resolve all open questions before proceeding to write the plan
+   - Remember: The final plan must have no open questions (Step 6 guideline)
 
 ### Step 3: Plan Structure Development
 

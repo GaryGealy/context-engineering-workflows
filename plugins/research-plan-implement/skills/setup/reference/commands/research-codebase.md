@@ -182,8 +182,15 @@ Then wait for the user's research query.
 8. **Present findings:**
 
    - Present a concise summary of findings to the user
-   - Include key file references for easy navigation
-   - Ask if they have follow-up questions or need clarification
+   - Include the path to the research document
+   - Inform them about the Open Questions section:
+     ```
+     I've created a comprehensive research document at `thoughts/shared/research/YYYY-MM-DD-description.md` — please review thoroughly.
+
+     When you're ready, I have some open questions based on this research. You can find them in the "Open Questions" section, or we can go through them together when you're ready.
+     ```
+   - Wait for the user to indicate they're ready to discuss open questions
+   - If the user wants to discuss open questions, use the AskUserQuestion tool to present them interactively
 
 9. **Handle follow-up questions:**
    - Add `last_updated_note: "Added follow-up research for [brief description]"` to frontmatter
