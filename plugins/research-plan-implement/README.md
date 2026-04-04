@@ -36,7 +36,7 @@ Note: v2 moves generated files from `.claude/commands/` to `.claude/skills/` to 
 ## What You Get
 
 **Skills:**
-- `/guide` - Interactive learning guide with best practices (formerly `/workflow-guide`)
+- `/guide` - Quick contextual orientation (where am I in the workflow? what's next?)
 - `/setup` - Generate project-specific workflow commands
 
 **Generated Skills** (after running `/setup`):
@@ -46,6 +46,7 @@ Note: v2 moves generated files from `.claude/commands/` to `.claude/skills/` to 
 - `/iterate-plan` - Update plans based on feedback or new discoveries
 - `/implement-plan` - Execute plans with automated verification and testing checkpoints
 - `/review-changes` - Guided post-implementation review with structured checklist
+- `/guide` - Quick contextual orientation (where am I? what's next?)
 
 **Generated Agents** (specialized AI assistants):
 - `codebase-locator` - Find WHERE code lives (files, directories, components)
@@ -91,12 +92,20 @@ The plugin creates this structure in your project:
 ```
 .claude/
 ├── skills/
-│   ├── research-codebase.md
-│   ├── design.md
-│   ├── create-plan.md
-│   ├── iterate-plan.md
-│   ├── implement-plan.md
-│   └── review-changes.md
+│   ├── research-codebase/
+│   │   └── SKILL.md
+│   ├── design/
+│   │   └── SKILL.md
+│   ├── create-plan/
+│   │   └── SKILL.md
+│   ├── iterate-plan/
+│   │   └── SKILL.md
+│   ├── implement-plan/
+│   │   └── SKILL.md
+│   ├── review-changes/
+│   │   └── SKILL.md
+│   └── guide/
+│       └── SKILL.md
 └── agents/
     ├── codebase-analyzer.md
     ├── codebase-locator.md
@@ -213,7 +222,7 @@ This:
 - Reviews the research document
 - Asks clarifying questions about approach and constraints
 - Explores tradeoffs between implementation options
-- Creates a design doc in `thoughts/shared/design/` that the plan will reference
+- Creates a design doc in `thoughts/shared/designs/` that the plan will reference
 
 ### 3. Create Implementation Plan
 
@@ -253,15 +262,16 @@ This:
 ### 6. Review Changes
 
 ```bash
-/review-changes thoughts/shared/plans/2025-01-05-add-oauth.md
+/review-changes2025-01-05-add-oauth.md
 ```
 
 This:
 
-- Diffs implementation against the plan
-- Checks for missing test coverage
-- Produces a structured review checklist
-- Flags anything that warrants a second look before merging
+- Analyzes the diff (current branch vs main)
+- Categorizes changes as critical vs mechanical
+- Maps test coverage across changed files
+- Produces a structured review guide with suggested reading order
+- Offers to post the guide as a PR comment
 
 ## Supported Project Types
 
@@ -396,7 +406,7 @@ Generated files moved from `.claude/commands/` to `.claude/skills/`. Re-run `/se
 1. Reviews existing research
 2. Asks about constraints (downtime tolerance, rollback requirements, etc.)
 3. Explores migration strategy options
-4. Creates design doc at `thoughts/shared/design/2026-04-02-migration-strategy.md`
+4. Creates design doc at `thoughts/shared/designs/2026-04-02-migration-strategy.md`
 
 ### Planning Example
 
@@ -429,15 +439,16 @@ Generated files moved from `.claude/commands/` to `.claude/skills/`. Re-run `/se
 ### Review Example
 
 ```bash
-/review-changes thoughts/shared/plans/2026-04-02-add-2fa.md
+/review-changes2026-04-02-add-2fa.md
 ```
 
 **Process:**
 
-1. Compares implementation to plan
-2. Checks test coverage for new code paths
-3. Produces structured checklist of review items
-4. Flags edge cases or missing error handling
+1. Diffs current branch against main
+2. Categorizes each changed file (critical / mechanical / tests)
+3. Maps test coverage across the changes
+4. Produces a review guide with suggested reading order
+5. Offers to post the guide as a PR comment
 
 ## Contributing
 
