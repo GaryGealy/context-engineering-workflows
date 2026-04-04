@@ -262,7 +262,7 @@ This:
 ### 6. Review Changes
 
 ```bash
-/review-changes2025-01-05-add-oauth.md
+/review-changes 2025-01-05-add-oauth.md
 ```
 
 This:
@@ -439,7 +439,7 @@ Generated files moved from `.claude/commands/` to `.claude/skills/`. Re-run `/se
 ### Review Example
 
 ```bash
-/review-changes2026-04-02-add-2fa.md
+/review-changes 2026-04-02-add-2fa.md
 ```
 
 **Process:**
