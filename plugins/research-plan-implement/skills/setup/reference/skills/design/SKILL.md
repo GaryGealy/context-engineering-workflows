@@ -1,0 +1,138 @@
+---
+name: design
+description: Create a lightweight design discussion document for human-agent alignment before planning
+model: opus
+effort: high
+---
+
+# Design Discussion
+
+You are tasked with creating a lightweight design discussion document (~200 lines) that captures the shared understanding between you and the user about what's being built and how. This is the highest-leverage review moment — corrections here save hundreds of lines of rework downstream.
+
+## CRITICAL: THIS IS NOT A PLAN
+
+- DO NOT include file-by-file changes or code snippets
+- DO NOT specify implementation phases or ordering
+- DO NOT write detailed instructions for an agent to follow
+- This is a conversation artifact for alignment — enough to agree on direction, not enough to implement from
+
+## Initial Response
+
+When this command is invoked:
+
+1. **Check if parameters were provided:**
+   - If a research doc path or ticket reference was provided as $ARGUMENTS, read them FULLY
+   - If both a research doc and ticket are provided, read both
+   - Begin the design process
+
+2. **If no parameters provided**, respond with:
+
+   ```
+   I'll help you create a design discussion to align on what we're building before we plan the implementation.
+
+   Please provide:
+   1. A research document (from /research-codebase) or describe what you want to build
+   2. Optionally, a ticket or task reference
+
+   Tip: /design thoughts/shared/research/2026-01-05-auth-flow.md
+   ```
+
+   Then wait for the user's input.
+
+## Process
+
+### Step 1: Gather Context
+
+1. **Read all provided files FULLY** — research docs, tickets, related docs
+2. **Spawn light confirmation agents** (if needed):
+   - Use **codebase-pattern-finder** to confirm patterns mentioned in research
+   - Use **codebase-locator** to verify file locations if uncertain
+   - These are quick confirmations, NOT a full research pass
+3. **Read any files identified by confirmation agents**
+
+### Step 2: Draft the Design Document
+
+Write the design document to `thoughts/shared/designs/YYYY-MM-DD-description.md`
+
+Use this structure:
+
+```markdown
+# Design: [Feature/Task Name]
+
+## Current State
+[What exists today, 3-5 sentences. Enough to ground the conversation, not a full audit.]
+
+## Desired End State
+[What does "done" look like? How will we know it works? This is the spec, not the implementation.]
+
+## Patterns to Follow
+[Which existing codebase patterns should we model after, with file:line references.]
+[This is where you catch the agent following the wrong example before it writes code.]
+
+## Testing Approach
+[How should we verify this works? Adapt to the project:]
+
+[If the codebase has good test infrastructure:]
+- Suggest specific test types with examples from the codebase
+- Reference existing test patterns found in research
+
+[If it's API work:]
+- Suggest conformance-style testing: define expected behavior, test against it
+- Reference endpoints that could be exercised via curl or similar
+
+[If it's UI work:]
+- Suggest manual testing steps the agent can help execute
+- Reference any existing UI test patterns
+
+[If the codebase has minimal tests:]
+- Frame as: "What would give you confidence this works?"
+- Help the user think through verification strategies
+
+[Always:]
+- Surface what test patterns already exist in the project
+- Suggest the testing approach that fits the shape of this work
+
+## Key Decisions
+[Resolved design choices with brief rationale. Things like:]
+- "Using the existing queue system rather than adding a new dependency because X"
+- "Following the v2 auth pattern, not the legacy one, because Y"
+
+## Open Questions
+[Anything you're unsure about — these will be walked through interactively.]
+
+## What We're NOT Doing
+[Explicit scope boundaries to prevent creep.]
+```
+
+### Step 3: Walk Through Open Questions
+
+1. Use AskUserQuestion to present open questions interactively, one at a time
+2. Update the design doc with resolved decisions
+3. Move resolved questions from "Open Questions" to "Key Decisions" with rationale
+
+### Step 4: Present the Design
+
+```
+I've created a design discussion at:
+`thoughts/shared/designs/YYYY-MM-DD-description.md`
+
+This captures our alignment on:
+- [Key point 1]
+- [Key point 2]
+- [Key point 3]
+
+All open questions are resolved. When you're ready, run `/create-plan` with this design to generate the implementation plan.
+```
+
+## Important Guidelines
+
+1. **Target ~200 lines** — Simple features might be 80, complex ones 300. An order of magnitude shorter than a plan.
+2. **Be opinionated about patterns** — Show the user which patterns you found and plan to follow. This is where they correct you.
+3. **Testing approach is required** — Every design must address how we'll verify the work. Adapt to what the project actually has, don't prescribe TDD if there's no test infrastructure.
+4. **No open questions in final doc** — Walk through all questions interactively before finalizing.
+5. **Read research fully** — The research doc is your primary input. Don't re-research what's already been done.
+6. **Surface patterns to follow explicitly** — This prevents the agent from following the wrong patterns during implementation.
+
+## What This Replaces
+
+Previously, `/create-plan` tried to handle both design alignment AND plan generation in a single 85+ instruction prompt. The design discussion handles alignment so that `/create-plan` can focus purely on tactical planning.
