@@ -88,25 +88,51 @@ Iterate based on feedback.
 
 ## Vertical Phase Design
 
-**CRITICAL: Every phase must be a vertical slice, not a horizontal layer.**
+**Prefer vertical slices over horizontal layers.** A vertical slice is a phase where you can take a real action and validate a real assumption — not just create infrastructure that sits untested until later.
 
-Instead of:
-```
-Phase 1: All database changes
-Phase 2: All service layer changes
-Phase 3: All API changes
-Phase 4: All frontend changes
-Phase 5: All tests
-```
+### The problem with horizontal phases:
 
-Write:
 ```
-Phase 1: Single feature working end-to-end (DB -> service -> API -> UI) with tests
-Phase 2: Add complexity to that feature, with tests
-Phase 3: Next feature end-to-end, with tests
+Phase 1: Database schema + migrations
+Phase 2: Service layer
+Phase 3: API endpoints
+Phase 4: Frontend UI
+Phase 5: Tests
 ```
 
-**Why:** Each vertical phase is independently testable. If Phase 2 breaks, you know where the problem is. Horizontal phases mean nothing works until everything works.
+In this ordering, you can't really test Phase 1 in any meaningful way. You create a migration, but you won't discover the data model is wrong until Phase 4 when you try to render it in the UI. By then you've built 3 phases on top of a bad assumption.
+
+### Vertical slices let you validate assumptions early:
+
+**Example: Adding a dashboard feature**
+```
+Phase 1: UI with mocked data — validate the experience, confirm the data shape
+         works for what you need to display. Testable: render the page, verify layout.
+Phase 2: Background jobs that compute dashboard metrics — fully testable with
+         unit/integration tests, no UI needed.
+Phase 3: Wire up the data layer — load function pulls real data, replaces mocks.
+         Testable: page renders with real data, metrics match expectations.
+```
+
+**Example: Adding a consensus algorithm**
+```
+Phase 1: Core algorithm with test harness — prove correctness under various
+         scenarios. Testable: unit tests, property tests, edge cases.
+Phase 2: Integration with the message transport layer — algorithm works over
+         real network calls. Testable: integration tests with multiple nodes.
+Phase 3: Admin UI and monitoring — trivial UI on top of working system.
+         Testable: manual verification of dashboard.
+```
+
+### How to decide slice ordering:
+
+1. **Start with the riskiest or most uncertain part** — wherever wrong assumptions will hurt most. That might be UI (data model risk) or backend (algorithmic complexity).
+2. **Prefer slices the agent can verify itself** — things with automated tests, curl-able endpoints, or observable output. Save manual checkpoints for things that genuinely need human eyes (UX feel, visual design, business logic judgment calls).
+3. **It's OK to use horizontal slices sometimes** — if a feature is straightforward and the data model is well-understood, doing the DB first and wiring up an API is fine. Vertical slices are a preference, not a religion. The goal is testability, not a specific ordering pattern.
+
+### The test: can I take an action after this phase?
+
+If a phase ends and the only thing you can do is "look at the migration file and hope it's right" — that's not a useful phase boundary. If a phase ends and you can render a page, run a test suite, or curl an endpoint — that's a good slice.
 
 ## Per-Phase Testing
 
