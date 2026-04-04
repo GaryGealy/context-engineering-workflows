@@ -1,8 +1,8 @@
-# Research → Plan → Implement
+# Research → Design → Plan → Implement → Review
 
 **Context-aware workflow for AI-assisted development.**
 
-Analyzes your codebase, creates detailed plans, and implements features with automated verification. Uses intentional compaction to manage context windows and maximize AI effectiveness.
+Analyzes your codebase, aligns on design, creates detailed plans, implements features with automated verification, and guides structured review. Uses intentional compaction to manage context windows and maximize AI effectiveness.
 
 ## Installation
 
@@ -19,46 +19,56 @@ First, add this marketplace to Claude Code:
 /plugin add lucasnad27/claude-plugins/research-plan-implement
 ```
 
+### Upgrading from v1
+
+If you installed v1 of this plugin, re-run `/setup` in your project to upgrade your generated workflow files to v2. The setup skill will detect existing files and ask which to regenerate.
+
+Note: v2 moves generated files from `.claude/commands/` to `.claude/skills/` to align with Claude Code's current conventions. Re-running `/setup` will create the new skill files alongside (or in place of) the old command files.
+
 ## Quick Start
 
 1. Navigate to your project: `cd my-project`
 2. Run setup: `/setup`
-3. Learn the workflow: `/workflow-guide`
+3. Learn the workflow: `/guide`
 4. Start researching: `/research-codebase "How does auth work?"`
+5. Align on design: `/design thoughts/shared/research/2026-04-02-auth.md`
 
 ## What You Get
 
 **Skills:**
-- 🎓 `/workflow-guide` - Interactive learning guide with best practices
-- ⚙️ `/setup` - Generate project-specific workflow commands
+- `/guide` - Interactive learning guide with best practices (formerly `/workflow-guide`)
+- `/setup` - Generate project-specific workflow commands
 
-**Generated Commands** (after running `/setup`):
-- 🔍 `/research-codebase` - Research using parallel sub-agents, create research documents
-- 📋 `/create-plan` - Create detailed implementation plans through interactive research
-- ✏️ `/iterate-plan` - Update plans based on feedback or new discoveries
-- ⚡ `/implement-plan` - Execute plans with automated verification and testing checkpoints
+**Generated Skills** (after running `/setup`):
+- `/research-codebase` - Research using parallel sub-agents, create research documents
+- `/design` - Align on design approach through collaborative discussion before planning
+- `/create-plan` - Create detailed implementation plans through interactive research
+- `/iterate-plan` - Update plans based on feedback or new discoveries
+- `/implement-plan` - Execute plans with automated verification and testing checkpoints
+- `/review-changes` - Guided post-implementation review with structured checklist
 
 **Generated Agents** (specialized AI assistants):
 - `codebase-locator` - Find WHERE code lives (files, directories, components)
 - `codebase-analyzer` - Analyze HOW code works (data flow, implementation details)
 - `codebase-pattern-finder` - Find similar patterns and examples to model after
+- `query-planner` - Decompose complex research questions into targeted sub-queries
 - `web-search-researcher` - Research external docs and resources
 - `thoughts-locator` - Find documents in thoughts/ directory (optional)
 - `thoughts-analyzer` - Extract insights from thought documents (optional)
 
 ## Real-World Results
 
-- 🚀 **300k LOC Rust codebase:** 1-hour bug fix by non-expert, PR approved without revision
-- ⚡ **35k LOC feature:** 7 hours vs 3-5 days estimated, minimal PR revisions
-- ✅ **Key insight:** Upfront research investment pays off exponentially
+- **300k LOC Rust codebase:** 1-hour bug fix by non-expert, PR approved without revision
+- **35k LOC feature:** 7 hours vs 3-5 days estimated, minimal PR revisions
+- **Key insight:** Upfront research and design investment pays off exponentially
 
 ## How It Works
 
-This plugin generates a complete "research → plan → implement" workflow in your project's `.claude/` directory by:
+This plugin generates a complete "research → design → plan → implement → review" workflow in your project's `.claude/` directory by:
 
 1. **Analyzing your project** - Reads your `package.json`, `Cargo.toml`, `go.mod`, or `pyproject.toml` to understand your stack
 2. **Adapting intelligently** - Uses Claude's reasoning (not brittle templates) to customize commands for your tools
-3. **Generating workflow** - Creates commands and agents that work natively with your project's build system
+3. **Generating workflow** - Creates skills and agents that work natively with your project's build system
 
 **No templates. No hardcoded rules.**
 
@@ -72,7 +82,7 @@ This plugin generates a complete "research → plan → implement" workflow in y
    /setup
    ```
 3. Answer a few questions about your preferences
-4. Start using the generated commands!
+4. Start using the generated skills!
 
 ### What Gets Generated
 
@@ -80,15 +90,18 @@ The plugin creates this structure in your project:
 
 ```
 .claude/
-├── commands/
+├── skills/
 │   ├── research-codebase.md
+│   ├── design.md
 │   ├── create-plan.md
 │   ├── iterate-plan.md
-│   └── implement-plan.md
+│   ├── implement-plan.md
+│   └── review-changes.md
 └── agents/
     ├── codebase-analyzer.md
     ├── codebase-locator.md
     ├── codebase-pattern-finder.md
+    ├── query-planner.md
     ├── thoughts-analyzer.md      # If thoughts/ enabled
     ├── thoughts-locator.md       # If thoughts/ enabled
     └── web-search-researcher.md
@@ -112,13 +125,13 @@ The plugin creates this structure in your project:
 
 **After running setup:**
 
-Generated commands will use your actual scripts:
+Generated skills will use your actual scripts:
 
-- ✓ Tests: `npm run test:unit` (not generic `npm test`)
-- ✓ Linting: `npm run lint`
-- ✓ Formatting: `npm run format`
-- ✓ Build: `npm run build`
-- ✓ Database: `npx prisma@6 db push` (if Prisma detected)
+- Tests: `npm run test:unit` (not generic `npm test`)
+- Linting: `npm run lint`
+- Formatting: `npm run format`
+- Build: `npm run build`
+- Database: `npx prisma@6 db push` (if Prisma detected)
 
 ### Example: Rust Project
 
@@ -132,12 +145,12 @@ name = "my-api"
 
 **After running setup:**
 
-Generated commands will use Rust tooling:
+Generated skills will use Rust tooling:
 
-- ✓ Tests: `cargo test`
-- ✓ Linting: `cargo clippy`
-- ✓ Formatting: `cargo fmt`
-- ✓ Build: `cargo build`
+- Tests: `cargo test`
+- Linting: `cargo clippy`
+- Formatting: `cargo fmt`
+- Build: `cargo build`
 
 ### Example: Python/Django Project
 
@@ -151,26 +164,28 @@ dependencies = { django = "^4.0" }
 
 **After running setup:**
 
-Generated commands will use Django patterns:
+Generated skills will use Django patterns:
 
-- ✓ Tests: `pytest tests/unit`
-- ✓ Linting: `ruff check .`
-- ✓ Formatting: `black .`
-- ✓ Migrations: `python manage.py migrate`
+- Tests: `pytest tests/unit`
+- Linting: `ruff check .`
+- Formatting: `black .`
+- Migrations: `python manage.py migrate`
 
 ## Understanding the Workflow
 
-This plugin implements **intentional compaction**—a strategy for managing AI agent context windows by distilling progress into structured artifacts (research docs, plans) before starting fresh contexts.
+This plugin implements **intentional compaction**—a strategy for managing AI agent context windows by distilling progress into structured artifacts (research docs, design docs, plans) before starting fresh contexts.
 
 **Why it matters:** Your context window is your ONLY lever to affect output quality without retraining models.
 
-### The Three Phases
+### The Five Phases
 
 1. **Research** - Explore codebase without polluting main context
-2. **Plan** - Create exact implementation specification
-3. **Implement** - Execute phase-by-phase with verification
+2. **Design** - Align on approach before committing to an implementation path
+3. **Plan** - Create exact implementation specification
+4. **Implement** - Execute phase-by-phase with testing-aware verification
+5. **Review** - Structured post-implementation review before merging
 
-**Run `/workflow-guide` to learn how to use this workflow effectively.**
+**Run `/guide` to learn how to use this workflow effectively.**
 
 ## Typical Workflow
 
@@ -187,7 +202,20 @@ This spawns parallel agents to:
 - Find usage patterns and examples
 - Create a research document in `thoughts/shared/research/`
 
-### 2. Create Implementation Plan
+### 2. Align on Design
+
+```bash
+/design thoughts/shared/research/2026-04-02-auth-research.md
+```
+
+This:
+
+- Reviews the research document
+- Asks clarifying questions about approach and constraints
+- Explores tradeoffs between implementation options
+- Creates a design doc in `thoughts/shared/design/` that the plan will reference
+
+### 3. Create Implementation Plan
 
 ```bash
 /create-plan thoughts/tickets/add-oauth-support.md
@@ -195,12 +223,12 @@ This spawns parallel agents to:
 
 This:
 
-- Reads the ticket
+- Reads the ticket and any referenced design docs
 - Researches relevant code patterns
 - Asks clarifying questions
 - Creates detailed plan in `thoughts/shared/plans/`
 
-### 3. Iterate on Plan
+### 4. Iterate on Plan
 
 ```bash
 /iterate-plan thoughts/shared/plans/2025-01-05-add-oauth.md
@@ -208,7 +236,7 @@ This:
 
 Update the plan based on feedback, new discoveries, or changed requirements.
 
-### 4. Implement the Plan
+### 5. Implement the Plan
 
 ```bash
 /implement-plan thoughts/shared/plans/2025-01-05-add-oauth.md
@@ -217,10 +245,23 @@ Update the plan based on feedback, new discoveries, or changed requirements.
 This:
 
 - Reads the plan
-- Implements each phase
+- Implements each phase with testing in mind from the start
 - Runs automated verification (tests, linting, builds)
 - Pauses for manual testing between phases
 - Updates checkboxes in the plan as progress is made
+
+### 6. Review Changes
+
+```bash
+/review-changes thoughts/shared/plans/2025-01-05-add-oauth.md
+```
+
+This:
+
+- Diffs implementation against the plan
+- Checks for missing test coverage
+- Produces a structured review checklist
+- Flags anything that warrants a second look before merging
 
 ## Supported Project Types
 
@@ -228,43 +269,45 @@ Currently adapts intelligently to:
 
 ### Languages
 
-- ✅ TypeScript/JavaScript (Node.js, Deno, Bun)
-- ✅ Python
-- ✅ Go
-- ✅ Rust
+- TypeScript/JavaScript (Node.js, Deno, Bun)
+- Python
+- Go
+- Rust
 
 ### Frameworks
 
-- ✅ SvelteKit
-- ✅ Next.js
-- ✅ Django
-- ✅ FastAPI
-- ✅ Generic frameworks (with sensible defaults)
+- SvelteKit
+- Next.js
+- Django
+- FastAPI
+- Generic frameworks (with sensible defaults)
 
 ### Build Systems
 
-- ✅ npm/yarn/pnpm scripts
-- ✅ Makefile
-- ✅ Cargo
-- ✅ Poetry
-- ✅ Go modules
+- npm/yarn/pnpm scripts
+- Makefile
+- Cargo
+- Poetry
+- Go modules
 
 ### Databases
 
-- ✅ Prisma
-- ✅ Drizzle
-- ✅ SQLAlchemy
-- ✅ Django ORM
-- ✅ Diesel
+- Prisma
+- Drizzle
+- SQLAlchemy
+- Django ORM
+- Diesel
 
 ## Philosophy
 
 This plugin generates workflows that follow these principles:
 
 1. **Documentarian Approach** - Research and document what EXISTS, not what SHOULD BE
-2. **Parallel Sub-Agents** - Spawn specialized agents concurrently for efficiency
-3. **Interactive Planning** - Iterative, collaborative plan creation with user feedback
-4. **Automated + Manual Verification** - Clear separation of what can be automated vs requires human testing
+2. **Design Before Planning** - Align on approach before committing to an implementation path
+3. **Parallel Sub-Agents** - Spawn specialized agents concurrently for efficiency
+4. **Interactive Planning** - Iterative, collaborative plan creation with user feedback
+5. **Testing-Aware Implementation** - Tests are not an afterthought; they're built into each phase
+6. **Automated + Manual Verification** - Clear separation of what can be automated vs requires human testing
 
 ## Customization
 
@@ -291,7 +334,7 @@ Commit `.claude/` to version control so your team gets the same workflow:
 
 ```bash
 git add .claude/
-git commit -m "Add research/plan/implement workflow"
+git commit -m "Add research/design/plan/implement/review workflow"
 git push
 ```
 
@@ -316,13 +359,17 @@ This means the plugin isn't installed correctly. Ensure:
 2. `skills/setup/reference/` directory exists
 3. Reference templates are present
 
-### Generated commands don't match my project
+### Generated skills don't match my project
 
 The plugin adapts based on what it finds in config files. If it gets something wrong:
 
 1. Re-run `/setup` with correct info
 2. Manually edit the generated `.claude/` files
 3. File an issue so we can improve detection
+
+### Upgrading from v1 to v2
+
+Generated files moved from `.claude/commands/` to `.claude/skills/`. Re-run `/setup` to generate the new skill files. You can safely delete the old `commands/` files once the new skills are confirmed working.
 
 ## Examples
 
@@ -334,9 +381,22 @@ The plugin adapts based on what it finds in config files. If it gets something w
 
 **Output:**
 
-- Research document at `thoughts/shared/research/2025-01-05-database-migrations.md`
+- Research document at `thoughts/shared/research/2026-04-02-database-migrations.md`
 - Includes file references, code examples, and architecture notes
 - Documents current state without recommendations
+
+### Design Example
+
+```bash
+/design thoughts/shared/research/2026-04-02-database-migrations.md
+```
+
+**Process:**
+
+1. Reviews existing research
+2. Asks about constraints (downtime tolerance, rollback requirements, etc.)
+3. Explores migration strategy options
+4. Creates design doc at `thoughts/shared/design/2026-04-02-migration-strategy.md`
 
 ### Planning Example
 
@@ -349,22 +409,35 @@ The plugin adapts based on what it finds in config files. If it gets something w
 1. Asks clarifying questions
 2. Researches existing auth code
 3. Proposes implementation phases
-4. Creates plan at `thoughts/shared/plans/2025-01-05-add-2fa.md`
+4. Creates plan at `thoughts/shared/plans/2026-04-02-add-2fa.md`
 
 ### Implementation Example
 
 ```bash
-/implement-plan thoughts/shared/plans/2025-01-05-add-2fa.md
+/implement-plan thoughts/shared/plans/2026-04-02-add-2fa.md
 ```
 
 **Process:**
 
 1. Reads plan
-2. Implements Phase 1
+2. Implements Phase 1 with tests alongside code
 3. Runs tests: `npm run test:unit`
 4. Runs linting: `npm run lint`
 5. Pauses for manual testing
 6. Continues to Phase 2 after confirmation
+
+### Review Example
+
+```bash
+/review-changes thoughts/shared/plans/2026-04-02-add-2fa.md
+```
+
+**Process:**
+
+1. Compares implementation to plan
+2. Checks test coverage for new code paths
+3. Produces structured checklist of review items
+4. Flags edge cases or missing error handling
 
 ## Contributing
 
@@ -377,17 +450,20 @@ Contributions welcome! Areas we'd love help with:
 
 ## Attribution
 
-This workflow is inspired by and adapted from **HumanLayer's** research and implementation patterns for AI-assisted development.
+This workflow is inspired by and adapted from multiple sources in the AI-assisted development community.
 
-**Original inspiration:**
-- **Website:** [humanlayer.dev](https://humanlayer.dev)
-- **GitHub:** [humanlayer/humanlayer](https://github.com/humanlayer/humanlayer)
-- **AI Engineering Talk:** [YouTube](https://youtu.be/rmvDxxNubIg?si=WtKgAdi6MydW8u-i) - Deep dive on context engineering for coding agents
+**Primary inspiration:**
+- **HumanLayer** - Original research → plan → implement pattern and intentional compaction strategy
+  - **Website:** [humanlayer.dev](https://humanlayer.dev)
+  - **GitHub:** [humanlayer/humanlayer](https://github.com/humanlayer/humanlayer)
+  - **AI Engineering Talk:** [YouTube](https://youtu.be/rmvDxxNubIg?si=WtKgAdi6MydW8u-i) - Deep dive on context engineering for coding agents
+  - [Advanced Context Engineering for Coding Agents](https://github.com/humanlayer/advanced-context-engineering-for-coding-agents) - Detailed guide on the principles behind this workflow
 
-**Additional resources:**
-- [Advanced Context Engineering for Coding Agents](https://github.com/humanlayer/advanced-context-engineering-for-coding-agents) - Detailed guide on the principles behind this workflow
+**Additional influences:**
+- **CRISPY / Dex** - Design-before-planning discipline and structured review phases
+- **Simon Willison** - Practical AI-assisted development patterns and the value of explicit workflow documentation
 
-The intentional compaction strategy and research → plan → implement pattern originated from HumanLayer's work on optimizing AI agent effectiveness through context window management.
+The intentional compaction strategy and multi-phase workflow originated from HumanLayer's work on optimizing AI agent effectiveness through context window management, expanded with design alignment and review phases drawn from the broader AI engineering community.
 
 ## License
 
