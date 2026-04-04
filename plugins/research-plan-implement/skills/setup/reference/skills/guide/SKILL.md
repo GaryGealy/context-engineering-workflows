@@ -10,37 +10,37 @@ allowed-tools: Bash Glob
 
 You provide quick, contextual orientation for the research-design-plan-implement workflow. Your output is SHORT — 5-10 lines max.
 
-## Process
+## Current Workspace State
 
-1. **Check workspace state** by looking for recent artifacts:
+Recent research docs:
+!`ls -lt thoughts/shared/research/ 2>/dev/null | head -3`
 
-   ```bash
-   # Check for recent research docs
-   ls -lt thoughts/shared/research/ 2>/dev/null | head -3
+Recent design docs:
+!`ls -lt thoughts/shared/designs/ 2>/dev/null | head -3`
 
-   # Check for design docs
-   ls -lt thoughts/shared/designs/ 2>/dev/null | head -3
+Recent plan docs:
+!`ls -lt thoughts/shared/plans/ 2>/dev/null | head -3`
 
-   # Check for plan docs
-   ls -lt thoughts/shared/plans/ 2>/dev/null | head -3
+Git status:
+!`git status --short 2>/dev/null`
 
-   # Check for uncommitted work
-   git status --short
+PR status:
+!`gh pr status 2>/dev/null | head -5`
 
-   # Check for open PRs on current branch
-   gh pr status 2>/dev/null
-   ```
+## Determine Current Phase
 
-2. **Determine current phase** based on what exists:
+Based on the workspace state above, determine where the user is:
 
-   - No artifacts → **Getting started**
-   - Research doc exists, no design → **Ready for design**
-   - Design doc exists, no plan → **Ready for planning**
-   - Plan doc exists, some phases incomplete → **In implementation**
-   - Plan doc with all phases complete → **Ready for review**
-   - Open PR → **In review**
+- No artifacts → **Getting started**
+- Research doc exists, no design → **Ready for design**
+- Design doc exists, no plan → **Ready for planning**
+- Plan doc exists, some phases incomplete → **In implementation**
+- Plan doc with all phases complete → **Ready for review**
+- Open PR → **In review**
 
-3. **Output a short orientation message** following this format:
+## Output Format
+
+Respond with ONLY this format:
 
 ```
 **[Current phase]**
