@@ -63,36 +63,7 @@ The testing approach was decided in `/design` and specified per-phase in `/creat
 
 ## Review Metadata
 
-As you implement each phase, keep a lightweight log for `/review-changes`. After completing all phases (or when the user runs `/review-changes`), save this to `thoughts/shared/review-metadata/YYYY-MM-DD-description.md`:
-
-```markdown
-# Review Metadata: [Feature Name]
-
-## Files Created
-- `path/to/new-file.ext` — [brief purpose]
-
-## Files Modified
-- `path/to/modified-file.ext` — [what changed and why]
-
-## Substantive vs Mechanical
-### Needs careful review:
-- `path/to/file.ext:45-89` — Core business logic for [feature]
-- `path/to/file.ext:12-34` — Security-sensitive: [what]
-
-### Mechanical/boilerplate:
-- `path/to/types.ext` — Type definitions mirroring schema
-- `path/to/file.ext` — Import reorganization only
-
-## Test Coverage
-### Covered by tests:
-- [Feature X] — tested in `tests/path/test.ext`
-
-### Not covered by tests:
-- [Feature Y] — [why: e.g., "UI interaction, needs manual testing"]
-
-## Plan Deviations
-- [Description of deviation and why]
-```
+As you implement each phase, keep a lightweight log for `/review-changes`. After completing all phases (or when the user runs `/review-changes`), save this to `thoughts/shared/review-metadata/YYYY-MM-DD-description.md` using the template from `review-metadata-template.md` in this skill's directory.
 
 This metadata makes `/review-changes` much more accurate, but it's optional — `/review-changes` works without it by analyzing the diff directly.
 
