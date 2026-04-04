@@ -167,6 +167,14 @@ describe('Pagination', () => {
 });
 ```
 
+### Testing Infrastructure
+**Test framework**: `jest` (configured in `jest.config.ts:1`)
+**Test utilities**: `tests/utils/helpers.ts:1` - shared test helpers
+**Fixtures**: `tests/fixtures/` - contains 12 fixture files
+**Factories**: `tests/factories/user.ts:1` - user factory pattern
+**Test database**: Configured in `tests/setup.ts:5` using test containers
+**CI config**: `.github/workflows/test.yml:1` - runs unit + integration
+
 ### Pattern Usage in Codebase
 
 - **Offset pagination**: Found in user listings, admin dashboards
@@ -205,10 +213,16 @@ describe('Pagination', () => {
 - Hooks usage
 
 ### Testing Patterns
-- Unit test structure
-- Integration test setup
-- Mock strategies
-- Assertion patterns
+- Unit test structure and conventions
+- Integration test setup and teardown
+- Mock/stub strategies and test doubles
+- Assertion patterns and custom matchers
+- Test fixture and factory patterns
+- Test database setup (seeds, migrations, cleanup)
+- Available test utilities and helpers
+- How similar features are tested (find concrete examples)
+- Test file naming and location conventions
+- CI/CD test configuration
 
 ## Important Guidelines
 

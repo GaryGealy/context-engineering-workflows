@@ -1,5 +1,8 @@
 ---
+name: implement-plan
 description: Implement technical plans from thoughts/shared/plans with verification
+model: opus
+effort: high
 ---
 
 # Implement Plan
@@ -28,21 +31,41 @@ Plans are carefully designed, but reality can be messy. Your job is to:
 - Verify your work makes sense in the broader codebase context
 - Update checkboxes in the plan as you complete sections
 
-When things don't match the plan exactly, think about why and communicate clearly. The plan is your guide, but your judgment matters too.
+## Testing-Aware Implementation
 
-If you encounter a mismatch:
+Before implementing each phase, read its Verification section and adapt your workflow:
 
-- STOP and think deeply about why the plan can't be followed
-- Present the issue clearly:
+**If the phase specifies TDD / red-green testing:**
+1. Write the failing tests first
+2. Run them to confirm they fail
+3. Implement the minimum code to make them pass
+4. Run tests again to confirm green
+5. Refactor if needed, keeping tests green
+6. Commit tests and implementation separately when practical — this makes the red-to-green progression visible in the diff
 
-  ```
-  Issue in Phase [N]:
-  Expected: [what the plan says]
-  Found: [actual situation]
-  Why this matters: [explanation]
+**If the phase specifies conformance testing:**
+1. Generate the test suite that defines correct behavior
+2. Run it to confirm it fails (the feature doesn't exist yet)
+3. Implement against the test suite
+4. Run tests until green
 
-  How should I proceed?
-  ```
+**If the phase specifies manual testing:**
+1. Implement the phase
+2. Exercise the work yourself — start a server, run curl commands, call the API
+3. Report what you observed in your phase completion message
+4. Include the commands you ran and their output
+
+**If the phase has no specific testing approach:**
+1. Implement the phase
+2. Run whatever automated checks exist (lint, typecheck, build, existing tests)
+
+The testing approach was decided in `/design` and specified per-phase in `/create-plan`. Follow it — don't decide on a different approach.
+
+## Review Metadata
+
+As you implement each phase, keep a lightweight log for `/review-changes`. After completing all phases (or when the user runs `/review-changes`), save this to `thoughts/shared/review-metadata/YYYY-MM-DD-description.md` using the template from `review-metadata-template.md` in this skill's directory.
+
+This metadata makes `/review-changes` much more accurate, but it's optional — `/review-changes` works without it by analyzing the diff directly.
 
 ## Verification Approach
 
@@ -69,6 +92,26 @@ After implementing a phase:
 If instructed to execute multiple phases consecutively, skip the pause until the last phase. Otherwise, assume you are just doing one phase.
 
 do not check off items in the manual testing steps until confirmed by the user.
+
+## When Things Don't Match the Plan
+
+When things don't match the plan exactly:
+
+- **Small deviations** (function signature changed, slightly different file path): Note it in your review metadata and keep going. Mention it in your phase completion message.
+- **Structural deviations** (approach won't work, missing dependency, wrong assumption): STOP and present the issue clearly:
+
+  ```
+  Issue in Phase [N]:
+  Expected: [what the plan says]
+  Found: [actual situation]
+  Why this matters: [explanation]
+
+  Options:
+  1. Adapt and continue (if the change is contained)
+  2. Run /iterate-plan to update the plan
+  ```
+
+The plan is your guide, but your judgment matters. Small adaptations are fine. Structural changes need alignment.
 
 ## If You Get Stuck
 

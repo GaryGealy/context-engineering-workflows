@@ -1,6 +1,8 @@
 ---
+name: research-codebase
 description: Document codebase as-is with thoughts directory for historical context
 model: opus
+effort: high
 ---
 
 # Research Codebase
@@ -36,17 +38,20 @@ Then wait for the user's research query.
    - **CRITICAL**: Read these files yourself in the main context before spawning any sub-tasks
    - This ensures you have full context before decomposing the research
 
-2. **Analyze and decompose the research question:**
+2. **Generate research questions via query planning:**
 
-   - Break down the user's query into composable research areas
-   - Take time to ultrathink about the underlying patterns, connections, and architectural implications the user might be seeking
-   - Identify specific components, patterns, or concepts to investigate
+   - If the user provided a ticket or task description (not just a bare question), use a **query-planner** agent to decompose it into focused, objective research questions
+   - The query-planner reads the ticket/task and generates 3-8 specific questions that will cause research agents to explore all relevant code
+   - **CRITICAL**: The query-planner strips out information about what is being built — research agents receive ONLY the questions, not the original ticket
+   - This keeps research findings objective and factual
+   - If the user provided a direct research question (e.g., "How does authentication work?"), skip query planning and use the question directly
    - Create a research plan using TodoWrite to track all subtasks
-   - Consider which directories, files, or architectural patterns are relevant
 
 3. **Spawn parallel sub-agent tasks for comprehensive research:**
 
    - Create multiple Task agents to research different aspects concurrently
+   - Use the research questions (from query planning or the user's direct question) to guide agent dispatch
+   - **IMPORTANT**: If query planning was used, pass ONLY the research questions to agents — do NOT include the original ticket or task description
    - We now have specialized agents that know how to do specific research tasks:
 
    **For codebase research:**

@@ -14,6 +14,19 @@ This skill analyzes your project's language, framework, and tooling, then intell
 3. **Generates customized workflow** in `.claude/` directory
 4. **No templates or hardcoded logic** - uses AI reasoning to adapt
 
+## Before You Start
+
+Before running setup, recommend the user create a branch for their work:
+
+```
+Tip: I recommend creating a branch before we set up the workflow — that way
+you can review the generated files as a diff before merging them into your project.
+
+  git checkout -b setup-rpi-workflow
+```
+
+If they're already on a feature branch, that's fine — just make sure they're aware that setup will create files in `.claude/`.
+
 ## Workflow
 
 ### Step 1: Analyze Current Project
@@ -64,6 +77,13 @@ Detected project configuration:
 - Type Check Command: [Unable to detect - will ask]
 - Issue Tracking: [Unable to detect - will ask]
 ```
+
+**Check for existing RPI installation:**
+- Check if `.claude/skills/research-codebase/SKILL.md` exists (v2 installation)
+- Check if `.claude/commands/research-codebase.md` exists (v1 installation)
+- If v2 found: this is a **v2 upgrade** — enter upgrade mode (see Upgrade Mode section below)
+- If v1 found: this is a **v1→v2 migration** — enter upgrade mode with migration (see Upgrade Mode section below)
+- If neither found: this is a **fresh install** — continue with Step 2
 
 ### Step 2: Fill in Gaps with User Questions
 
@@ -231,23 +251,34 @@ Ask about configuration choices:
    - "Any additional custom verification commands I should include?"
    - "Any project-specific testing notes or requirements?"
 
-3. **Final Confirmation:**
+3. **Thoughts gitignore:**
+   - Check if `thoughts/` is in `.gitignore`
+   - If not: "I recommend adding `thoughts/` to `.gitignore`. These are working artifacts, not source code — keeping them out of git keeps your PRs clean. Add it? (yes/no)"
+   - If yes and thoughts files are already tracked in git:
+     "I see thoughts files are currently tracked. Want me to untrack them? This removes them from git tracking without deleting the local files. (yes/no)"
+     - If yes: run `git rm --cached -r thoughts/`
+
+4. **Final Confirmation:**
    - "Ready to generate workflow files? (yes/no)"
 
 ### Step 4: Read Reference Templates
 
 Read all reference templates from the plugin:
 
-**Commands to read:**
-- `skills/setup/reference/commands/research-codebase.md`
-- `skills/setup/reference/commands/create-plan.md`
-- `skills/setup/reference/commands/iterate-plan.md`
-- `skills/setup/reference/commands/implement-plan.md`
+**Skills to read:**
+- `skills/setup/reference/skills/research-codebase/SKILL.md`
+- `skills/setup/reference/skills/design/SKILL.md`
+- `skills/setup/reference/skills/create-plan/SKILL.md`
+- `skills/setup/reference/skills/iterate-plan/SKILL.md`
+- `skills/setup/reference/skills/implement-plan/SKILL.md`
+- `skills/setup/reference/skills/review-changes/SKILL.md`
+- `skills/setup/reference/skills/guide/SKILL.md`
 
 **Agents to read:**
 - `skills/setup/reference/agents/codebase-analyzer.md`
 - `skills/setup/reference/agents/codebase-locator.md`
 - `skills/setup/reference/agents/codebase-pattern-finder.md`
+- `skills/setup/reference/agents/query-planner.md`
 - `skills/setup/reference/agents/web-search-researcher.md`
 
 **Conditional agents (if user wants thoughts/):**
@@ -313,16 +344,28 @@ Create the `.claude/` directory structure if it doesn't exist, then write adapte
 **Directory structure to create:**
 ```
 .claude/
-├── commands/
-│   ├── research-codebase.md
-│   ├── create-plan.md
-│   ├── iterate-plan.md
-│   ├── implement-plan.md
-│   └── read-ticket.md           # Optional: if Linear/GitHub/GitLab
+├── skills/
+│   ├── research-codebase/
+│   │   └── SKILL.md
+│   ├── design/
+│   │   └── SKILL.md
+│   ├── create-plan/
+│   │   └── SKILL.md
+│   ├── iterate-plan/
+│   │   └── SKILL.md
+│   ├── implement-plan/
+│   │   └── SKILL.md
+│   ├── review-changes/
+│   │   └── SKILL.md
+│   ├── guide/
+│   │   └── SKILL.md
+│   └── read-ticket/              # Optional: if Linear/GitHub/GitLab
+│       └── SKILL.md
 └── agents/
     ├── codebase-analyzer.md
     ├── codebase-locator.md
     ├── codebase-pattern-finder.md
+    ├── query-planner.md
     ├── web-search-researcher.md
     ├── thoughts-analyzer.md      # Only if thoughts/ enabled
     ├── thoughts-locator.md       # Only if thoughts/ enabled
@@ -332,19 +375,19 @@ Create the `.claude/` directory structure if it doesn't exist, then write adapte
 **Optional files based on issue tracking:**
 
 If using **Linear**, optionally generate:
-- `commands/read-ticket.md` - Read Linear ticket details and save to thoughts/tickets/
+- `skills/read-ticket/SKILL.md` - Read Linear ticket details and save to thoughts/tickets/
 - `agents/linear-ticket-reader.md` - Agent specialized in fetching Linear tickets
 - Note: Only generate if user wants Linear integration
 
 If using **GitHub Issues**, optionally generate:
-- `commands/read-issue.md` - Read GitHub issue using `gh issue view`
+- `skills/read-issue/SKILL.md` - Read GitHub issue using `gh issue view`
 - Note: Uses gh CLI, no special agent needed
 
 If using **GitLab Issues**, optionally generate:
-- `commands/read-issue.md` - Read GitLab issue using `glab issue view`
+- `skills/read-issue/SKILL.md` - Read GitLab issue using `glab issue view`
 - Note: Uses glab CLI, no special agent needed
 
-**Write each adapted file:**
+**Write each adapted skill and agent file:**
 - Use Write tool to create each file
 - Ensure adapted content matches the project's actual tooling
 - Preserve markdown formatting and frontmatter
@@ -354,11 +397,11 @@ If using **GitLab Issues**, optionally generate:
 Show the user what was created:
 
 ```
-✓ Created research/plan/implement workflow in .claude/
+Created research-design-plan-implement workflow in .claude/
 
 Generated files:
-- 4 commands: /research-codebase, /create-plan, /iterate-plan, /implement-plan
-- [N] agents: codebase-locator, codebase-analyzer, pattern-finder, web-search-researcher, [+thoughts agents if enabled]
+- 7 skills: /research-codebase, /design, /create-plan, /iterate-plan, /implement-plan, /review-changes, /guide
+- [N] agents: query-planner, codebase-locator, codebase-analyzer, pattern-finder, web-search-researcher, [+thoughts agents if enabled]
 
 Adapted for your project:
 - Test command: [detected command]
@@ -368,13 +411,17 @@ Adapted for your project:
 - Database: [detected tool and commands]
 - Issue tracking: [detected system]
 
+Workflow:
+  /research-codebase -> /design -> /create-plan -> /implement-plan -> /review-changes
+  /guide (run anytime for orientation)
+
 Quick start:
   /research-codebase "How does authentication work?"
-  /create-plan path/to/ticket.md
-  /iterate-plan path/to/plan.md
-  /implement-plan path/to/plan.md
-
-Learn the workflow: /workflow-guide
+  /design thoughts/shared/research/2026-01-05-auth-flow.md
+  /create-plan thoughts/shared/designs/2026-01-05-auth-redesign.md
+  /implement-plan thoughts/shared/plans/2026-01-05-auth-redesign.md
+  /review-changes
+  /guide
 ```
 
 ### Step 8: Show Workflow Quick Tips
@@ -382,83 +429,54 @@ Learn the workflow: /workflow-guide
 After presenting the summary, show essential workflow concepts:
 
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📚 Understanding the Research → Plan → Implement Workflow
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Understanding the Research -> Design -> Plan -> Implement -> Review Workflow
 
 This workflow uses "INTENTIONAL COMPACTION" to manage context windows:
 
-🔍 RESEARCH Phase
-   • Explores codebase without polluting main context
-   • Sub-agents handle messy file discovery
-   • Output: Clean research document with findings
-   • Example: /research-codebase "How does auth work?"
+RESEARCH Phase (/research-codebase)
+   Explores codebase without polluting main context
+   Sub-agents handle messy file discovery
+   Output: Clean research document with findings
 
-📋 PLAN Phase
-   • Uses research to create exact implementation spec
-   • Includes files, code examples, success criteria
-   • Output: Actionable plan that guides implementation
-   • Critical: A bad line in a plan → hundreds of bad lines of code
+DESIGN Phase (/design)
+   Lightweight ~200-line alignment artifact
+   Captures: current state, desired end state, patterns, testing approach
+   This is your highest-leverage review moment
+   Output: Design discussion document
 
-⚙️ IMPLEMENT Phase
-   • Executes plan phase-by-phase
-   • Runs automated verification: {{TEST_COMMAND}}, {{LINT_COMMAND}}
-   • Pauses for manual testing between phases
-   • Updates checkboxes as progress is made
+PLAN Phase (/create-plan)
+   Takes design as input — decisions already made
+   Vertical phases (end-to-end slices, not horizontal layers)
+   Per-phase testing baked in
+   Output: Tactical implementation plan
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-💡 Key Success Factors
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+IMPLEMENT Phase (/implement-plan)
+   Testing-aware: follows the testing approach from design/plan
+   Generates review metadata as it goes
+   Phase-by-phase with verification checkpoints
 
-✓ Always research before planning (even for "simple" tasks)
-✓ Review and validate plans before implementing
-✓ Implement one phase at a time, verify between phases
-✓ Keep context utilization under 70%
-✓ Compact progress into documents, start fresh contexts
+REVIEW Phase (/review-changes)
+   Guides human attention through the diff
+   Critical vs mechanical changes
+   Test coverage map
+   Can post review guide to PR
 
-Human Checkpoints (highest leverage):
-  1. Research → Validate findings are complete
-  2. Planning → Review approach and phasing
-  3. Implementation → Manual test between phases
+ORIENTATION (/guide)
+   Run anytime to see where you are and what's next
+   5-10 lines of contextual help
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🎯 Your Context Window = Your Only Lever
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Key Success Factors:
+  Always research before designing
+  Design is your highest-leverage review moment
+  Plans use vertical slices with per-phase testing
+  Run /review-changes before or after creating a PR
+  Run /guide if you forget where you are
 
-Optimize by worst outcomes:
-  1. ❌ Incorrect information (most damaging)
-  2. ⚠️  Missing information
-  3. 📊 Excessive noise
-
-Real-world results with this workflow:
-  • 300k LOC Rust codebase: 1-hour bug fix by non-expert
-  • 35k LOC feature: 7 hours vs 3-5 days estimated
-  • Both PRs approved with minimal revision
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Learn more: /workflow-guide
-  - /workflow-guide research
-  - /workflow-guide plan
-  - /workflow-guide implement
-  - /workflow-guide tips
-
-Ready to start? Try: /research-codebase "What's the architecture?"
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🙏 Attribution
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-This workflow is inspired by HumanLayer's research on AI-assisted development:
-
-  • Website: humanlayer.dev
-  • GitHub: github.com/humanlayer/humanlayer
-  • AI Engineering Talk: youtu.be/rmvDxxNubIg?si=WtKgAdi6MydW8u-i
-
-The intentional compaction strategy and research → plan → implement
-pattern originated from HumanLayer's work on context engineering.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Attribution:
+  Inspired by HumanLayer's research on AI-assisted development
+  Informed by talks from Dex (CRISPY) and Simon Willison (TDD/conformance)
+  Website: humanlayer.dev
+  GitHub: github.com/humanlayer/humanlayer
 ```
 
 ### Step 9: Optional - Create thoughts/ Directory
@@ -470,10 +488,82 @@ Would you like me to create the thoughts/ directory structure?
   thoughts/
   ├── shared/
   │   ├── research/
-  │   └── plans/
+  │   ├── designs/
+  │   ├── plans/
+  │   └── review-metadata/
   └── [username]/
       ├── tickets/
       └── notes/
+```
+
+## Upgrade Mode
+
+When existing RPI commands or skills are detected, enter upgrade mode:
+
+### Step U1: Extract Project Adaptations
+
+Read the existing commands/skills to extract project-specific details. Check both `.claude/commands/` (v1) and `.claude/skills/` (v2) locations:
+- Test commands (unit, integration, e2e)
+- Lint, format, build, typecheck commands
+- Database tools and migration commands
+- Framework-specific patterns (SvelteKit load functions, Django views, etc.)
+- Issue tracking integration
+- Thoughts directory configuration
+- Any custom additions the user made
+
+### Step U2: Show Upgrade Summary
+
+```
+Detected existing RPI installation. Here's what's changing:
+
+MIGRATION:
+  Commands are moving from .claude/commands/ to .claude/skills/ (new Claude Code convention)
+  Old command files will be removed after migration
+
+NEW skills:
+  /design — Lightweight design discussion before planning (~200 lines vs ~1000 line plans)
+  /review-changes — Structured review guide for PRs (critical vs mechanical changes)
+  /guide — Contextual orientation (where am I? what's next?)
+
+NEW agent:
+  query-planner — Keeps research objective by separating questions from intent
+
+UPDATED skills:
+  /research-codebase — Now uses query planning to keep research objective
+  /create-plan — Slimmed down (design decisions moved to /design), vertical phases, per-phase testing
+  /implement-plan — Testing-aware (adapts to TDD/conformance/manual), generates review metadata
+
+UNCHANGED:
+  /iterate-plan — Migrated to skills format, content unchanged
+
+Your project adaptations will be preserved:
+  - Test command: [extracted]
+  - Lint command: [extracted]
+  - [etc.]
+
+Ready to upgrade? (yes / let me see details for a specific skill)
+```
+
+### Step U3: Regenerate Files
+
+1. Read all new reference templates (Step 4)
+2. Adapt each template using the extracted project-specific details (Step 5)
+3. Write all files to `.claude/skills/` and `.claude/agents/` (Step 6)
+4. Remove old `.claude/commands/` files that have been migrated to skills:
+   - `rm .claude/commands/research-codebase.md` (if exists)
+   - `rm .claude/commands/create-plan.md` (if exists)
+   - `rm .claude/commands/iterate-plan.md` (if exists)
+   - `rm .claude/commands/implement-plan.md` (if exists)
+   - `rm .claude/commands/read-ticket.md` (if exists)
+   - Ask before removing: "I'll clean up the old .claude/commands/ files that have been migrated to .claude/skills/. OK? (yes/no)"
+5. Handle thoughts gitignore (if not already configured)
+6. Show updated summary (Step 7) and workflow tips (Step 8)
+
+### Step U4: Create designs directory
+
+If `thoughts/shared/` exists but `thoughts/shared/designs/` doesn't:
+```
+mkdir -p thoughts/shared/designs thoughts/shared/review-metadata
 ```
 
 ## Important Guidelines
@@ -497,8 +587,9 @@ Would you like me to create the thoughts/ directory structure?
 - If project has a Makefile, check if it has standard targets (test, lint, build)
 
 **Don't Overwrite Existing Files:**
-- Check if .claude/ directory already exists
-- If files exist, ask: "Found existing .claude/ files. Overwrite? (yes/no/selective)"
+- Check if `.claude/skills/` or `.claude/commands/` directory already exists
+- If skills exist, enter upgrade mode (see Upgrade Mode section)
+- If only commands exist, enter migration + upgrade mode
 - If selective, show list and let user choose which to regenerate
 
 ## Example Adaptations
