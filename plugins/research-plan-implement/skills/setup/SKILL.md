@@ -14,6 +14,19 @@ This skill analyzes your project's language, framework, and tooling, then intell
 3. **Generates customized workflow** in `.claude/` directory
 4. **No templates or hardcoded logic** - uses AI reasoning to adapt
 
+## Before You Start
+
+Before running setup, recommend the user create a branch for their work:
+
+```
+Tip: I recommend creating a branch before we set up the workflow — that way
+you can review the generated files as a diff before merging them into your project.
+
+  git checkout -b setup-rpi-workflow
+```
+
+If they're already on a feature branch, that's fine — just make sure they're aware that setup will create files in `.claude/`.
+
 ## Workflow
 
 ### Step 1: Analyze Current Project
