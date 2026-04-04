@@ -1,11 +1,11 @@
 ---
 name: workflow-guide
-description: Learn how to use the Research → Plan → Implement workflow effectively through intentional compaction
+description: Learn how to use the Research → Design → Plan → Implement → Review workflow effectively through intentional compaction
 ---
 
-# Research → Plan → Implement Workflow Guide
+# Research → Design → Plan → Implement → Review Workflow Guide
 
-Interactive guide to understanding and using the RPI (Research, Plan, Implement) workflow effectively.
+Interactive guide to understanding and using the RDPIR (Research, Design, Plan, Implement, Review) workflow effectively.
 
 ## How to Use This Guide
 
@@ -14,10 +14,12 @@ You can:
 - Run `/workflow-guide [topic]` to learn about a specific area
 
 **Available topics:**
-- `overview` - What is intentional compaction and the RPI workflow?
+- `overview` - What is intentional compaction and the workflow?
 - `research` - How to use the research phase effectively
+- `design` - How to use the design phase effectively
 - `plan` - How to create good implementation plans
 - `implement` - How to execute plans successfully
+- `review` - How to review changes efficiently
 - `context` - Managing context windows and compaction
 - `patterns` - Common workflow patterns (greenfield, bug fix, refactoring)
 - `tips` - Best practices and common pitfalls
@@ -29,17 +31,17 @@ If no topic specified, show this quick start guide:
 
 ---
 
-# Research → Plan → Implement Workflow
+# Research → Design → Plan → Implement → Review Workflow
 
 This workflow uses **intentional compaction** to manage AI agent context windows effectively.
 
 ## What is Intentional Compaction?
 
-Intentional compaction is a deliberate strategy where you periodically pause work and distill progress into structured artifacts (research summaries, plans, status updates) before starting fresh context windows.
+Intentional compaction is a deliberate strategy where you periodically pause work and distill progress into structured artifacts (research summaries, designs, plans, status updates) before starting fresh context windows.
 
 **Why it matters:** Since LLMs are stateless functions, your context window is the ONLY lever you have to affect output quality without retraining models.
 
-## The Three-Phase Workflow
+## The Workflow
 
 ### 🔍 Phase 1: Research (`/research-codebase`)
 
@@ -58,40 +60,89 @@ Intentional compaction is a deliberate strategy where you periodically pause wor
 
 **Output:** `thoughts/shared/research/YYYY-MM-DD-topic.md`
 
-### 📋 Phase 2: Plan (`/create-plan`)
+### 🎨 Phase 2: Design (`/design`)
 
-**Purpose:** Create exact implementation specification based on research.
+**Purpose:** Create a ~200-line design discussion to align on what you're building. This is your highest-leverage review moment.
 
 **Example:**
 ```bash
-/create-plan thoughts/tickets/add-oauth-support.md
+/design thoughts/shared/research/2026-01-05-auth-feature.md
 ```
 
 **What happens:**
-- Reads research documents and requirements
-- Asks clarifying questions
-- Proposes implementation phases
-- Creates detailed plan with success criteria
+- Reads research document
+- Proposes current state and desired end state
+- Identifies patterns to follow
+- Decides testing approach upfront
+- Resolves open questions before planning
 
-**Output:** `thoughts/shared/plans/YYYY-MM-DD-topic.md`
+**Output:** `thoughts/shared/designs/YYYY-MM-DD-topic.md`
 
-**Critical insight:** A bad line in a plan can lead to hundreds of bad lines of code. Review carefully!
+**Critical insight:** Corrections here prevent hundreds of lines of wrong code. This is cheaper than fixing a bad plan.
 
-### ⚙️ Phase 3: Implement (`/implement-plan`)
+### 📋 Phase 3: Plan (`/create-plan`)
 
-**Purpose:** Execute the plan with verification checkpoints.
+**Purpose:** Takes the design doc as input. Creates vertical implementation phases with per-phase testing.
 
 **Example:**
 ```bash
-/implement-plan thoughts/shared/plans/2025-01-05-oauth-support.md
+/create-plan thoughts/shared/designs/2026-01-05-auth-feature.md
+```
+
+**What happens:**
+- Reads design document (decisions already made)
+- Creates vertical phases (each delivers a working slice)
+- Includes per-phase testing based on the design's testing approach
+- Defines success criteria for each phase
+
+**Output:** `thoughts/shared/plans/YYYY-MM-DD-topic.md`
+
+### ⚙️ Phase 4: Implement (`/implement-plan`)
+
+**Purpose:** Testing-aware implementation. Follows the testing approach specified in the design and plan.
+
+**Example:**
+```bash
+/implement-plan thoughts/shared/plans/2026-01-05-auth-feature.md
 ```
 
 **What happens:**
 - Reads plan completely
-- Implements one phase at a time
-- Runs automated verification (tests, linting, builds)
+- Implements one vertical phase at a time
+- Runs per-phase tests and automated verification
 - Pauses for manual testing between phases
 - Updates checkboxes in plan
+- Generates review metadata for the review phase
+
+### 🔎 Phase 5: Review (`/review-changes`)
+
+**Purpose:** Generate a guided review of your changes. Highlights critical vs mechanical code, test coverage, and suggested review order.
+
+**Example:**
+```bash
+/review-changes
+```
+
+**What happens:**
+- Analyzes all changes made during implementation
+- Categorizes code as critical or mechanical
+- Maps test coverage
+- Suggests optimal review order
+- Generates a review guide you can share with teammates
+
+### 🧭 Utility: Guide (`/guide`)
+
+**Purpose:** Run anytime to see where you are in the workflow.
+
+**Example:**
+```bash
+/guide
+```
+
+**What happens:**
+- Shows your current position in the workflow
+- Lists available artifacts (research docs, designs, plans)
+- Suggests next steps
 
 ## Strategic Human Review Points
 
@@ -99,9 +150,11 @@ Focus your effort on the **highest-leverage checkpoints**:
 
 | Phase | Your Role | Impact |
 |-------|-----------|--------|
+| Design | Correct agent's thinking early | Prevents hundreds of lines of wrong code |
 | Research | Validate findings are accurate/complete | Prevents cascading errors |
 | Planning | Review implementation approach | Bad plan → hundreds of bad lines |
 | Implementation | Manual testing between phases | Catch issues before they compound |
+| Review | Focus on critical sections | Fast, targeted PR reviews |
 
 ## Context Window Management
 
@@ -122,18 +175,23 @@ Focus your effort on the **highest-leverage checkpoints**:
 
 ## Quick Tips
 
-✓ Always research before planning (even for "simple" tasks)
+✓ Always research before designing (even for "simple" tasks)
+✓ Use the design phase to align on approach — it's your cheapest correction point
 ✓ Review and validate plans before implementing
 ✓ Implement one phase at a time, verify between phases
+✓ Run /review-changes before creating your PR
 ✓ Keep context utilization under 70%
 ✓ Compact progress into documents, start fresh contexts
+✓ Use /guide anytime to check your current workflow position
 
 ## Learn More
 
 Run `/workflow-guide [topic]` for detailed information:
 - `/workflow-guide research` - Deep dive on research phase
+- `/workflow-guide design` - Design phase best practices
 - `/workflow-guide plan` - Planning best practices
 - `/workflow-guide implement` - Implementation patterns
+- `/workflow-guide review` - Review phase guide
 - `/workflow-guide context` - Context window optimization
 - `/workflow-guide patterns` - Common workflow patterns
 - `/workflow-guide tips` - Best practices and pitfalls
@@ -155,11 +213,12 @@ Show the quick start content above plus:
 - Tool output (JSON blobs)
 - Error states and debugging attempts
 - Research findings
+- Design discussions
 - Implementation progress
 
 **Compaction Output Format:**
 ```markdown
-# [Topic] Research/Plan/Status
+# [Topic] Research/Design/Plan/Status
 
 ## Problem Statement
 [What we're trying to solve]
@@ -181,7 +240,7 @@ Show the quick start content above plus:
 
 **Research Phase Deep Dive**
 
-**Purpose:** Thoroughly explore the codebase before making any implementation decisions.
+**Purpose:** Thoroughly explore the codebase before making any design or implementation decisions.
 
 **When to research:**
 - Before starting any new feature
@@ -207,7 +266,7 @@ Show the quick start content above plus:
 
 **Best practices:**
 - Be specific in your research question
-- Review the research document before planning
+- Review the research document before designing
 - Ask follow-up questions if unclear
 - Validate findings match your understanding
 - Look for multiple examples of patterns
@@ -218,18 +277,51 @@ Show the quick start content above plus:
 - "How is error handling done in the payment processing module?"
 - "What testing patterns exist for database migrations?"
 
+### Topic: `design`
+
+**Design Phase Deep Dive**
+
+**Purpose:** Create a lightweight alignment artifact before the full plan. Corrections here prevent hundreds of lines of wrong code.
+
+**When to design:**
+- After research, before planning
+- For any non-trivial feature or change
+- When you want to validate your understanding with the agent
+
+**What a good design looks like:**
+✓ ~200 lines (not 1000)
+✓ Current state and desired end state clearly stated
+✓ Patterns to follow explicitly called out
+✓ Testing approach decided (not deferred to planning)
+✓ Key decisions documented with rationale
+✓ Scope boundaries defined (what we're NOT doing)
+✓ All open questions resolved
+
+**What a bad design looks like:**
+❌ Just a restated ticket
+❌ Includes implementation details or code snippets
+❌ No testing approach
+❌ Unresolved questions left in the doc
+❌ Patterns not specified (agent will pick wrong ones)
+
+**Best practices:**
+- Read the research doc before starting
+- Pay attention to the "Patterns to Follow" section — this is where you correct the agent
+- The testing approach should match your project's actual infrastructure
+- Use this as a shareable artifact — send to teammates for quick alignment
+
 ### Topic: `plan`
 
 **Planning Phase Deep Dive**
 
-**Purpose:** Create a detailed, unambiguous specification that guides implementation.
+**Purpose:** Create a detailed, unambiguous specification that guides implementation. Design decisions are already made — this phase focuses on execution order and verification.
 
 **What makes a good plan:**
 ✓ Specific file paths and line numbers
 ✓ Code examples showing the pattern
 ✓ Clear success criteria (automated + manual)
-✓ Incremental phases (3-5 phases max per plan)
-✓ Each phase is independently testable
+✓ Vertical phases (each delivers a working slice, 3-5 phases max)
+✓ Per-phase testing aligned with the design's testing approach
 ✓ Database migrations clearly specified
 ✓ No open questions or "TBD" items
 
@@ -238,20 +330,30 @@ Show the quick start content above plus:
 ❌ No specific file references
 ❌ Unclear when "done"
 ❌ All-or-nothing (no phases)
-❌ Missing test strategy
+❌ Testing deferred to a bottom section instead of per-phase
 ❌ Unresolved questions
 
 **Planning workflow:**
-1. Start with high-level approach
-2. Get user alignment on approach
-3. Break into phases
+1. Read the design document
+2. Break into vertical phases (each delivers working functionality)
+3. Add per-phase testing based on the design's testing approach
 4. Detail each phase with specifics
-5. Define success criteria
+5. Define success criteria per phase
 6. Get final approval
 
 **Success Criteria Format:**
 ```markdown
-### Success Criteria
+### Phase 1: [Name]
+
+#### Implementation:
+- [ ] File changes listed with specifics
+
+#### Per-Phase Testing:
+- [ ] Unit tests pass: npm run test:unit -- --filter=phase1
+- [ ] Integration test: verify end-to-end slice works
+- [ ] Manual verification: [specific check]
+
+### Success Criteria (Overall)
 
 #### Automated Verification:
 - [ ] All tests pass: npm run test:unit
@@ -266,26 +368,38 @@ Show the quick start content above plus:
 - [ ] Works on mobile devices
 ```
 
-**Critical:** Separate automated (can run automatically) from manual (requires human testing).
+**Critical:** Each vertical phase should be independently testable and deliver a working slice of functionality.
 
 ### Topic: `implement`
 
 **Implementation Phase Deep Dive**
 
-**Purpose:** Execute the plan systematically with verification at each step.
+**Purpose:** Execute the plan systematically with testing-aware implementation and verification at each step.
 
 **Implementation workflow:**
 1. Read entire plan first (don't skip ahead)
-2. Implement Phase 1 completely
-3. Run all automated verification
-4. Pause for manual testing
-5. Get user confirmation
-6. Mark phase complete in plan
-7. Proceed to Phase 2
+2. Implement Phase 1 completely (vertical slice)
+3. Run per-phase tests as specified in the plan
+4. Run all automated verification
+5. Pause for manual testing
+6. Get user confirmation
+7. Mark phase complete in plan
+8. Proceed to Phase 2
+
+**Testing-aware implementation:**
+✓ Follow the testing approach specified in the design
+✓ Write tests as part of each phase, not after all phases
+✓ Per-phase testing ensures each vertical slice works before moving on
+✓ Use the project's actual test infrastructure (don't invent new patterns)
+
+**Review metadata generation:**
+- As you implement, track which changes are critical vs mechanical
+- Note what's tested and what's not
+- This metadata feeds into the /review-changes phase
 
 **Best practices:**
-✓ Complete one phase fully before moving to next
-✓ Run verification after each phase
+✓ Complete one vertical phase fully before moving to next
+✓ Run per-phase tests after each phase
 ✓ Update checkboxes in the plan as you go
 ✓ Don't skip manual testing steps
 ✓ If blocked, update the plan—don't diverge
@@ -297,6 +411,7 @@ Show the quick start content above plus:
 ❌ Diverging from plan without updating it
 ❌ Not marking progress in plan
 ❌ Maxing out context window
+❌ Deferring all tests to the end instead of per-phase
 
 **When to pause implementation:**
 - After each phase completes
@@ -311,6 +426,31 @@ If implementation spans multiple days or contexts:
 2. Note what's complete, what's in progress
 3. Document any discoveries or blockers
 4. Start fresh context with updated plan
+
+### Topic: `review`
+
+**Review Phase Deep Dive**
+
+**Purpose:** Make reviewing large PRs fast and focused. Get a guided tour of what matters.
+
+**When to review:**
+- After implementation is complete
+- Before creating a PR
+- When reviewing a coworker's PR
+
+**The review guide tells you:**
+✓ What's critical (read carefully)
+✓ What's mechanical (safe to skim)
+✓ What's tested and what's not
+✓ Suggested review order
+✓ Patterns to spot-check
+
+**Best practices:**
+- Run /review-changes before creating the PR
+- Post the review guide as a PR comment for teammates
+- Focus your reading time on the "Critical Review" section
+- Use the test coverage map to identify risk areas
+- If something critical is untested, add tests before merging
 
 ### Topic: `context`
 
@@ -338,7 +478,8 @@ Your context window is the ONLY lever you have to affect AI output quality witho
 - Complex refactoring: 40% (lots of discovery)
 
 **When to start fresh context:**
-✓ Moving from research → planning
+✓ Moving from research → design
+✓ Moving from design → planning
 ✓ Moving from planning → implementation
 ✓ Completing a major phase
 ✓ Context utilization > 70%
@@ -346,12 +487,14 @@ Your context window is the ONLY lever you have to affect AI output quality witho
 
 **What to carry forward:**
 - Load the research document
+- Load the design document
 - Load the plan document
 - Reference specific findings
 - Don't copy entire conversation history
 
 **What gets compacted:**
 - File search results → Research document
+- Design discussion → Design document
 - Implementation progress → Plan document (checkboxes)
 - Debugging session → Updated plan or new research
 - Error states → Status update in plan
@@ -366,11 +509,17 @@ Your context window is the ONLY lever you have to affect AI output quality witho
 # 1. Research existing patterns
 /research-codebase "How are similar features implemented?"
 
-# 2. Create plan
-/create-plan "Add new feature X"
+# 2. Design the approach
+/design thoughts/shared/research/2026-01-05-feature-x.md
 
-# 3. Implement
-/implement-plan thoughts/shared/plans/2025-01-05-feature-x.md
+# 3. Create plan from design
+/create-plan thoughts/shared/designs/2026-01-05-feature-x.md
+
+# 4. Implement
+/implement-plan thoughts/shared/plans/2026-01-05-feature-x.md
+
+# 5. Review before PR
+/review-changes
 ```
 
 ### Pattern 2: Bug Fix
@@ -379,11 +528,17 @@ Your context window is the ONLY lever you have to affect AI output quality witho
 # 1. Research to understand bug
 /research-codebase "Why is X failing?"
 
-# 2. Plan the fix
-/create-plan thoughts/tickets/bug-123.md
+# 2. Design the fix
+/design thoughts/shared/research/2026-01-05-bug-123.md
 
-# 3. Implement with tests
-/implement-plan thoughts/shared/plans/2025-01-05-fix-bug-123.md
+# 3. Plan the fix
+/create-plan thoughts/shared/designs/2026-01-05-bug-123.md
+
+# 4. Implement with tests
+/implement-plan thoughts/shared/plans/2026-01-05-fix-bug-123.md
+
+# 5. Review changes
+/review-changes
 ```
 
 ### Pattern 3: Refactoring
@@ -392,19 +547,26 @@ Your context window is the ONLY lever you have to affect AI output quality witho
 # 1. Research current implementation
 /research-codebase "How does module X work currently?"
 
-# 2. Plan incremental changes
-/create-plan "Refactor module X for testability"
+# 2. Design the refactoring approach
+/design thoughts/shared/research/2026-01-05-refactor-x.md
 
-# 3. Implement with backwards compatibility
-/implement-plan thoughts/shared/plans/2025-01-05-refactor-x.md
+# 3. Plan incremental changes
+/create-plan thoughts/shared/designs/2026-01-05-refactor-x.md
+
+# 4. Implement with backwards compatibility
+/implement-plan thoughts/shared/plans/2026-01-05-refactor-x.md
+
+# 5. Review changes
+/review-changes
 ```
 
 ### Pattern 4: Complex Feature (Multi-Day)
 
 ```bash
-# Day 1: Research and planning
+# Day 1: Research, design, and planning
 /research-codebase "How should feature X integrate?"
-/create-plan thoughts/tickets/feature-x.md
+/design thoughts/shared/research/2026-01-05-feature-x.md
+/create-plan thoughts/shared/designs/2026-01-05-feature-x.md
 
 # Day 2: Implement Phase 1-2
 /implement-plan thoughts/shared/plans/feature-x.md
@@ -414,18 +576,28 @@ Your context window is the ONLY lever you have to affect AI output quality witho
 # Start fresh context, load plan
 /implement-plan thoughts/shared/plans/feature-x.md
 # (Continues from last completed phase)
+
+# Day 3 (end): Review
+/review-changes
 ```
 
 ### Pattern 5: Iterating on Plan
 
 ```bash
 # After feedback or new discoveries
-/iterate-plan thoughts/shared/plans/2025-01-05-feature-x.md
+/iterate-plan thoughts/shared/plans/2026-01-05-feature-x.md
 
 # Provide updates:
 # - "Split Phase 2 into two phases"
 # - "Add error handling for edge case Y"
 # - "Update success criteria based on testing"
+```
+
+### Pattern 6: Quick Check
+
+```bash
+# Not sure where you are? Run guide anytime
+/guide
 ```
 
 ### Topic: `tips`
@@ -436,7 +608,7 @@ Your context window is the ONLY lever you have to affect AI output quality witho
 
 **✓ Do:**
 - Be specific in questions
-- Validate findings before planning
+- Validate findings before designing
 - Look for multiple pattern examples
 - Document edge cases
 - Include file:line references
@@ -447,28 +619,44 @@ Your context window is the ONLY lever you have to affect AI output quality witho
 - Rely on assumptions
 - Stop at surface-level understanding
 
+### Design Phase
+
+**✓ Do:**
+- Keep it to ~200 lines
+- Decide the testing approach here, not later
+- Explicitly call out patterns to follow
+- Resolve all open questions
+- Define what's NOT in scope
+
+**✗ Don't:**
+- Include implementation details or code snippets
+- Leave questions unresolved
+- Skip the testing approach
+- Restate the ticket without adding value
+- Let it grow to 1000+ lines
+
 ### Planning Phase
 
 **✓ Do:**
 - Include specific file paths
 - Write measurable success criteria
-- Separate automated vs manual verification
-- Plan incremental phases
+- Create vertical phases (each delivers working functionality)
+- Include per-phase testing
 - Resolve all open questions before finalizing
 
 **✗ Don't:**
 - Write vague plans
 - Leave questions unresolved
 - Create all-or-nothing plans
-- Skip test strategy
+- Defer all testing to a bottom section
 - Forget database migrations
 
 ### Implementation Phase
 
 **✓ Do:**
 - Read entire plan first
-- Complete one phase at a time
-- Run all verification between phases
+- Complete one vertical phase at a time
+- Run per-phase tests between phases
 - Update checkboxes in plan
 - Pause for manual testing
 
@@ -478,6 +666,19 @@ Your context window is the ONLY lever you have to affect AI output quality witho
 - Diverge from plan without updating it
 - Max out context window
 - Rush manual testing
+
+### Review Phase
+
+**✓ Do:**
+- Run /review-changes before creating PR
+- Focus on the "Critical Review" sections
+- Check the test coverage map
+- Share the review guide with teammates
+
+**✗ Don't:**
+- Skip the review phase for "small" changes
+- Treat all code as equally important to review
+- Ignore untested critical sections
 
 ### Context Management
 
@@ -544,16 +745,17 @@ Your context window is the ONLY lever you have to affect AI output quality witho
 ## Measuring Success
 
 **Good indicators:**
-✓ Research documents consulted during planning
-✓ Plans have specific file:line references
+✓ Research documents consulted during design
+✓ Designs are ~200 lines with clear decisions
+✓ Plans have specific file:line references and vertical phases
 ✓ Implementation rarely diverges from plan
-✓ Tests pass between phases
-✓ Manual testing catches edge cases early
+✓ Per-phase tests pass between phases
+✓ Review guide highlights risk areas before PR
 ✓ PRs require minimal revision
 ✓ Context windows stay under 70%
 
 **Warning signs:**
-⚠️ Skipping research phase
+⚠️ Skipping research or design phases
 ⚠️ Vague plans without specifics
 ⚠️ Implementing without testing
 ⚠️ Context window maxing out
@@ -562,14 +764,16 @@ Your context window is the ONLY lever you have to affect AI output quality witho
 
 ## Summary
 
-The Research → Plan → Implement workflow succeeds through:
+The Research → Design → Plan → Implement → Review workflow succeeds through:
 1. **Thorough research** before making decisions
-2. **Clear planning** with specific implementation steps
-3. **Incremental implementation** with verification
-4. **Active engagement** at human checkpoints
-5. **Context management** through intentional compaction
+2. **Lightweight design** to align on approach and testing strategy
+3. **Clear planning** with vertical phases and per-phase testing
+4. **Incremental implementation** with testing-aware execution
+5. **Guided review** to focus human attention on what matters
+6. **Active engagement** at human checkpoints (especially design)
+7. **Context management** through intentional compaction
 
-**Remember:** This is not magic—it requires your active participation at the highest-leverage points.
+**Remember:** This is not magic—it requires your active participation at the highest-leverage points. The design phase is your cheapest correction point.
 
 ## Attribution
 
