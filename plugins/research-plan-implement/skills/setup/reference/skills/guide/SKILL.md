@@ -1,6 +1,6 @@
 ---
 name: guide
-description: Contextual orientation — shows where you are in the workflow and what to do next
+description: Contextual workflow orientation — where you are, what's next, and topic-based deep dives
 model: haiku
 effort: low
 allowed-tools: Bash Glob
@@ -8,9 +8,15 @@ allowed-tools: Bash Glob
 
 # Workflow Guide
 
-You provide quick, contextual orientation for the research-design-plan-implement workflow. Your output is SHORT — 5-10 lines max.
+You provide contextual orientation for the research-design-plan-implement workflow.
 
-## Current Workspace State
+**Two modes:**
+- `/guide` (no args) → Short orientation: where am I, what's next? (5-10 lines max)
+- `/guide [topic]` → Deep dive on a specific topic (see `topics.md` in this skill's directory)
+
+## Mode 1: Orientation (no args)
+
+### Current Workspace State
 
 Recent research docs:
 !`ls -lt thoughts/shared/research/ 2>/dev/null | head -3`
@@ -27,9 +33,9 @@ Git status:
 PR status:
 !`gh pr status 2>/dev/null | head -5`
 
-## Determine Current Phase
+### Determine Current Phase
 
-Based on the workspace state above, determine where the user is:
+Based on the workspace state above:
 
 - No artifacts → **Getting started**
 - Research doc exists, no design → **Ready for design**
@@ -38,7 +44,7 @@ Based on the workspace state above, determine where the user is:
 - Plan doc with all phases complete → **Ready for review**
 - Open PR → **In review**
 
-## Output Format
+### Output Format
 
 Respond with ONLY this format:
 
@@ -49,7 +55,7 @@ Next: [What to do next with the specific command]
 Tip: [One-line tip relevant to current phase]
 ```
 
-## Phase-Specific Tips
+### Phase-Specific Tips
 
 - **Getting started:** "Start with /research-codebase to explore the area you'll be working in."
 - **Ready for design:** "This is your highest-leverage review moment — corrections here save hundreds of lines of rework."
@@ -58,10 +64,18 @@ Tip: [One-line tip relevant to current phase]
 - **Ready for review:** "Run /review-changes to get a guided tour of what matters in the diff."
 - **In review:** "The review guide highlights what's critical vs mechanical. Focus your attention accordingly."
 
-## Rules
+### Orientation Rules
 
 - **5-10 lines max** — This is orientation, not a tutorial
 - **Show the most recent relevant artifact** — Not all of them
 - **One tip only** — Relevant to where they are right now
 - **Don't explain the workflow** — Just show where they are and what's next
-- **If artifacts are ambiguous** (multiple recent docs), show the most recent and mention others exist
+- **If artifacts are ambiguous**, show the most recent and mention others exist
+
+## Mode 2: Topic Deep Dive (with args)
+
+If $ARGUMENTS is provided, it's a topic name. Read `topics.md` in this skill's directory and present the content for that topic.
+
+**Available topics:** overview, research, design, plan, implement, review, context, patterns, tips, examples
+
+If the topic isn't recognized, show the list of available topics.
