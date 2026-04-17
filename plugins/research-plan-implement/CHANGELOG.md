@@ -3,6 +3,25 @@
 All notable changes to the `research-plan-implement` plugin are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com).
 
+## [2.1.0] - 2026-04-16
+
+Optimizations for Claude Opus 4.7.
+
+### Changed
+
+- Bumped reasoning effort to `xhigh` for agentic skills (`research-codebase`,
+  `create-plan`, `implement-plan`, `iterate-plan`, `design`, `review-changes`)
+  to take advantage of Opus 4.7's extended thinking
+- Refined skill guidance across `create-plan`, `implement-plan`,
+  `research-codebase`, `iterate-plan`, `design`, and `review-changes` for
+  Opus 4.7
+- Updated `codebase-analyzer` and `thoughts-analyzer` agent prompts
+- Expanded setup skill and `/guide` topics
+
+### Fixed
+
+- Corrected `AskUserQuestion` batching guidance
+
 ## [2.0.0] - 2026-04-05
 
 Major rewrite migrating the workflow to the skills format, with new alignment
