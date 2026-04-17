@@ -2,7 +2,7 @@
 name: create-plan
 description: Create vertical implementation plans with per-phase testing from a design document
 model: opus
-effort: high
+effort: xhigh
 ---
 
 # Implementation Plan
@@ -157,4 +157,4 @@ Adapt the testing approach from the design doc:
 4. **Per-phase testing** — No "Testing Strategy" section at the bottom.
 5. **Shorter than v1 plans** — Design alignment is already done. Focus on the how, not the what or why.
 6. **Spot-check, don't deep-review** — Tell the user to spot-check, not spend an hour reviewing.
-7. **No open questions** — If something is unclear, go back to the design doc or ask.
+7. **No open questions** — If something is unclear, go back to the design doc or ask. Batch clarifying questions into as few user turns as possible (`AskUserQuestion` takes up to 4 multiple-choice questions per call; use a consolidated text prompt for free-text).

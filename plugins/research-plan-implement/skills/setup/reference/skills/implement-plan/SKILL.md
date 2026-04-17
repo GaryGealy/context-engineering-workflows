@@ -2,7 +2,7 @@
 name: implement-plan
 description: Implement technical plans from thoughts/shared/plans with verification
 model: opus
-effort: high
+effort: xhigh
 ---
 
 # Implement Plan
@@ -16,11 +16,13 @@ When given a plan path:
 - Read the plan completely and check for any existing checkmarks (- [x])
 - Read the original ticket and all files mentioned in the plan
 - **Read files fully** - never use limit/offset parameters, you need complete context
-- Think deeply about how the pieces fit together
+- Think carefully and step-by-step about how the pieces fit together — the plan is the spec, but real code rarely matches the plan exactly
 - Create a todo list to track your progress
 - Start implementing if you understand what needs to be done
 
 If no plan path provided, ask for one.
+
+**This skill is designed for long-running autonomous execution.** The plan provides complete upfront context — phases, file paths, verification commands — so the implementing agent can work end-to-end without progressive guidance. Users running this skill should consider enabling auto mode (Shift+Tab) to cut cycle time on multi-phase implementations.
 
 ## Implementation Philosophy
 

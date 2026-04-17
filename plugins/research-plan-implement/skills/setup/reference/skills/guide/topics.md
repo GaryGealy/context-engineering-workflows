@@ -318,6 +318,14 @@ This workflow uses **intentional compaction** — periodically pausing work and 
 - Start fresh contexts between phases
 - Carry forward key documents, not conversation history
 
+**Running on Claude Opus 4.7:**
+- Treat the agent as a delegated engineer — give it complete context upfront rather than steering turn-by-turn
+- `/implement-plan` is the ideal auto-mode candidate (Shift+Tab to toggle) — the plan provides the upfront context it needs
+- Default effort level is `xhigh`; bump to `max` only for genuinely hard problems (it can overthink)
+- If you want more reasoning: add "think carefully and step-by-step" to your prompt
+- If you want faster responses: add "prioritize responding quickly rather than thinking deeply"
+- The model spawns fewer subagents by default — if you want parallel fan-out for research, say so explicitly
+
 ## Topic: examples
 
 ### Real-World Success Stories

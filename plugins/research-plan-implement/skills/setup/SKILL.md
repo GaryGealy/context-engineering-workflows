@@ -1,6 +1,8 @@
 ---
 name: setup
 description: Generate project-specific research/plan/implement workflow by analyzing your project and intelligently adapting reference templates
+model: opus
+effort: high
 ---
 
 # Setup Research-Plan-Implement Workflow
@@ -87,7 +89,23 @@ Detected project configuration:
 
 ### Step 2: Fill in Gaps with User Questions
 
-For any commands or configuration that couldn't be auto-detected, ask the user specific questions:
+For any commands or configuration that couldn't be auto-detected, ask the user in as few turns as possible — every user turn adds reasoning overhead, and the user would rather answer once than six times.
+
+**How to batch:**
+- These gap-fills are free-text (commands, paths) and don't fit `AskUserQuestion`'s 2-4-option-per-question shape. Instead, present all missing items together as a single consolidated prompt with one block the user can fill in:
+
+  ```
+  I couldn't auto-detect a few things. Please answer these together:
+
+  1. Unit test command (e.g., npm run test:unit, pytest tests/unit):
+  2. Lint command (or "none"):
+  3. Format command (or "none"):
+  4. Type check command (or "skip"):
+  5. Build command (or "none"):
+  ```
+
+- The one place `AskUserQuestion` fits is the issue-tracker choice (multiple-choice, 2-4 options). Use it there, batching follow-up CLI-availability questions into the same call when possible (max 4 questions per `AskUserQuestion` call).
+- Only split into multiple rounds if a later question genuinely depends on an earlier answer.
 
 **If test command not found:**
 ```

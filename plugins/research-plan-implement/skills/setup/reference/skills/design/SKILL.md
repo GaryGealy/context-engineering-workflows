@@ -2,7 +2,7 @@
 name: design
 description: Create a lightweight design discussion document for human-agent alignment before planning
 model: opus
-effort: high
+effort: xhigh
 ---
 
 # Design Discussion
@@ -58,7 +58,7 @@ Use the template from `template.md` in this skill's directory as the starting st
 
 ### Step 3: Walk Through Open Questions
 
-1. Use AskUserQuestion to present open questions interactively, one at a time
+1. Batch open questions through `AskUserQuestion` — it accepts up to 4 questions per call with 2-4 options each. If you have ≤4 multiple-choice questions, send them all in one call. If you have more than 4, or some are free-text, combine the free-text ones into a single consolidated text prompt and use `AskUserQuestion` for the rest. Goal: minimize user turns. Every turn adds reasoning overhead, so don't drip-feed one question per turn.
 2. Update the design doc with resolved decisions
 3. Move resolved questions from "Open Questions" to "Key Decisions" with rationale
 
