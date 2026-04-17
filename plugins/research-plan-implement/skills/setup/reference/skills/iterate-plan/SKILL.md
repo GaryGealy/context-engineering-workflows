@@ -186,12 +186,13 @@ Get user confirmation before proceeding.
    - Ensure updated sections maintain quality standards
    - Verify success criteria are still measurable
 
-4. **Be Interactive**:
+4. **Be Interactive, but efficient with turns**:
 
    - Confirm understanding before making changes
    - Show what you plan to change before doing it
    - Allow course corrections
    - Don't disappear into research without communicating
+   - If you have multiple clarifying questions, batch them in one AskUserQuestion call rather than drip-feeding one per turn
 
 5. **Track Progress**:
 

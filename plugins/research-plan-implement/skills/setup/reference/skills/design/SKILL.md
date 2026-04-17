@@ -58,7 +58,7 @@ Use the template from `template.md` in this skill's directory as the starting st
 
 ### Step 3: Walk Through Open Questions
 
-1. Use AskUserQuestion to present open questions interactively, one at a time
+1. Use AskUserQuestion to present all open questions in a **single batched call** — every user turn adds reasoning overhead, so don't drip-feed one question per turn. If you genuinely have a follow-up that depends on an earlier answer, ask it in a second batch.
 2. Update the design doc with resolved decisions
 3. Move resolved questions from "Open Questions" to "Key Decisions" with rationale
 

@@ -49,7 +49,8 @@ Then wait for the user's research query.
 
 3. **Spawn parallel sub-agent tasks for comprehensive research:**
 
-   - Create multiple Task agents to research different aspects concurrently
+   - **Fan out across research questions** — when you have N distinct questions or areas to investigate, spawn N subagents in a single response so they run concurrently. This is the whole point of research phase: parallel exploration, not sequential drilling.
+   - **When to spawn vs. reason directly**: spawn subagents for file discovery, cross-file tracing, and pattern surveys — work that would flood the main context with search output. Reason directly only when a single targeted read answers the question.
    - Use the research questions (from query planning or the user's direct question) to guide agent dispatch
    - **IMPORTANT**: If query planning was used, pass ONLY the research questions to agents — do NOT include the original ticket or task description
    - We now have specialized agents that know how to do specific research tasks:

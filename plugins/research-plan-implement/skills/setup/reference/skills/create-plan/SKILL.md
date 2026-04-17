@@ -157,4 +157,4 @@ Adapt the testing approach from the design doc:
 4. **Per-phase testing** — No "Testing Strategy" section at the bottom.
 5. **Shorter than v1 plans** — Design alignment is already done. Focus on the how, not the what or why.
 6. **Spot-check, don't deep-review** — Tell the user to spot-check, not spend an hour reviewing.
-7. **No open questions** — If something is unclear, go back to the design doc or ask.
+7. **No open questions** — If something is unclear, go back to the design doc or ask. If you need to ask the user multiple things, batch them in one AskUserQuestion call rather than asking serially.

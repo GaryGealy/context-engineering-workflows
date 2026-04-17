@@ -87,7 +87,9 @@ Detected project configuration:
 
 ### Step 2: Fill in Gaps with User Questions
 
-For any commands or configuration that couldn't be auto-detected, ask the user specific questions:
+For any commands or configuration that couldn't be auto-detected, ask the user specific questions. **Batch all gap-filling questions into a single AskUserQuestion call** rather than asking one-at-a-time — every user turn adds reasoning overhead, and the user would rather answer 6 questions once than 6 times. Only split into multiple rounds if a later question genuinely depends on an earlier answer (e.g., issue-tracker choice drives follow-up CLI questions).
+
+The per-gap prompt text below shows the exact phrasing for each question — combine the ones that apply into one batched call.
 
 **If test command not found:**
 ```
