@@ -2,7 +2,7 @@
 name: design
 description: Create a lightweight design discussion document for human-agent alignment before planning
 model: opus
-effort: high
+effort: xhigh
 ---
 
 # Design Discussion

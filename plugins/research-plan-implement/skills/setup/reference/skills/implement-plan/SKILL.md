@@ -2,7 +2,7 @@
 name: implement-plan
 description: Implement technical plans from thoughts/shared/plans with verification
 model: opus
-effort: high
+effort: xhigh
 ---
 
 # Implement Plan

@@ -2,7 +2,7 @@
 name: review-changes
 description: Generate a structured review guide for code changes to help humans review efficiently
 model: opus
-effort: medium
+effort: high
 allowed-tools: Read Grep Glob Bash
 ---
 

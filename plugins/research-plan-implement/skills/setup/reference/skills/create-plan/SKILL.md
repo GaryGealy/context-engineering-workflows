@@ -2,7 +2,7 @@
 name: create-plan
 description: Create vertical implementation plans with per-phase testing from a design document
 model: opus
-effort: high
+effort: xhigh
 ---
 
 # Implementation Plan

@@ -2,7 +2,7 @@
 name: research-codebase
 description: Document codebase as-is with thoughts directory for historical context
 model: opus
-effort: high
+effort: xhigh
 ---
 
 # Research Codebase

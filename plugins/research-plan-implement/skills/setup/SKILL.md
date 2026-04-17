@@ -1,6 +1,8 @@
 ---
 name: setup
 description: Generate project-specific research/plan/implement workflow by analyzing your project and intelligently adapting reference templates
+model: opus
+effort: high
 ---
 
 # Setup Research-Plan-Implement Workflow
