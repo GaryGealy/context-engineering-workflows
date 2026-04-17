@@ -192,7 +192,7 @@ Get user confirmation before proceeding.
    - Show what you plan to change before doing it
    - Allow course corrections
    - Don't disappear into research without communicating
-   - If you have multiple clarifying questions, batch them in one AskUserQuestion call rather than drip-feeding one per turn
+   - If you have multiple clarifying questions, batch them into as few turns as possible (`AskUserQuestion` takes up to 4 multiple-choice questions per call; use a consolidated text prompt for free-text) rather than drip-feeding one per turn
 
 5. **Track Progress**:
 
