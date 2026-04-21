@@ -3,6 +3,16 @@
 All notable changes to the `research-plan-implement` plugin are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com).
 
+## [2.1.1] - 2026-04-21
+
+### Fixed
+
+- Scoped the `thoughts-locator` agent template to the current repo's
+  `thoughts/` directory only. Previously it ranged across parent directories,
+  sibling worktrees, and `~/thoughts`, causing slow searches and excessive
+  permission prompts. Also dropped unused references to `thoughts/searchable/`,
+  `thoughts/global/`, and per-user subdirs in the `research-codebase` skill.
+
 ## [2.1.0] - 2026-04-16
 
 Optimizations for Claude Opus 4.7.
