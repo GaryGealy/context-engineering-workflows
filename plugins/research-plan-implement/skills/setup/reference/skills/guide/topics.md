@@ -17,7 +17,7 @@ This workflow uses **intentional compaction** — periodically pausing work and 
 
 **The five phases:**
 
-1. **Research** (`/research-codebase`) — Explore the codebase. Sub-agents do the messy file discovery. Output: clean research document.
+1. **Research** (`/research-codebase`) — Explore the codebase. Sub-agents do the messy file discovery. Output: clean research document. Run it with no arguments and it detects the ticket from your current branch and researches against that.
 2. **Design** (`/design`) — ~200-line alignment artifact. Current state, desired end state, patterns, testing approach. Your highest-leverage review moment.
 3. **Plan** (`/create-plan`) — Vertical implementation phases with per-phase testing. Takes the design as input — decisions are already made.
 4. **Implement** (`/implement-plan`) — Testing-aware, phase-by-phase execution. Generates review metadata as it goes.

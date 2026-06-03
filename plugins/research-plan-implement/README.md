@@ -53,6 +53,7 @@ Note: v2 moves generated files from `.claude/commands/` to `.claude/skills/` to 
 - `codebase-analyzer` - Analyze HOW code works (data flow, implementation details)
 - `codebase-pattern-finder` - Find similar patterns and examples to model after
 - `query-planner` - Decompose complex research questions into targeted sub-queries
+- `branch-ticket-detector` - Detect the ticket from your branch/worktree so `/research-codebase` works with no arguments (if an issue tracker is configured)
 - `web-search-researcher` - Research external docs and resources
 - `thoughts-locator` - Find documents in thoughts/ directory (optional)
 - `thoughts-analyzer` - Extract insights from thought documents (optional)
@@ -111,6 +112,7 @@ The plugin creates this structure in your project:
     ├── codebase-locator.md
     ├── codebase-pattern-finder.md
     ├── query-planner.md
+    ├── branch-ticket-detector.md # If an issue tracker is configured
     ├── thoughts-analyzer.md      # If thoughts/ enabled
     ├── thoughts-locator.md       # If thoughts/ enabled
     └── web-search-researcher.md
