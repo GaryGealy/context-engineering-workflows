@@ -3,6 +3,21 @@
 All notable changes to the `research-plan-implement` plugin are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com).
 
+## [3.0.0] - 2026-06-03
+
+### Added
+
+- `/prepare-pr` skill that bundles the change review and pull-request
+  preparation into a single guided flow
+- `branch-ticket-detector` agent that infers the associated ticket from the
+  current branch name
+- `/research-codebase` now auto-detects the ticket from the branch and folds
+  it into the research context
+
+### Removed
+
+- `/review-changes` skill, replaced by `/prepare-pr`
+
 ## [2.1.1] - 2026-04-21
 
 ### Fixed
