@@ -3,34 +3,6 @@
 All notable changes to the `research-plan-implement` plugin are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com).
 
-## [Unreleased]
-
-### Added
-
-- `branch-ticket-detector` agent that infers the ticket from the current git
-  branch and worktree and fetches its details. When `/research-codebase` is run
-  without arguments, it now detects the ticket you're working on and offers to
-  research against it, instead of always prompting for a question. Falls back to
-  asking when no ticket can be detected. Generated only when an issue tracker
-  (Linear/GitHub/GitLab/local files) is configured; the setup skill adapts the
-  agent's identifier pattern and fetch command to the project's tracker.
-- `/prepare-pr` skill that commits outstanding changes, opens a pull request,
-  and writes the PR description as a structured review guide (critical vs
-  mechanical changes, test coverage, suggested review order). Can also point at
-  an existing PR number to rewrite its description.
-
-### Removed
-
-- Retired the `/review-changes` skill. Its review-guide logic is now folded into
-  `/prepare-pr`, which writes the guide directly into the PR description instead
-  of producing a local guide or PR comment. The setup skill's upgrade mode
-  removes a stale `.claude/skills/review-changes/` if one exists.
-
-### Changed
-
-- Updated `setup`, `guide`, `implement-plan`, and documentation to reference
-  `/prepare-pr` as the final review phase of the workflow.
-
 ## [2.1.1] - 2026-04-21
 
 ### Fixed
