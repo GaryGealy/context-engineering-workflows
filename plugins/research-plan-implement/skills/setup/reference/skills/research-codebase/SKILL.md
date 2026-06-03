@@ -21,13 +21,26 @@ You are tasked with conducting comprehensive research across the codebase to ans
 
 ## Initial Setup
 
-When this command is invoked, respond with:
+When this command is invoked, check whether the user gave you something to research (a question, a ticket reference, or a file in `$ARGUMENTS`):
 
-```txt
-I'm ready to research the codebase. Please provide your research question or area of interest, and I'll analyze it thoroughly by exploring relevant components and connections.
-```
+**If the user provided a research question or ticket**, read any mentioned files (see step 1) and proceed.
 
-Then wait for the user's research query.
+**If the user provided nothing**, don't immediately ask them to type a question — they're almost always on a branch cut for a specific ticket, and that ticket is the thing they want researched. Try to detect it first:
+
+1. Spawn the **branch-ticket-detector** agent. It inspects the current branch and worktree, extracts a ticket identifier, and fetches the ticket.
+2. Branch on what it returns:
+   - **Ticket found** — confirm before committing to it, since a wrong guess wastes a full research pass:
+     ```txt
+     It looks like you're working on ENG-1478 — "Add SSO support to the login flow" (detected from your branch). Want me to research the codebase against this ticket? (yes / or tell me what to research instead)
+     ```
+     On confirmation, treat the fetched ticket body as the research input and continue (the ticket goes through query planning in step 2 like any other ticket).
+   - **Nothing found, ambiguous, or fetch failed** — fall back to asking:
+     ```txt
+     I'm ready to research the codebase. Please provide your research question or area of interest, and I'll analyze it thoroughly by exploring relevant components and connections.
+     ```
+     Then wait for the user's research query.
+
+Detection is a convenience, not a constraint — the user can always override the detected ticket with their own question.
 
 ## Steps to follow after receiving the research query
 
@@ -40,7 +53,7 @@ Then wait for the user's research query.
 
 2. **Generate research questions via query planning:**
 
-   - If the user provided a ticket or task description (not just a bare question), use a **query-planner** agent to decompose it into focused, objective research questions
+   - If you have a ticket or task description — whether the user provided it or the **branch-ticket-detector** fetched it during Initial Setup (not just a bare question) — use a **query-planner** agent to decompose it into focused, objective research questions
    - The query-planner reads the ticket/task and generates 3-8 specific questions that will cause research agents to explore all relevant code
    - **CRITICAL**: The query-planner strips out information about what is being built — research agents receive ONLY the questions, not the original ticket
    - This keeps research findings objective and factual

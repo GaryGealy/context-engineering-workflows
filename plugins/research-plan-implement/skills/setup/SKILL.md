@@ -303,6 +303,9 @@ Read all reference templates from the plugin:
 - `skills/setup/reference/agents/thoughts-analyzer.md`
 - `skills/setup/reference/agents/thoughts-locator.md`
 
+**Conditional agent (if an issue tracker is configured — Linear/GitHub/GitLab/local files):**
+- `skills/setup/reference/agents/branch-ticket-detector.md`
+
 ### Step 5: Intelligently Adapt Each Template
 
 For each template, reason about what needs to change based on the project analysis:
@@ -348,6 +351,20 @@ For each template, reason about what needs to change based on the project analys
    - If Local files: Reference ticket file paths (e.g., `thoughts/tickets/ENG-123.md`)
    - If None: Remove ticket-specific references, keep generic "task description"
 
+7. **Branch Ticket Detection:**
+   - The `branch-ticket-detector` agent lets `/research-codebase` (and optionally
+     `/design` and `/create-plan`) auto-detect the ticket from the current branch
+     when the user runs the command without arguments.
+   - In `branch-ticket-detector.md`, the "Issue Tracker" section has one subsection
+     per tracker. Keep only the subsection matching the detected tracker and delete
+     the rest, so the agent's identifier pattern and fetch command match the project.
+     For Local files, set the actual ticket file path used by this project.
+   - **If issue tracking is None**: do NOT generate `branch-ticket-detector.md`. In
+     `research-codebase.md`, strip the detection branch from "Initial Setup" and keep
+     only the plain "ask the user for a research question" fallback, so the skill
+     never references an agent that wasn't generated. Also drop the "run it with no
+     arguments" branch-detection mention from `guide/topics.md`.
+
 **Adaptation process:**
 - Read each template completely
 - Identify all project-specific references (commands, paths, tools)
@@ -385,9 +402,10 @@ Create the `.claude/` directory structure if it doesn't exist, then write adapte
     ├── codebase-pattern-finder.md
     ├── query-planner.md
     ├── web-search-researcher.md
-    ├── thoughts-analyzer.md      # Only if thoughts/ enabled
-    ├── thoughts-locator.md       # Only if thoughts/ enabled
-    └── ticket-reader.md          # Optional: if Linear/GitHub/GitLab
+    ├── thoughts-analyzer.md         # Only if thoughts/ enabled
+    ├── thoughts-locator.md          # Only if thoughts/ enabled
+    ├── branch-ticket-detector.md    # Only if an issue tracker is configured
+    └── ticket-reader.md             # Optional: if Linear/GitHub/GitLab
 ```
 
 **Optional files based on issue tracking:**
@@ -543,11 +561,14 @@ NEW skills:
   /review-changes — Structured review guide for PRs (critical vs mechanical changes)
   /guide — Contextual orientation (where am I? what's next?)
 
-NEW agent:
+NEW agents:
   query-planner — Keeps research objective by separating questions from intent
+  branch-ticket-detector — Detects the ticket from your branch/worktree so
+    /research-codebase works with no arguments (only if an issue tracker is configured)
 
 UPDATED skills:
-  /research-codebase — Now uses query planning to keep research objective
+  /research-codebase — Now uses query planning to keep research objective, and
+    auto-detects the ticket from your branch when run without arguments
   /create-plan — Slimmed down (design decisions moved to /design), vertical phases, per-phase testing
   /implement-plan — Testing-aware (adapts to TDD/conformance/manual), generates review metadata
 
