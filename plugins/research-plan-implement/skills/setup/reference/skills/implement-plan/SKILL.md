@@ -65,9 +65,9 @@ The testing approach was decided in `/design` and specified per-phase in `/creat
 
 ## Review Metadata
 
-As you implement each phase, keep a lightweight log for `/review-changes`. After completing all phases (or when the user runs `/review-changes`), save this to `thoughts/shared/review-metadata/YYYY-MM-DD-description.md` using the template from `review-metadata-template.md` in this skill's directory.
+As you implement each phase, keep a lightweight log for `/prepare-pr`. After completing all phases (or when the user runs `/prepare-pr`), save this to `thoughts/shared/review-metadata/YYYY-MM-DD-description.md` using the template from `review-metadata-template.md` in this skill's directory.
 
-This metadata makes `/review-changes` much more accurate, but it's optional — `/review-changes` works without it by analyzing the diff directly.
+This metadata makes the PR description that `/prepare-pr` writes much more accurate, but it's optional — `/prepare-pr` works without it by analyzing the diff directly.
 
 ## Verification Approach
 

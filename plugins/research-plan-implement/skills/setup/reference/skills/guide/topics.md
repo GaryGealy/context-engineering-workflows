@@ -7,7 +7,7 @@ Present the content for the requested topic. Keep it practical and scannable.
 ### The Workflow
 
 ```
-/research-codebase → /design → /create-plan → /implement-plan → /review-changes
+/research-codebase → /design → /create-plan → /implement-plan → /prepare-pr
                                 /guide (run anytime)
 ```
 
@@ -21,7 +21,7 @@ This workflow uses **intentional compaction** — periodically pausing work and 
 2. **Design** (`/design`) — ~200-line alignment artifact. Current state, desired end state, patterns, testing approach. Your highest-leverage review moment.
 3. **Plan** (`/create-plan`) — Vertical implementation phases with per-phase testing. Takes the design as input — decisions are already made.
 4. **Implement** (`/implement-plan`) — Testing-aware, phase-by-phase execution. Generates review metadata as it goes.
-5. **Review** (`/review-changes`) — Guided tour of the diff. Critical vs mechanical changes. Can post to PR.
+5. **Review** (`/prepare-pr`) — Commit, open the PR, and write its description as a guided tour of the diff: critical vs mechanical changes. Can also update an existing PR's description.
 
 **Strategic human review points:**
 
@@ -170,21 +170,20 @@ This workflow uses **intentional compaction** — periodically pausing work and 
 
 **Purpose:** Make reviewing large PRs fast and focused. Get a guided tour of what matters.
 
-**When to review:**
-- After implementation is complete
-- Before creating a PR
-- When reviewing a coworker's PR
+**When to use it:**
+- After implementation is complete — to commit and open the PR
+- When a PR already exists and just needs a good description (pass the PR number)
+- When preparing a PR for a coworker's branch
 
-**The review guide tells you:**
+**The PR description (review guide) tells reviewers:**
 - What's critical (read carefully)
 - What's mechanical (safe to skim)
 - What's tested and what's not
 - Suggested review order
-- Patterns to spot-check
 
 **Best practices:**
-- Run `/review-changes` before creating the PR
-- Post the review guide as a PR comment for teammates
+- Run `/prepare-pr` to commit, push, and open the PR in one pass
+- Pass an existing PR number to refresh its description if it was created outside the loop
 - Focus reading time on the "Critical Review" section
 - Use the test coverage map to identify risk areas
 - If something critical is untested, add tests before merging
@@ -232,7 +231,7 @@ This workflow uses **intentional compaction** — periodically pausing work and 
 /design thoughts/shared/research/2026-01-05-feature.md
 /create-plan thoughts/shared/designs/2026-01-05-feature.md
 /implement-plan thoughts/shared/plans/2026-01-05-feature.md
-/review-changes
+/prepare-pr
 ```
 
 **Bug Fix:**
@@ -241,7 +240,7 @@ This workflow uses **intentional compaction** — periodically pausing work and 
 /design thoughts/shared/research/2026-01-05-bug.md
 /create-plan thoughts/shared/designs/2026-01-05-bug.md
 /implement-plan thoughts/shared/plans/2026-01-05-bug.md
-/review-changes
+/prepare-pr
 ```
 
 **Refactoring:**
@@ -250,7 +249,7 @@ This workflow uses **intentional compaction** — periodically pausing work and 
 /design thoughts/shared/research/2026-01-05-refactor.md
 /create-plan thoughts/shared/designs/2026-01-05-refactor.md
 /implement-plan thoughts/shared/plans/2026-01-05-refactor.md
-/review-changes
+/prepare-pr
 ```
 
 **Multi-Day Feature:**
@@ -264,7 +263,7 @@ This workflow uses **intentional compaction** — periodically pausing work and 
 /implement-plan thoughts/shared/plans/2026-01-05-feature.md
 
 # Final: Review
-/review-changes
+/prepare-pr
 ```
 
 **Iterating on a Plan:**
@@ -307,10 +306,10 @@ This workflow uses **intentional compaction** — periodically pausing work and 
 - If blocked, update the plan — don't diverge
 
 **Review:**
-- Run /review-changes before creating PR
+- Run /prepare-pr to commit, open the PR, and write its review-guide description
 - Focus on "Critical Review" sections
 - Check the test coverage map
-- Share review guide with teammates
+- Pass an existing PR number to refresh its description
 
 **Context Management:**
 - Keep utilization 40-60%

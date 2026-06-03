@@ -61,8 +61,8 @@ Tip: [One-line tip relevant to current phase]
 - **Ready for design:** "This is your highest-leverage review moment — corrections here save hundreds of lines of rework."
 - **Ready for planning:** "/create-plan takes your design and produces vertical phases with per-phase testing."
 - **In implementation:** "Each phase should be testable on its own. If it's not, the plan may need vertical restructuring."
-- **Ready for review:** "Run /review-changes to get a guided tour of what matters in the diff."
-- **In review:** "The review guide highlights what's critical vs mechanical. Focus your attention accordingly."
+- **Ready for review:** "Run /prepare-pr to commit, open the PR, and write its description as a review guide for what matters in the diff."
+- **In review:** "The PR description highlights what's critical vs mechanical. Point /prepare-pr at an existing PR number to refresh its description."
 
 ### Orientation Rules
 

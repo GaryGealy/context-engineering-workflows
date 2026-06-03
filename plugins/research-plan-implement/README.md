@@ -45,7 +45,7 @@ Note: v2 moves generated files from `.claude/commands/` to `.claude/skills/` to 
 - `/create-plan` - Create detailed implementation plans through interactive research
 - `/iterate-plan` - Update plans based on feedback or new discoveries
 - `/implement-plan` - Execute plans with automated verification and testing checkpoints
-- `/review-changes` - Guided post-implementation review with structured checklist
+- `/prepare-pr` - Commit changes, open the PR, and write its description as a structured review guide (or update an existing PR's description)
 - `/guide` - Quick contextual orientation (where am I? what's next?)
 
 **Generated Agents** (specialized AI assistants):
@@ -103,7 +103,7 @@ The plugin creates this structure in your project:
 │   │   └── SKILL.md
 │   ├── implement-plan/
 │   │   └── SKILL.md
-│   ├── review-changes/
+│   ├── prepare-pr/
 │   │   └── SKILL.md
 │   └── guide/
 │       └── SKILL.md
@@ -194,7 +194,7 @@ This plugin implements **intentional compaction**—a strategy for managing AI a
 2. **Design** - Align on approach before committing to an implementation path
 3. **Plan** - Create exact implementation specification
 4. **Implement** - Execute phase-by-phase with testing-aware verification
-5. **Review** - Structured post-implementation review before merging
+5. **Review** - Commit, open the PR, and write its description as a structured review guide
 
 **Run `/guide` to learn how to use this workflow effectively.**
 
@@ -261,19 +261,21 @@ This:
 - Pauses for manual testing between phases
 - Updates checkboxes in the plan as progress is made
 
-### 6. Review Changes
+### 6. Prepare PR
 
 ```bash
-/review-changes 2025-01-05-add-oauth.md
+/prepare-pr            # commit, push, open a PR for the current branch
+/prepare-pr 123        # update the description of existing PR #123
 ```
 
 This:
 
+- Commits any outstanding changes and pushes the branch
 - Analyzes the diff (current branch vs main)
 - Categorizes changes as critical vs mechanical
 - Maps test coverage across changed files
-- Produces a structured review guide with suggested reading order
-- Offers to post the guide as a PR comment
+- Opens the PR with a description written as a structured review guide (suggested reading order)
+- Can instead point at an existing PR number and rewrite its description
 
 ## Supported Project Types
 
@@ -438,19 +440,20 @@ Generated files moved from `.claude/commands/` to `.claude/skills/`. Re-run `/se
 5. Pauses for manual testing
 6. Continues to Phase 2 after confirmation
 
-### Review Example
+### Prepare PR Example
 
 ```bash
-/review-changes 2026-04-02-add-2fa.md
+/prepare-pr
 ```
 
 **Process:**
 
-1. Diffs current branch against main
-2. Categorizes each changed file (critical / mechanical / tests)
-3. Maps test coverage across the changes
-4. Produces a review guide with suggested reading order
-5. Offers to post the guide as a PR comment
+1. Commits any outstanding changes and pushes the branch
+2. Diffs current branch against main
+3. Categorizes each changed file (critical / mechanical / tests)
+4. Maps test coverage across the changes
+5. Opens the PR with a description written as a review guide (suggested reading order)
+6. Or, given a PR number, rewrites that existing PR's description instead
 
 ## Contributing
 

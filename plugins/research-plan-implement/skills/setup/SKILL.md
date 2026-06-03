@@ -289,7 +289,7 @@ Read all reference templates from the plugin:
 - `skills/setup/reference/skills/create-plan/SKILL.md`
 - `skills/setup/reference/skills/iterate-plan/SKILL.md`
 - `skills/setup/reference/skills/implement-plan/SKILL.md`
-- `skills/setup/reference/skills/review-changes/SKILL.md`
+- `skills/setup/reference/skills/prepare-pr/SKILL.md`
 - `skills/setup/reference/skills/guide/SKILL.md`
 
 **Agents to read:**
@@ -390,7 +390,7 @@ Create the `.claude/` directory structure if it doesn't exist, then write adapte
 │   │   └── SKILL.md
 │   ├── implement-plan/
 │   │   └── SKILL.md
-│   ├── review-changes/
+│   ├── prepare-pr/
 │   │   └── SKILL.md
 │   ├── guide/
 │   │   └── SKILL.md
@@ -436,7 +436,7 @@ Show the user what was created:
 Created research-design-plan-implement workflow in .claude/
 
 Generated files:
-- 7 skills: /research-codebase, /design, /create-plan, /iterate-plan, /implement-plan, /review-changes, /guide
+- 7 skills: /research-codebase, /design, /create-plan, /iterate-plan, /implement-plan, /prepare-pr, /guide
 - [N] agents: query-planner, codebase-locator, codebase-analyzer, pattern-finder, web-search-researcher, [+thoughts agents if enabled]
 
 Adapted for your project:
@@ -448,7 +448,7 @@ Adapted for your project:
 - Issue tracking: [detected system]
 
 Workflow:
-  /research-codebase -> /design -> /create-plan -> /implement-plan -> /review-changes
+  /research-codebase -> /design -> /create-plan -> /implement-plan -> /prepare-pr
   /guide (run anytime for orientation)
 
 Quick start:
@@ -456,7 +456,7 @@ Quick start:
   /design thoughts/shared/research/2026-01-05-auth-flow.md
   /create-plan thoughts/shared/designs/2026-01-05-auth-redesign.md
   /implement-plan thoughts/shared/plans/2026-01-05-auth-redesign.md
-  /review-changes
+  /prepare-pr
   /guide
 ```
 
@@ -491,11 +491,11 @@ IMPLEMENT Phase (/implement-plan)
    Generates review metadata as it goes
    Phase-by-phase with verification checkpoints
 
-REVIEW Phase (/review-changes)
-   Guides human attention through the diff
-   Critical vs mechanical changes
-   Test coverage map
-   Can post review guide to PR
+REVIEW Phase (/prepare-pr)
+   Commits outstanding work and opens the PR
+   Writes the PR description as a review guide
+   Guides human attention through the diff: critical vs mechanical
+   Test coverage map; can also update an existing PR's description
 
 ORIENTATION (/guide)
    Run anytime to see where you are and what's next
@@ -505,7 +505,7 @@ Key Success Factors:
   Always research before designing
   Design is your highest-leverage review moment
   Plans use vertical slices with per-phase testing
-  Run /review-changes before or after creating a PR
+  Run /prepare-pr to commit, open the PR, and write its review-guide description
   Run /guide if you forget where you are
 
 Attribution:
@@ -558,8 +558,11 @@ MIGRATION:
 
 NEW skills:
   /design — Lightweight design discussion before planning (~200 lines vs ~1000 line plans)
-  /review-changes — Structured review guide for PRs (critical vs mechanical changes)
+  /prepare-pr — Commit, open the PR, and write its description as a review guide (critical vs mechanical changes); can also update an existing PR's description
   /guide — Contextual orientation (where am I? what's next?)
+
+RETIRED skills:
+  /review-changes — Folded into /prepare-pr. If a .claude/skills/review-changes/ exists from an earlier install, it will be removed.
 
 NEW agents:
   query-planner — Keeps research objective by separating questions from intent
@@ -588,13 +591,14 @@ Ready to upgrade? (yes / let me see details for a specific skill)
 1. Read all new reference templates (Step 4)
 2. Adapt each template using the extracted project-specific details (Step 5)
 3. Write all files to `.claude/skills/` and `.claude/agents/` (Step 6)
-4. Remove old `.claude/commands/` files that have been migrated to skills:
+4. Remove old/retired files:
    - `rm .claude/commands/research-codebase.md` (if exists)
    - `rm .claude/commands/create-plan.md` (if exists)
    - `rm .claude/commands/iterate-plan.md` (if exists)
    - `rm .claude/commands/implement-plan.md` (if exists)
    - `rm .claude/commands/read-ticket.md` (if exists)
-   - Ask before removing: "I'll clean up the old .claude/commands/ files that have been migrated to .claude/skills/. OK? (yes/no)"
+   - `rm -r .claude/skills/review-changes/` (if exists — retired, folded into /prepare-pr)
+   - Ask before removing: "I'll clean up the old .claude/commands/ files migrated to .claude/skills/, and remove the retired review-changes skill (now /prepare-pr). OK? (yes/no)"
 5. Handle thoughts gitignore (if not already configured)
 6. Show updated summary (Step 7) and workflow tips (Step 8)
 
