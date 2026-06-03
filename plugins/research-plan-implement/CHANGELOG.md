@@ -3,18 +3,6 @@
 All notable changes to the `research-plan-implement` plugin are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com).
 
-## [Unreleased]
-
-### Added
-
-- `branch-ticket-detector` agent that infers the ticket from the current git
-  branch and worktree and fetches its details. When `/research-codebase` is run
-  without arguments, it now detects the ticket you're working on and offers to
-  research against it, instead of always prompting for a question. Falls back to
-  asking when no ticket can be detected. Generated only when an issue tracker
-  (Linear/GitHub/GitLab/local files) is configured; the setup skill adapts the
-  agent's identifier pattern and fetch command to the project's tracker.
-
 ## [2.1.1] - 2026-04-21
 
 ### Fixed
