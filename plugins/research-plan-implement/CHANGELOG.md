@@ -3,6 +3,17 @@
 All notable changes to the `research-plan-implement` plugin are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com).
 
+## [Unreleased]
+
+### Added
+
+- herdr phase markers: each workflow skill tags its herdr tab with an emoji
+  prefix (🔬 research · 🎨 design · 📋 plan · 🔨 implement · 🔍 review) so the
+  session sidebar doubles as a phase board. Backed by a copied-verbatim
+  `scripts/herdr-phase.sh` that no-ops outside herdr, so it's harmless for
+  projects whose author doesn't use herdr
+- `/guide herdr` topic explaining the phase markers and the manual override
+
 ## [3.0.0] - 2026-06-03
 
 ### Added
