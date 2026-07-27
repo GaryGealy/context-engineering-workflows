@@ -3,7 +3,7 @@
 All notable changes to the `research-plan-implement` plugin are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com).
 
-## [Unreleased]
+## [4.0.0] - 2026-07-27
 
 ### Changed
 
@@ -53,6 +53,12 @@ Format based on [Keep a Changelog](https://keepachangelog.com).
   part of a good design, rather than counting code snippets against one
 - `/create-plan` phases now specify test files and named test cases instead of
   "add tests for X" checkboxes
+- `/guide tips` no longer pins its closing section to a specific model release.
+  It had gone stale twice, and most of what it said ("give complete context
+  upfront", "`/implement-plan` is the auto-mode candidate") describes the
+  workflow rather than any one model. The durable advice stays under a
+  model-neutral heading; the release-specific steering phrases and effort
+  defaults are gone, since `effort:` lives in each skill's frontmatter anyway
 
 ### Fixed
 

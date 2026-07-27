@@ -324,13 +324,17 @@ This workflow uses **intentional compaction** — periodically pausing work and 
 - Start fresh contexts between phases
 - Carry forward key documents, not conversation history
 
-**Running on Claude Opus 4.7:**
-- Treat the agent as a delegated engineer — give it complete context upfront rather than steering turn-by-turn
-- `/implement-plan` is the ideal auto-mode candidate (Shift+Tab to toggle) — the plan provides the upfront context it needs
-- Default effort level is `xhigh`; bump to `max` only for genuinely hard problems (it can overthink)
-- If you want more reasoning: add "think carefully and step-by-step" to your prompt
-- If you want faster responses: add "prioritize responding quickly rather than thinking deeply"
-- The model spawns fewer subagents by default — if you want parallel fan-out for research, say so explicitly
+**Driving the agent:**
+- Treat it as a delegated engineer — give it complete context upfront rather than
+  steering turn-by-turn. The research, design, and plan artifacts exist to make that
+  possible; a good plan is what lets implementation run unattended.
+- `/implement-plan` is the ideal auto-mode candidate (Shift+Tab to toggle) — the plan
+  already carries the phases, file paths, and verification commands it needs
+- Research is supposed to fan out. If it's drilling one question at a time instead of
+  spawning subagents in parallel, say so explicitly.
+- Reasoning effort is per-skill, in each SKILL.md's `effort:` frontmatter — the phase
+  skills ship at `xhigh`, `/guide` at `low`. If a phase consistently under-thinks, raise
+  that skill's effort rather than re-prompting every run.
 
 ## Topic: examples
 
