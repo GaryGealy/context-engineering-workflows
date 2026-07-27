@@ -2,6 +2,14 @@
 
 Reference for the setup skill when an existing RPI installation is detected.
 
+## Scope: only touch what this plugin generated
+
+`.claude/skills/` and `.claude/agents/` are shared directories. A real project will have skills from other plugins and skills the team wrote themselves sitting right alongside the RPI ones — often many more of them than yours.
+
+Your scope is exactly the files listed in Step 6 of `SKILL.md`, plus the retired files named in Step U3 below. Everything else in those directories is out of bounds: don't regenerate it, don't "tidy" it, don't remove it because it looks unfamiliar, and don't apply the residue rules below to it. A skill you don't recognize is almost certainly someone else's, not an old version of yours.
+
+If a project skill happens to share a name with one of yours, stop and ask rather than overwriting.
+
 ## Step U1: Extract project adaptations
 
 Read the existing commands/skills to recover the project-specific details, checking both `.claude/commands/` (v1) and `.claude/skills/` (v2+): test commands (unit, integration, e2e), lint/format/build/typecheck commands, database tooling and migration commands, framework-specific patterns, issue tracking integration, thoughts directory configuration, and any custom additions the user made.
