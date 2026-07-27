@@ -9,12 +9,11 @@ effort: xhigh
 
 You are tasked with creating a lightweight design discussion document (~200 lines) that captures the shared understanding between you and the user about what's being built and how. This is the highest-leverage review moment — corrections here save hundreds of lines of rework downstream.
 
-## CRITICAL: THIS IS NOT A PLAN
+## What a design doc is
 
-- DO NOT include file-by-file changes or code snippets
-- DO NOT specify implementation phases or ordering
-- DO NOT write detailed instructions for an agent to follow
-- This is a conversation artifact for alignment — enough to agree on direction, not enough to implement from
+~200 lines of alignment: current state, desired end state, patterns to follow, testing approach.
+
+File-by-file changes, code snippets, and phase ordering belong in `/create-plan` — this doc is what you and the user agree on before that exists. It's enough to agree on direction, not enough to implement from.
 
 ## Mark the herdr phase
 

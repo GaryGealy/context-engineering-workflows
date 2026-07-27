@@ -7,7 +7,7 @@ effort: high
 
 # Iterate Implementation Plan
 
-You are tasked with updating existing implementation plans based on user feedback. You should be skeptical, thorough, and ensure changes are grounded in actual codebase reality.
+You are tasked with updating an existing implementation plan based on user feedback. Be skeptical and thorough — changes must be grounded in what the codebase actually does, not in what the feedback assumes.
 
 ## Mark the herdr phase
 
@@ -19,97 +19,45 @@ bash "$(git rev-parse --show-toplevel)/.claude/scripts/herdr-phase.sh" plan
 
 ## Initial Response
 
-When this command is invoked:
+Parse the input for a plan file path and the requested changes, then:
 
-1. **Parse the input to identify**:
+**Both provided** → proceed straight to Step 1.
 
-   - Plan file path (e.g., `thoughts/shared/plans/2025-10-16-feature.md`)
-   - Requested changes/feedback
+**Plan file but no feedback:**
 
-2. **Handle different input scenarios**:
+```
+I've found the plan at [path]. What changes would you like to make?
 
-   **If NO plan file provided**:
+For example:
+- "Add a phase for migration handling"
+- "Update the success criteria to include performance tests"
+- "Split Phase 2 into two separate phases"
+```
 
-   ```
-   I'll help you iterate on an existing implementation plan.
+**Neither:**
 
-   Which plan would you like to update? Please provide the path to the plan file (e.g., `thoughts/shared/plans/2025-10-16-feature.md`).
+```
+I'll help you iterate on an existing implementation plan.
 
-   Tip: You can list recent plans with `ls -lt thoughts/shared/plans/ | head`
-   ```
+Which plan would you like to update? Please provide the path to the plan file
+(e.g., `thoughts/shared/plans/2025-10-16-feature.md`).
 
-   Wait for user input, then re-check for feedback.
+Tip: You can list recent plans with `ls -lt thoughts/shared/plans/ | head`
+```
 
-   **If plan file provided but NO feedback**:
+## Process
 
-   ```
-   I've found the plan at [path]. What changes would you like to make?
+### Step 1: Read and understand the current plan
 
-   For example:
-   - "Add a phase for migration handling"
-   - "Update the success criteria to include performance tests"
-   - "Adjust the scope to exclude feature X"
-   - "Split Phase 2 into two separate phases"
-   ```
+Read the plan file COMPLETELY — no limit/offset. Understand its structure, phases, scope, and success criteria before touching anything. Then parse what the user wants added, modified, or removed, and judge whether it needs codebase research or is a pure editorial change.
 
-   Wait for user input.
+### Step 2: Research, only if the change requires it
 
-   **If BOTH plan file AND feedback provided**:
+Simple changes (rewording criteria, splitting a phase, adjusting scope) need no research. Spawn agents only when the feedback requires new technical understanding or validation of an assumption.
 
-   - Proceed immediately to Step 1
-   - No preliminary questions needed
+When you do: use **codebase-locator** to find relevant files, **codebase-analyzer** for implementation details, **codebase-pattern-finder** for similar patterns, and the **thoughts-*** agents for prior decisions. Run them in parallel, then read the files they surface fully into the main context before proceeding. Track the research with TodoWrite if it's more than a couple of tasks.
 
-## Process Steps
-
-### Step 1: Read and Understand Current Plan
-
-1. **Read the existing plan file COMPLETELY**:
-
-   - Use the Read tool WITHOUT limit/offset parameters
-   - Understand the current structure, phases, and scope
-   - Note the success criteria and implementation approach
-
-2. **Understand the requested changes**:
-   - Parse what the user wants to add/modify/remove
-   - Identify if changes require codebase research
-   - Determine scope of the update
-
-### Step 2: Research If Needed
-
-**Only spawn research tasks if the changes require new technical understanding.**
-
-If the user's feedback requires understanding new code patterns or validating assumptions:
-
-1. **Create a research todo list** using TodoWrite
-
-2. **Spawn parallel sub-tasks for research**:
-   Use the right agent for each type of research:
-
-   **For code investigation:**
-
-   - **codebase-locator** - To find relevant files
-   - **codebase-analyzer** - To understand implementation details
-   - **codebase-pattern-finder** - To find similar patterns
-
-   **For historical context:**
-
-   - **thoughts-locator** - To find related research or decisions
-   - **thoughts-analyzer** - To extract insights from documents
-
-   **Be EXTREMELY specific about directories**:
-
-   - Include full path context in prompts
-
-3. **Read any new files identified by research**:
-
-   - Read them FULLY into the main context
-   - Cross-reference with the plan requirements
-
-4. **Wait for ALL sub-tasks to complete** before proceeding
-
-### Step 3: Present Understanding and Approach
-
-Before making changes, confirm your understanding:
+### Step 3: Present your understanding and confirm
 
 ```
 Based on your feedback, I understand you want to:
@@ -127,150 +75,43 @@ I plan to update the plan by:
 Does this align with your intent?
 ```
 
-Get user confirmation before proceeding.
+Get confirmation before editing.
 
-### Step 4: Update the Plan
+### Step 4: Update the plan
 
-1. **Make focused, precise edits** to the existing plan:
+Make surgical edits — preserve what doesn't need changing. Keep file:line references accurate, maintain the existing structure unless the change is structural, and keep new content at the same quality bar as the original: specific paths, measurable criteria, project-appropriate verification commands.
 
-   - Use the Edit tool for surgical changes
-   - Maintain the existing structure unless explicitly changing it
-   - Keep all file:line references accurate
-   - Update success criteria if needed
+Check consistency as you go. A new phase should follow the existing phase pattern; a scope change should update "What We're NOT Doing"; an approach change should update "Implementation Approach."
 
-2. **Ensure consistency**:
+### Step 5: Present the changes
 
-   - If adding a new phase, ensure it follows the existing pattern
-   - If modifying scope, update "What We're NOT Doing" section
-   - If changing approach, update "Implementation Approach" section
-   - Maintain the distinction between automated vs manual success criteria
+```
+I've updated the plan at `thoughts/shared/plans/[filename].md`
 
-3. **Preserve quality standards**:
-   - Include specific file paths and line numbers for new content
-   - Write measurable success criteria
-   - Use `npm` commands for automated verification
-   - Keep language clear and actionable
+Changes made:
+- [Specific change 1]
+- [Specific change 2]
 
-### Step 5: Sync and Review
+The updated plan now:
+- [Key improvement]
 
-1. **Present the changes made**:
-
-   ```
-   I've updated the plan at `thoughts/shared/plans/[filename].md`
-
-   Changes made:
-   - [Specific change 1]
-   - [Specific change 2]
-
-   The updated plan now:
-   - [Key improvement]
-   - [Another improvement]
-
-   Would you like any further adjustments?
-   ```
-
-2. **Be ready to iterate further** based on feedback
-
-## Important Guidelines
-
-1. **Be Skeptical**:
-
-   - Don't blindly accept change requests that seem problematic
-   - Question vague feedback - ask for clarification
-   - Verify technical feasibility with code research
-   - Point out potential conflicts with existing plan phases
-
-2. **Be Surgical**:
-
-   - Make precise edits, not wholesale rewrites
-   - Preserve good content that doesn't need changing
-   - Only research what's necessary for the specific changes
-   - Don't over-engineer the updates
-
-3. **Be Thorough**:
-
-   - Read the entire existing plan before making changes
-   - Research code patterns if changes require new technical understanding
-   - Ensure updated sections maintain quality standards
-   - Verify success criteria are still measurable
-
-4. **Be Interactive, but efficient with turns**:
-
-   - Confirm understanding before making changes
-   - Show what you plan to change before doing it
-   - Allow course corrections
-   - Don't disappear into research without communicating
-   - If you have multiple clarifying questions, batch them into as few turns as possible (`AskUserQuestion` takes up to 4 multiple-choice questions per call; use a consolidated text prompt for free-text) rather than drip-feeding one per turn
-
-5. **Track Progress**:
-
-   - Use TodoWrite to track update tasks if complex
-   - Update todos as you complete research
-   - Mark tasks complete when done
-
-6. **No Open Questions**:
-   - If the requested change raises questions, ASK
-   - Research or get clarification immediately
-   - Do NOT update the plan with unresolved questions
-   - Every change must be complete and actionable
-
-## Success Criteria Guidelines
-
-When updating success criteria, always maintain the two-category structure:
-
-1. **Automated Verification** (can be run by execution agents):
-
-   - Commands that can be run: `npm run test:unit`, `npm run lint`, etc.
-   - Specific files that should exist
-   - Code compilation/type checking
-
-2. **Manual Verification** (requires human testing):
-   - UI/UX functionality
-   - Performance under real conditions
-   - Edge cases that are hard to automate
-   - User acceptance criteria
-
-## Sub-task Spawning Best Practices
-
-When spawning research sub-tasks:
-
-1. **Only spawn if truly needed** - don't research for simple changes
-2. **Spawn multiple tasks in parallel** for efficiency
-3. **Each task should be focused** on a specific area
-4. **Provide detailed instructions** including:
-   - Exactly what to search for
-   - Which directories to focus on
-   - What information to extract
-   - Expected output format
-5. **Request specific file:line references** in responses
-6. **Wait for all tasks to complete** before synthesizing
-7. **Verify sub-task results** - if something seems off, spawn follow-up tasks
-
-## Example Interaction Flows
-
-**Scenario 1: User provides everything upfront**
-
-```txt
-User: /iterate_plan thoughts/shared/plans/2025-10-16-feature.md - add phase for error handling
-Assistant: [Reads plan, researches error handling patterns, updates plan]
+Would you like any further adjustments?
 ```
 
-**Scenario 2: User provides just plan file**
+## Guidelines
 
-```txt
-User: /iterate_plan thoughts/shared/plans/2025-10-16-feature.md
-Assistant: I've found the plan. What changes would you like to make?
-User: Split Phase 2 into two phases - one for backend, one for frontend
-Assistant: [Proceeds with update]
-```
+**Be skeptical.** Question vague feedback and ask for clarification. If a requested change conflicts with an existing phase or seems technically infeasible, say so before making it — verifying with code research beats implementing a bad instruction cleanly.
 
-**Scenario 3: User provides no arguments**
+**Be surgical.** Precise edits, not wholesale rewrites. Research only what the specific change requires.
 
-```txt
-User: /iterate_plan
-Assistant: Which plan would you like to update? Please provide the path...
-User: thoughts/shared/plans/2025-10-16-feature.md
-Assistant: I've found the plan. What changes would you like to make?
-User: Add more specific success criteria
-Assistant: [Proceeds with update]
-```
+**Be efficient with turns.** Confirm understanding before editing and allow course corrections, but batch clarifying questions rather than drip-feeding them — `AskUserQuestion` takes up to 4 multiple-choice questions per call, and free-text questions can go in one consolidated prompt.
+
+**Leave no open questions.** If a change raises a question, resolve it before updating. The plan must stay fully actionable — an implementing agent will follow it without the context of this conversation.
+
+## Success Criteria Structure
+
+Preserve the two-category split when updating criteria:
+
+**Automated** — commands an execution agent can run (the project's test, lint, and type-check commands), files that should exist, compilation success.
+
+**Manual** — UI/UX behavior, performance under real conditions, edge cases that resist automation, user acceptance.
