@@ -31,16 +31,28 @@
 
 ### Verification:
 
+#### Tests to write:
+[Name real files and real test cases — this is the phase's spec, not a reminder to test.
+The implementing agent should be able to create these files from this block alone.]
+
+**File**: `path/to/feature.test.ext`
+
+```[language]
+// Signatures and cases this phase must satisfy
+test('rejects a request with no auth header', ...)
+test('returns 403 when the role lacks the permission', ...)
+test('passes through when the permission is granted', ...)
+```
+
 #### Automated:
 - [ ] [Specific test command]: `test command here`
 - [ ] [Lint/typecheck]: `lint command here`
 
-#### Testing:
-[Adapted from the design doc's Testing Approach section]
-- [ ] [Specific test to write or run, based on what the design specified]
-- [ ] [Manual verification step if applicable]
+#### Manual:
+- [ ] [Verification step requiring human eyes, if applicable]
 
-**What "green" looks like:** [Concrete description of what passing looks like for this phase]
+**What "green" looks like:** [Concrete description — the actual output, status code, or
+observable behavior that means this phase is done]
 
 **After automated verification passes, pause for manual confirmation before proceeding to the next phase.**
 

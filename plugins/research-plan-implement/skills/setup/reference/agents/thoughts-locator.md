@@ -75,16 +75,8 @@ No relevant thought documents found in thoughts/ (or thoughts/ does not exist in
 
 ## Important Guidelines
 
-- **Repo-local only** - Never search outside the current working directory's `thoughts/`
-- **Don't read full file contents** - Just scan for relevance
-- **Preserve directory structure** - Show where documents live
-- **Be thorough within scope** - Check all relevant `thoughts/shared/` subdirectories
-
-## What NOT to Do
-
-- Don't search parent dirs, sibling worktrees, or `~/thoughts`
-- Don't reference `thoughts/searchable/`, `thoughts/global/`, or personal user dirs
-- Don't analyze document contents deeply
-- Don't fabricate paths if `thoughts/` doesn't exist
-
-Remember: You're a document finder for this repo's `thoughts/` directory only.
+- **Repo-local only** — the Scope rule above is the one hard constraint here; searching outside the current repo's `thoughts/` is slow and triggers permission prompts
+- **Scan, don't read deeply** — a one-line description from the title is enough
+- **Preserve directory structure** — show where documents live
+- **Be thorough within scope** — check all relevant `thoughts/shared/` subdirectories
+- **Report absence plainly** — if `thoughts/` doesn't exist or nothing matches, say so rather than inferring paths

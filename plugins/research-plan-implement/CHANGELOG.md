@@ -5,6 +5,37 @@ Format based on [Keep a Changelog](https://keepachangelog.com).
 
 ## [Unreleased]
 
+### Changed
+
+- Rewrote the agent and skill templates for the Claude 5 generation of models,
+  following Anthropic's [context engineering
+  guidance](https://claude.com/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models).
+  Newer models infer intent well enough that the old guardrails cost more than
+  they bought:
+  - Collapsed the triplicated "documentarian" prohibition blocks in
+    `codebase-analyzer`, `codebase-locator`, `codebase-pattern-finder`, and
+    `research-codebase` down to a single statement each, folded into the
+    `description` so it also improves dispatch
+  - Resolved four instruction conflicts, including `codebase-pattern-finder`
+    being told both to note the preferred pattern and never to recommend one
+  - Replaced the 120-line invented pagination example in
+    `codebase-pattern-finder` with an output contract — the example was
+    JavaScript in an agent that runs against Rust, Go, and Python repos
+  - Split the 745-line `setup` skill into a routing spine plus `detection.md`,
+    `adaptation.md`, and `upgrade.md`, loaded only on the path that needs them
+- `/design` now produces a concrete reference artifact — a self-contained HTML
+  mockup for UI work, real payloads for an API, a schema diff for data model
+  changes — and `/create-plan` and `/implement-plan` build against it rather
+  than against prose describing it
+- `/create-plan` phases now specify test files and named test cases instead of
+  "add tests for X" checkboxes
+
+### Fixed
+
+- `codebase-pattern-finder` had a malformed code fence that rendered its own
+  operating guidelines (Pattern Categories, Important Guidelines, What NOT to
+  Do) inside a code block
+
 ### Added
 
 - herdr phase markers: each workflow skill tags its herdr tab with an emoji
@@ -13,6 +44,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com).
   `scripts/herdr-phase.sh` that no-ops outside herdr, so it's harmless for
   projects whose author doesn't use herdr
 - `/guide herdr` topic explaining the phase markers and the manual override
+- Post-setup pointer to `/doctor` for rightsizing the generated skills against
+  how the team actually works
 
 ## [3.0.0] - 2026-06-03
 

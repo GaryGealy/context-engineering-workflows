@@ -227,6 +227,7 @@ This:
 - Reviews the research document
 - Asks clarifying questions about approach and constraints
 - Explores tradeoffs between implementation options
+- Produces a concrete reference artifact where the work has a shape worth rendering — a self-contained HTML mockup for UI work, real request/response payloads for an API, a schema diff for a data model change
 - Creates a design doc in `thoughts/shared/designs/` that the plan will reference
 
 ### 3. Create Implementation Plan
@@ -336,6 +337,8 @@ All generated files are standard markdown in `.claude/` - you can edit them free
 - Customize success criteria
 - Add more agents
 - Modify workflows
+
+Run `/doctor` after setup to have Claude Code rightsize the generated skills against how your team actually works — it trims instructions that aren't earning their place in the context window.
 
 ### Preserving Customizations
 
