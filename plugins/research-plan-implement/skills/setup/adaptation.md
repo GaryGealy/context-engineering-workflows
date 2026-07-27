@@ -44,6 +44,21 @@ Four behaviors carry the workflow. Change the tooling around them freely; if any
 
 **The automated vs. manual verification split.** Plans separate what an agent can verify itself from what needs a human. This distinction drives the pause-between-phases behavior in `/implement-plan`. Adapt the commands; keep the two categories.
 
+## The register these templates are written in
+
+The templates are terse on purpose, and each constraint appears exactly once. That's a deliberate choice you need to preserve, because the natural instinct while adapting is to be helpful and explain more.
+
+Current models infer intent well. A rule stated three times doesn't land three times harder — it makes the model spend effort reconciling near-duplicates instead of doing the work, and if the restatements drift even slightly apart, it has to decide which one wins. That reconciliation is pure cost. One clear statement outperforms a stack of emphatic ones.
+
+So while adapting:
+
+- **Add project specifics, not explanation.** Their test command, their patterns, their framework's idioms — yes. A paragraph on why documenting beats critiquing — no, it's already there once.
+- **Don't restate a rule for emphasis.** If you find yourself writing "remember," you're duplicating something above.
+- **Prefer defining over forbidding.** "A design doc is ~200 lines of alignment; file-by-file changes belong in `/create-plan`" beats three `DO NOT` bullets. Same boundary, less to reconcile.
+- **Keep the prohibitions that guard a real cost.** A few remain deliberately — the repo-local search scope in `thoughts-locator`, "don't check off manual testing until the user confirms" in `/implement-plan`, the read-only contract in `branch-ticket-detector`. These earn their place because being wrong is expensive. Carry them through.
+
+**A check worth running:** if your adapted file is materially longer than the template it came from, look at what you added. Project-specific detail is why you're here. Re-explanation of something the template already says is the thing to cut.
+
 ## Judgment calls
 
 - Multiple test commands → use the most comprehensive as the default, and keep the specific ones where the template distinguishes unit/integration/e2e

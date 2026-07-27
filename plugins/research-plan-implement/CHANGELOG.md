@@ -32,6 +32,20 @@ Format based on [Keep a Changelog](https://keepachangelog.com).
     skill-listing character cap
   - Dropped `/implement-plan`'s "never use limit/offset" instruction, which
     fought the Read tool's own guidance
+- `/setup` now carries the reasoning behind the template style, so an agent
+  regenerating someone's skills understands what it's preserving rather than
+  copying shapes:
+  - `adaptation.md` explains the register the templates are written in — one
+    statement per constraint, definitions over prohibitions, and which
+    prohibitions deliberately remain — with a length check against the source
+    template to catch re-explanation creeping back in
+  - `upgrade.md` gives a decision rule for the hard call in any upgrade:
+    project-specific content is the user's and must survive, while an
+    instruction repeated within a file is stale template and should collapse
+  - `upgrade.md` lists the v3-and-earlier residue that is safe to replace
+    without asking, scoped so it can be deleted once those installs age out
+  - The upgrade summary is now composed from `CHANGELOG.md` for the user's
+    actual version delta, instead of always showing the v2→v3 story
 - `/design` now produces a concrete reference artifact — a self-contained HTML
   mockup for UI work, real payloads for an API, a schema diff for data model
   changes — and `/create-plan` and `/implement-plan` build against it rather

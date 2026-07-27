@@ -12,8 +12,8 @@ This skill analyzes a project's language, framework, and tooling, then adapts th
 Supporting references in this skill's directory (`${CLAUDE_SKILL_DIR}`) — read each when you reach the step that needs it, not upfront:
 
 - **`detection.md`** — what to read, what to extract, how to fill gaps (Steps 1-2)
-- **`adaptation.md`** — how to adapt each template to the project (Step 5)
-- **`upgrade.md`** — upgrade and v1→v2 migration flow
+- **`adaptation.md`** — how to adapt each template: what must survive, what register to write in, where to use judgment (Step 5)
+- **`upgrade.md`** — upgrading an existing install: telling a user's customizations apart from stale template, and the migration paths
 
 ## Before You Start
 
