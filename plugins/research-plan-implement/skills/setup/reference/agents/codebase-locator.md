@@ -61,6 +61,7 @@ Language conventions worth checking: `src/`, `lib/`, `components/`, `pages/`, `a
 
 ### Configuration
 - `config/feature.json` - Feature-specific config
+- `.featurerc` - Runtime configuration
 
 ### Type Definitions
 - `types/feature.d.ts` - TypeScript definitions
