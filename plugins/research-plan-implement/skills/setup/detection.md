@@ -56,9 +56,30 @@ Present the complete resolved configuration and get a yes before generating anyt
 
 ## Detecting an existing installation
 
-- `.claude/skills/research-codebase/SKILL.md` exists → **v2+ upgrade**, see `upgrade.md`
-- `.claude/commands/research-codebase.md` exists → **v1→v2 migration**, see `upgrade.md`
+- `.claude/skills/research-codebase/SKILL.md` exists → **upgrade**, see `upgrade.md`
+- `.claude/commands/research-codebase.md` exists → **v1 migration**, see `upgrade.md`
 - Neither → **fresh install**, continue with Step 2
+
+### Which version is installed
+
+The upgrade summary is composed from the changelog entries between their version and
+yours, so you need to know theirs. Read `.claude/.rpi-version` — Step 6 writes it on
+every install and upgrade.
+
+Installs generated before the marker existed won't have one, so fall back to what the
+file set implies:
+
+| Evidence | Version |
+|---|---|
+| `.claude/skills/prepare-pr/` exists | 3.x |
+| `.claude/skills/review-changes/` exists | 2.x |
+| only `.claude/commands/` | 1.x |
+
+The 2.x/3.x split is reliable — v3 added `/prepare-pr` and removed `/review-changes` in
+the same release. Within a major, patch level isn't recoverable from the file set; treat
+it as the oldest in the range so the summary errs toward showing a change rather than
+omitting it. If the evidence contradicts itself (both `prepare-pr/` and
+`review-changes/` present), say so and ask.
 
 ## When detection fails
 

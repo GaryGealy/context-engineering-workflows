@@ -88,6 +88,9 @@ This workflow uses **intentional compaction** — periodically pausing work and 
 - ~200 lines (not 1000)
 - Current state and desired end state clearly stated
 - Patterns to follow explicitly called out
+- A concrete reference artifact wherever the work has a shape worth rendering — a
+  self-contained HTML mockup for UI, real request/response payloads for an API, a
+  schema diff for a data model change
 - Testing approach decided (not deferred to planning)
 - Key decisions documented with rationale
 - Scope boundaries defined (what we're NOT doing)
@@ -95,7 +98,7 @@ This workflow uses **intentional compaction** — periodically pausing work and 
 
 **What a bad design looks like:**
 - Just a restated ticket
-- Includes implementation details or code snippets
+- Walks through the file-by-file changes — that's `/create-plan`'s job
 - No testing approach
 - Unresolved questions left in the doc
 - Patterns not specified (agent will pick wrong ones)
@@ -103,6 +106,8 @@ This workflow uses **intentional compaction** — periodically pausing work and 
 **Best practices:**
 - Read the research doc before starting
 - Pay attention to "Patterns to Follow" — this is where you correct the agent
+- Review the concrete reference artifact, not the prose describing it — a mockup
+  settles layout and states in one pass, and the implementing agent builds against it
 - The testing approach should match your project's actual infrastructure
 - Use this as a shareable artifact — send to teammates for quick alignment
 

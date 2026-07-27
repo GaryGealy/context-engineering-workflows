@@ -27,9 +27,9 @@ Format based on [Keep a Changelog](https://keepachangelog.com).
     doc is — same boundary, no fence
   - Slimmed `/iterate-plan` (276 → 117 lines) by cutting worked interaction
     examples and a subagent-spawning tutorial the agent descriptions cover
-  - Rewrote the `web-search-researcher` and `thoughts-analyzer` descriptions,
-    which were jokes; descriptions drive dispatch and count against the
-    skill-listing character cap
+  - Rewrote the `web-search-researcher`, `thoughts-analyzer`, and
+    `thoughts-locator` descriptions, which were jokes; descriptions drive
+    dispatch and count against the skill-listing character cap
   - Dropped `/implement-plan`'s "never use limit/offset" instruction, which
     fought the Read tool's own guidance
 - `/setup` now carries the reasoning behind the template style, so an agent
@@ -49,7 +49,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com).
 - `/design` now produces a concrete reference artifact — a self-contained HTML
   mockup for UI work, real payloads for an API, a schema diff for data model
   changes — and `/create-plan` and `/implement-plan` build against it rather
-  than against prose describing it
+  than against prose describing it. `/guide design` describes the artifact as
+  part of a good design, rather than counting code snippets against one
 - `/create-plan` phases now specify test files and named test cases instead of
   "add tests for X" checkboxes
 
@@ -58,6 +59,11 @@ Format based on [Keep a Changelog](https://keepachangelog.com).
 - `codebase-pattern-finder` had a malformed code fence that rendered its own
   operating guidelines (Pattern Categories, Important Guidelines, What NOT to
   Do) inside a code block
+- `/setup` listed a `read-ticket` skill and a `ticket-reader` agent in its
+  output tree that no reference template ever backed, and `/research-codebase`
+  pointed at "the project's ticket-reading agent" to match. Both dropped;
+  `branch-ticket-detector` already fetches ticket contents, and a one-off
+  lookup of a related ticket doesn't need a subagent
 
 ### Added
 
@@ -67,8 +73,11 @@ Format based on [Keep a Changelog](https://keepachangelog.com).
   `scripts/herdr-phase.sh` that no-ops outside herdr, so it's harmless for
   projects whose author doesn't use herdr
 - `/guide herdr` topic explaining the phase markers and the manual override
-- Post-setup pointer to `/doctor` for rightsizing the generated skills against
-  how the team actually works
+- `.claude/.rpi-version`, written on every install and upgrade, so `/setup` can
+  tell which version generated a user's files. The changelog-driven upgrade
+  summary needs their version to pick the right entries, and nothing recorded
+  it before. Installs predating this fall back to inferring the major from the
+  file set — `/prepare-pr` means 3.x, `/review-changes` means 2.x
 
 ## [3.0.0] - 2026-06-03
 

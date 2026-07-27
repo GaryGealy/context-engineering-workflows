@@ -79,7 +79,7 @@ Detection is a convenience, not a constraint — the user can always override th
 
    - **web-search-researcher** — external documentation and resources. Instruct it to return LINKS with its findings, and include those links in your final report.
 
-   **For ticket context (if relevant):** use the project's ticket-reading agent to pull full details of a specific ticket or find related historical context.
+   **For ticket context (if relevant):** fetch related tickets yourself with the project's issue-tracker command — a single lookup doesn't need a subagent.
 
    Use these agents intelligently: start with locator agents to find what exists, then use analyzer agents on the most promising findings. Run multiple agents in parallel when they're searching for different things. Each agent knows its job — tell it what you're looking for, not how to search.
 

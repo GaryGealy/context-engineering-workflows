@@ -1,6 +1,6 @@
 ---
 name: thoughts-locator
-description: Discovers relevant documents in the current repo's thoughts/ directory (We use this for all sorts of metadata storage!). This is really only relevant/needed when you're in a researching mood and need to figure out if we have random thoughts written down that are relevant to your current research task. Based on the name, I imagine you can guess this is the `thoughts` equivalent of `codebase-locator`
+description: Finds documents in the current repo's thoughts/ directory — tickets, research, designs, plans, PR descriptions — and returns them grouped by type with one-line descriptions. Use to surface prior work on a topic before researching it fresh; pair with thoughts-analyzer to read the most relevant ones deeply.
 tools: Grep, Glob, LS
 model: sonnet
 ---

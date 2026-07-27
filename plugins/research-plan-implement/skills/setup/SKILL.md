@@ -78,8 +78,7 @@ Read `adaptation.md` and work through the templates. The core of this skill is h
 │   ├── iterate-plan/SKILL.md
 │   ├── implement-plan/SKILL.md + review-metadata-template.md
 │   ├── prepare-pr/SKILL.md
-│   ├── guide/SKILL.md + topics.md
-│   └── read-ticket/SKILL.md          # if Linear/GitHub/GitLab
+│   └── guide/SKILL.md + topics.md
 ├── scripts/
 │   └── herdr-phase.sh                # verbatim, chmod +x
 └── agents/
@@ -90,8 +89,14 @@ Read `adaptation.md` and work through the templates. The core of this skill is h
     ├── web-search-researcher.md
     ├── thoughts-analyzer.md          # if thoughts/ enabled
     ├── thoughts-locator.md           # if thoughts/ enabled
-    ├── branch-ticket-detector.md     # if an issue tracker is configured
-    └── ticket-reader.md              # if Linear/GitHub/GitLab
+    └── branch-ticket-detector.md     # if an issue tracker is configured
+```
+
+Write `.claude/.rpi-version` alongside them (see `upgrade.md` for what reads it):
+
+```
+version: [the "version" field from ${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json]
+generated: YYYY-MM-DD
 ```
 
 The phase skills invoke the script via `"$(git rev-parse --show-toplevel)/.claude/scripts/herdr-phase.sh"`, so it resolves from any working directory and propagates to every worktree.
@@ -126,7 +131,6 @@ Quick start:
   /prepare-pr
 
 These files are yours now — edit them freely as you learn what your team needs.
-Run /doctor to have Claude Code rightsize them against how you actually work.
 ```
 
 ## Step 8: Show workflow quick tips

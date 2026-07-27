@@ -61,9 +61,11 @@ Your project adaptations will be preserved:
 Ready to upgrade? (yes / let me see details for a specific skill)
 ```
 
-**Show only the deltas that apply to their installed version.** The block above is the v2→v3 story; don't show a v1 migration section to a v2 user, or the list above to someone already on v3. `CHANGELOG.md` in the plugin root is the source of truth for what changed between any two versions — read it and compose the summary from the entries that apply.
+**Show only the deltas that apply to their installed version.** The block above is the v2→v3 story; don't show a v1 migration section to a v2 user, or the list above to someone already on v3. Take their version from `.claude/.rpi-version` (or the fallback ladder in `detection.md`), then read `${CLAUDE_PLUGIN_ROOT}/CHANGELOG.md` and compose the summary from the entries between their version and yours.
 
-For a **v3→v4** upgrade, the honest summary is that the workflow didn't change but the templates were rewritten:
+If you couldn't pin their version down, say so in the summary and show the union of the candidate ranges rather than picking one silently — an extra line about a change they already have is cheaper than not mentioning one they don't.
+
+For an upgrade **from v3**, the honest summary is that the workflow didn't change but the templates were rewritten:
 
 ```
 Your skills and agents are the same set — nothing added or retired. What changed
@@ -87,9 +89,10 @@ Your project adaptations and any edits you made are preserved.
 
 1. Read all reference templates (Step 4 of the main skill)
 2. Adapt each one using the extracted details (see `adaptation.md`)
-3. Write everything to `.claude/skills/` and `.claude/agents/`, including copying `reference/scripts/herdr-phase.sh` verbatim to `.claude/scripts/herdr-phase.sh` and `chmod +x`-ing it. Overwrite any existing copy so upgrades pick up script fixes.
+3. Write everything to `.claude/skills/` and `.claude/agents/`, including copying `reference/scripts/herdr-phase.sh` verbatim to `.claude/scripts/herdr-phase.sh` and `chmod +x`-ing it. Overwrite any existing copy so upgrades pick up script fixes. Refresh `.claude/.rpi-version` with the version you just generated from.
 4. Clean up retired files, **asking first**:
-   - `.claude/commands/{research-codebase,create-plan,iterate-plan,implement-plan,read-ticket}.md` — migrated to skills
+   - `.claude/commands/{research-codebase,create-plan,iterate-plan,implement-plan}.md` — migrated to skills
+   - `.claude/commands/read-ticket.md` — retired; `branch-ticket-detector` fetches tickets now
    - `.claude/skills/review-changes/` — retired, folded into `/prepare-pr`
 5. Handle the thoughts gitignore if it isn't configured yet
 6. Show the summary and workflow tips (Steps 7-8 of the main skill)
@@ -118,9 +121,9 @@ If the user wants to be selective, show the list of files and let them choose wh
 
 *(This section describes residue specific to v3-and-earlier installs. Delete it once those are no longer in circulation.)*
 
-v4 rewrote the templates for the Claude 5 generation of models — see "The register these templates are written in" in `adaptation.md` for the reasoning. The practical consequence for an upgrade is that v3 files carry a lot of duplication that reads like emphasis but isn't. Expect to find, and collapse:
+The current templates were rewritten for the Claude 5 generation of models — see "The register these templates are written in" in `adaptation.md` for the reasoning. The practical consequence for an upgrade is that v3 files carry a lot of duplication that reads like emphasis but isn't. Expect to find, and collapse:
 
-- **The documentarian rule stated three times per agent** in `codebase-analyzer`, `codebase-locator`, and `codebase-pattern-finder` — an opening `CRITICAL` block, a "What NOT to Do" list, and a closing "you are a documentarian, not a critic" paragraph. v4 states it once, in the `description` plus one line of body.
+- **The documentarian rule stated three times per agent** in `codebase-analyzer`, `codebase-locator`, and `codebase-pattern-finder` — an opening `CRITICAL` block, a "What NOT to Do" list, and a closing "you are a documentarian, not a critic" paragraph. The current template states it once, in the `description` plus one line of body.
 - **A ~120-line invented pagination example** in `codebase-pattern-finder`, plus a malformed code fence that swallowed its own guidelines section.
 - **`/design`'s "CRITICAL: THIS IS NOT A PLAN"** block of `DO NOT` lines, now a positive definition of what a design doc is.
 - **`/implement-plan`'s "never use limit/offset"** instruction, removed — it fights the Read tool's own guidance.

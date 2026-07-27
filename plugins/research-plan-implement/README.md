@@ -338,8 +338,6 @@ All generated files are standard markdown in `.claude/` - you can edit them free
 - Add more agents
 - Modify workflows
 
-Run `/doctor` after setup to have Claude Code rightsize the generated skills against how your team actually works — it trims instructions that aren't earning their place in the context window.
-
 ### Preserving Customizations
 
 When you re-run `/setup`, it will:

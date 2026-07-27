@@ -23,7 +23,7 @@ Adapt each template by reasoning about what the project actually needs — read 
 The agent's "Issue Tracker" section has one subsection per tracker. **Keep only the subsection matching the detected tracker and delete the rest**, so its identifier pattern and fetch command match reality. For local files, set the project's actual ticket path.
 
 **If issue tracking is None**, don't generate this agent at all. Then:
-- In `research-codebase/SKILL.md`, strip the detection branch from "Initial Setup" and keep only the plain "ask the user for a research question" fallback
+- In `research-codebase/SKILL.md`, strip the detection branch from "Initial Setup" and keep only the plain "ask the user for a research question" fallback, and drop the "For ticket context" bullet from step 3
 - Drop the "run it with no arguments" branch-detection mention from `guide/topics.md`
 
 Otherwise the generated skills reference an agent that doesn't exist.
