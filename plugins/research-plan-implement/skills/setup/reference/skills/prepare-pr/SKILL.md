@@ -12,6 +12,14 @@ You are tasked with getting a change ready for review: commit any outstanding wo
 
 This is the final step of the research → design → plan → implement → review workflow.
 
+## Mark the herdr phase
+
+As your very first action, tag this agent's herdr tab so the session navigator shows the workflow phase (safe no-op outside herdr):
+
+```bash
+bash "$(git rev-parse --show-toplevel)/.claude/scripts/herdr-phase.sh" review
+```
+
 ## Initial Response
 
 When this skill is invoked, determine the mode from `$ARGUMENTS`:

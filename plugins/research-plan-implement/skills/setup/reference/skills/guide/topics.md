@@ -11,6 +11,8 @@ Present the content for the requested topic. Keep it practical and scannable.
                                 /guide (run anytime)
 ```
 
+Running inside herdr, each phase skill tags its tab (🔬 🎨 📋 🔨 🔍) so the sidebar shows where every feature sits in the pipeline. See `/guide herdr`.
+
 This workflow uses **intentional compaction** — periodically pausing work and distilling progress into structured artifacts (research docs, designs, plans) before starting fresh context windows.
 
 **Why it matters:** Your context window is the ONLY lever you have to affect output quality without retraining models.
@@ -348,6 +350,34 @@ This workflow uses **intentional compaction** — periodically pausing work and 
 - Issue: Insufficient dependency tree exploration
 - Result: Failed to complete task
 - Key lesson: Domain expertise matters; research depth requires adequate effort
+
+## Topic: herdr
+
+### Phase Markers in the herdr Sidebar
+
+When you run inside [herdr](https://herdr.dev), each phase skill tags its own tab so the session navigator doubles as a milestone board — every tab shows both its feature and where it is in the pipeline.
+
+**Two independent dimensions:**
+
+| Dimension | Who sets it | What you see |
+|-----------|-------------|--------------|
+| **State** | herdr (auto) | working / done / idle / blocked status icon |
+| **Phase** | these skills | 🔬 🎨 📋 🔨 🔍 prefix on the tab label |
+
+**Glyphs:** 🔬 research · 🎨 design · 📋 plan · 🔨 implement · 🔍 review
+
+**How it works:** each phase skill (`/research-codebase`, `/design`, `/create-plan`, `/iterate-plan`, `/implement-plan`, `/prepare-pr`) runs `.claude/scripts/herdr-phase.sh <phase>` as its first action. It rewrites *this tab's* label, swapping any prior phase glyph for the new one — so `336-global-sidebar` becomes `🎨 336-global-sidebar` during design, then `🔨 336-global-sidebar` during implementation. It persists until the next phase skill overwrites it.
+
+**Manual override** — set or clear a tab's phase without invoking a skill:
+
+```bash
+bash .claude/scripts/herdr-phase.sh review   # force the review marker
+bash .claude/scripts/herdr-phase.sh clear    # strip the marker, keep the feature name
+```
+
+**Notes:**
+- Safe no-op outside herdr (CI, plain terminals, headless agents) — nothing to configure.
+- Each worktree picks this up once its branch contains the script + skill changes.
 
 ## Attribution
 

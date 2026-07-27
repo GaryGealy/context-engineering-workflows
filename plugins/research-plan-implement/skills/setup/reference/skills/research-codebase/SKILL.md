@@ -9,6 +9,14 @@ effort: xhigh
 
 You are tasked with conducting comprehensive research across the codebase to answer user questions by spawning parallel sub-agents and synthesizing their findings.
 
+## Mark the herdr phase
+
+As your very first action, tag this agent's herdr tab so the session navigator shows the workflow phase (safe no-op outside herdr):
+
+```bash
+bash "$(git rev-parse --show-toplevel)/.claude/scripts/herdr-phase.sh" research
+```
+
 ## CRITICAL: YOUR ONLY JOB IS TO DOCUMENT AND EXPLAIN THE CODEBASE AS IT EXISTS TODAY
 
 - DO NOT suggest improvements or changes unless the user explicitly asks for them

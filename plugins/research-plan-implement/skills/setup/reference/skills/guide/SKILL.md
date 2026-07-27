@@ -76,6 +76,6 @@ Tip: [One-line tip relevant to current phase]
 
 If $ARGUMENTS is provided, it's a topic name. Read `topics.md` in this skill's directory and present the content for that topic.
 
-**Available topics:** overview, research, design, plan, implement, review, context, patterns, tips, examples
+**Available topics:** overview, research, design, plan, implement, review, herdr, context, patterns, tips, examples
 
 If the topic isn't recognized, show the list of available topics.

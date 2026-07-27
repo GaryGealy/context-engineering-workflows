@@ -306,6 +306,15 @@ Read all reference templates from the plugin:
 **Conditional agent (if an issue tracker is configured — Linear/GitHub/GitLab/local files):**
 - `skills/setup/reference/agents/branch-ticket-detector.md`
 
+**Script (copied verbatim — see note below):**
+- `skills/setup/reference/scripts/herdr-phase.sh`
+
+**Note on the herdr-phase script:** This script is project-agnostic — it contains no
+commands, paths, or tooling to adapt. Copy it **verbatim** to `.claude/scripts/herdr-phase.sh`
+(do NOT rewrite it during Step 5). Each phase skill already includes a "Mark the herdr phase"
+step near the top that calls it. The script no-ops when not running inside herdr, so it's
+harmless on projects whose author never uses herdr — install it unconditionally.
+
 ### Step 5: Intelligently Adapt Each Template
 
 For each template, reason about what needs to change based on the project analysis:
@@ -396,6 +405,8 @@ Create the `.claude/` directory structure if it doesn't exist, then write adapte
 │   │   └── SKILL.md
 │   └── read-ticket/              # Optional: if Linear/GitHub/GitLab
 │       └── SKILL.md
+├── scripts/
+│   └── herdr-phase.sh            # Copied verbatim; makes the herdr sidebar a phase board
 └── agents/
     ├── codebase-analyzer.md
     ├── codebase-locator.md
@@ -428,6 +439,11 @@ If using **GitLab Issues**, optionally generate:
 - Ensure adapted content matches the project's actual tooling
 - Preserve markdown formatting and frontmatter
 
+**Write the herdr-phase script:**
+- Write `skills/setup/reference/scripts/herdr-phase.sh` verbatim to `.claude/scripts/herdr-phase.sh` (no adaptation)
+- Make it executable: `chmod +x .claude/scripts/herdr-phase.sh`
+- The phase skills invoke it via `"$(git rev-parse --show-toplevel)/.claude/scripts/herdr-phase.sh"`, so it resolves from any working directory and is committed alongside the skills (propagates to every worktree)
+
 ### Step 7: Present Summary and Next Steps
 
 Show the user what was created:
@@ -438,6 +454,7 @@ Created research-design-plan-implement workflow in .claude/
 Generated files:
 - 7 skills: /research-codebase, /design, /create-plan, /iterate-plan, /implement-plan, /prepare-pr, /guide
 - [N] agents: query-planner, codebase-locator, codebase-analyzer, pattern-finder, web-search-researcher, [+thoughts agents if enabled]
+- 1 script: scripts/herdr-phase.sh — tags each tab with its workflow phase in the herdr sidebar (no-op outside herdr; run /guide herdr to learn more)
 
 Adapted for your project:
 - Test command: [detected command]
@@ -569,6 +586,10 @@ NEW agents:
   branch-ticket-detector — Detects the ticket from your branch/worktree so
     /research-codebase works with no arguments (only if an issue tracker is configured)
 
+NEW script:
+  scripts/herdr-phase.sh — When you work in herdr, each phase skill tags its tab
+    (🔬 🎨 📋 🔨 🔍) so the sidebar becomes a phase board. No-op outside herdr.
+
 UPDATED skills:
   /research-codebase — Now uses query planning to keep research objective, and
     auto-detects the ticket from your branch when run without arguments
@@ -590,7 +611,10 @@ Ready to upgrade? (yes / let me see details for a specific skill)
 
 1. Read all new reference templates (Step 4)
 2. Adapt each template using the extracted project-specific details (Step 5)
-3. Write all files to `.claude/skills/` and `.claude/agents/` (Step 6)
+3. Write all files to `.claude/skills/` and `.claude/agents/` (Step 6). This includes
+   copying `scripts/herdr-phase.sh` verbatim to `.claude/scripts/herdr-phase.sh` and
+   `chmod +x`-ing it — the regenerated phase skills reference it. Overwrite an existing
+   copy so upgrades pick up script fixes.
 4. Remove old/retired files:
    - `rm .claude/commands/research-codebase.md` (if exists)
    - `rm .claude/commands/create-plan.md` (if exists)

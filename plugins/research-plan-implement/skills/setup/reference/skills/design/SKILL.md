@@ -16,6 +16,14 @@ You are tasked with creating a lightweight design discussion document (~200 line
 - DO NOT write detailed instructions for an agent to follow
 - This is a conversation artifact for alignment — enough to agree on direction, not enough to implement from
 
+## Mark the herdr phase
+
+As your very first action, tag this agent's herdr tab so the session navigator shows the workflow phase (safe no-op outside herdr):
+
+```bash
+bash "$(git rev-parse --show-toplevel)/.claude/scripts/herdr-phase.sh" design
+```
+
 ## Initial Response
 
 When this command is invoked:

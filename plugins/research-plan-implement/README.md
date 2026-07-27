@@ -58,6 +58,9 @@ Note: v2 moves generated files from `.claude/commands/` to `.claude/skills/` to 
 - `thoughts-locator` - Find documents in thoughts/ directory (optional)
 - `thoughts-analyzer` - Extract insights from thought documents (optional)
 
+**Generated Script:**
+- `scripts/herdr-phase.sh` - If you run inside [herdr](https://herdr.dev), each workflow skill tags its tab with a phase emoji (🔬 research · 🎨 design · 📋 plan · 🔨 implement · 🔍 review) so the session sidebar becomes a phase board. Safe no-op outside herdr — nothing to configure. Run `/guide herdr` for details.
+
 ## Real-World Results
 
 - **300k LOC Rust codebase:** 1-hour bug fix by non-expert, PR approved without revision

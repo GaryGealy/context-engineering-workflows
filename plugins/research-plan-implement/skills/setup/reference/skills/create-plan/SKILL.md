@@ -9,6 +9,14 @@ effort: xhigh
 
 You are tasked with creating detailed, vertical implementation plans from an approved design document. The design decisions are already made — your job is to translate them into actionable phases.
 
+## Mark the herdr phase
+
+As your very first action, tag this agent's herdr tab so the session navigator shows the workflow phase (safe no-op outside herdr):
+
+```bash
+bash "$(git rev-parse --show-toplevel)/.claude/scripts/herdr-phase.sh" plan
+```
+
 ## Initial Response
 
 When this command is invoked:

@@ -9,6 +9,14 @@ effort: xhigh
 
 You are tasked with implementing an approved technical plan from `thoughts/shared/plans/`. These plans contain phases with specific changes and success criteria.
 
+## Mark the herdr phase
+
+As your very first action, tag this agent's herdr tab so the session navigator shows the workflow phase (safe no-op outside herdr):
+
+```bash
+bash "$(git rev-parse --show-toplevel)/.claude/scripts/herdr-phase.sh" implement
+```
+
 ## Getting Started
 
 When given a plan path:
