@@ -23,7 +23,7 @@ When given a plan path:
 
 - Read the plan completely and check for any existing checkmarks (- [x])
 - Read the original ticket and all files mentioned in the plan
-- **Read files fully** - never use limit/offset parameters, you need complete context
+- Read any concrete reference artifact the design linked — an HTML mockup, schema diff, or example payloads. Build against the artifact, not against prose describing it.
 - Think carefully and step-by-step about how the pieces fit together — the plan is the spec, but real code rarely matches the plan exactly
 - Create a todo list to track your progress
 - Start implementing if you understand what needs to be done

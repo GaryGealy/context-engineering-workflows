@@ -227,6 +227,7 @@ This:
 - Reviews the research document
 - Asks clarifying questions about approach and constraints
 - Explores tradeoffs between implementation options
+- Produces a concrete reference artifact where the work has a shape worth rendering — a self-contained HTML mockup for UI work, real request/response payloads for an API, a schema diff for a data model change
 - Creates a design doc in `thoughts/shared/designs/` that the plan will reference
 
 ### 3. Create Implementation Plan

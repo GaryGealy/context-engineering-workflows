@@ -43,12 +43,13 @@ When this command is invoked:
 ### Step 1: Context Gathering
 
 1. **Read the design document FULLY** — this is your primary input
-2. **Read any referenced research docs and tickets**
-3. **Spawn focused research agents if needed:**
+2. **Read any concrete reference artifact it links** — an HTML mockup, a schema diff, example request/response payloads. These are the spec; prefer them over the prose describing them.
+3. **Read any referenced research docs and tickets**
+4. **Spawn focused research agents if needed:**
    - Use **codebase-locator** to find specific files referenced in the design
    - Use **codebase-analyzer** to understand implementation details needed for planning
    - Only research what the design doc doesn't already cover
-4. **Read all files identified by research agents**
+5. **Read all files identified by research agents**
 
 ### Step 2: Create Plan Outline
 
@@ -147,7 +148,7 @@ If a phase ends and the only thing you can do is "look at the migration file and
 **Testing is not a section at the bottom. It's part of every phase.**
 
 Each phase's Verification section should specify:
-- What tests to write (drawn from the design doc's Testing Approach)
+- **The tests themselves** — real file paths and real test case names, drawn from the design doc's Testing Approach. "Add tests for the permission check" is a reminder; a file path with three named cases is a spec the implementing agent can execute against.
 - What commands to run
 - What "green" looks like — the concrete signal that this phase is working
 

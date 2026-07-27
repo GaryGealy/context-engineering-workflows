@@ -9,12 +9,11 @@ effort: xhigh
 
 You are tasked with creating a lightweight design discussion document (~200 lines) that captures the shared understanding between you and the user about what's being built and how. This is the highest-leverage review moment — corrections here save hundreds of lines of rework downstream.
 
-## CRITICAL: THIS IS NOT A PLAN
+## What a design doc is
 
-- DO NOT include file-by-file changes or code snippets
-- DO NOT specify implementation phases or ordering
-- DO NOT write detailed instructions for an agent to follow
-- This is a conversation artifact for alignment — enough to agree on direction, not enough to implement from
+~200 lines of alignment: current state, desired end state, patterns to follow, testing approach.
+
+File-by-file changes, code snippets, and phase ordering belong in `/create-plan` — this doc is what you and the user agree on before that exists. It's enough to agree on direction, not enough to implement from.
 
 ## Mark the herdr phase
 
@@ -63,6 +62,8 @@ When this command is invoked:
 Write the design document to `thoughts/shared/designs/YYYY-MM-DD-description.md`
 
 Use the template from `template.md` in this skill's directory as the starting structure. Adapt each section to the specific project and feature — the template shows what each section should contain and how to adapt based on project context (test infrastructure, API vs UI work, etc.).
+
+**Produce a concrete reference artifact wherever the work has a shape you can render.** A self-contained HTML mockup settles more design questions than three paragraphs describing the same screen, and real JSON settles an API contract faster than a description of it. Write mockups alongside the design doc as `thoughts/shared/designs/YYYY-MM-DD-description.html` and link them from the Concrete Reference section. The user reviews the artifact, not your description of it — and the implementing agent builds against it directly.
 
 ### Step 3: Walk Through Open Questions
 

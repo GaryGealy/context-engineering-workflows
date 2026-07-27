@@ -5,6 +5,72 @@ Format based on [Keep a Changelog](https://keepachangelog.com).
 
 ## [Unreleased]
 
+### Changed
+
+- Rewrote the agent and skill templates for the Claude 5 generation of models,
+  following Anthropic's [context engineering
+  guidance](https://claude.com/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models).
+  Newer models infer intent well enough that the old guardrails cost more than
+  they bought:
+  - Collapsed the triplicated "documentarian" prohibition blocks in
+    `codebase-analyzer`, `codebase-locator`, `codebase-pattern-finder`, and
+    `research-codebase` down to a single statement each, folded into the
+    `description` so it also improves dispatch
+  - Resolved four instruction conflicts, including `codebase-pattern-finder`
+    being told both to note the preferred pattern and never to recommend one
+  - Replaced the 120-line invented pagination example in
+    `codebase-pattern-finder` with an output contract — the example was
+    JavaScript in an agent that runs against Rust, Go, and Python repos
+  - Split the 745-line `setup` skill into a routing spine plus `detection.md`,
+    `adaptation.md`, and `upgrade.md`, loaded only on the path that needs them
+  - Restated `/design`'s three `DO NOT` lines as a definition of what a design
+    doc is — same boundary, no fence
+  - Slimmed `/iterate-plan` (276 → 117 lines) by cutting worked interaction
+    examples and a subagent-spawning tutorial the agent descriptions cover
+  - Rewrote the `web-search-researcher`, `thoughts-analyzer`, and
+    `thoughts-locator` descriptions, which were jokes; descriptions drive
+    dispatch and count against the skill-listing character cap
+  - Dropped `/implement-plan`'s "never use limit/offset" instruction, which
+    fought the Read tool's own guidance
+- `/setup` now carries the reasoning behind the template style, so an agent
+  regenerating someone's skills understands what it's preserving rather than
+  copying shapes:
+  - `adaptation.md` explains the register the templates are written in — one
+    statement per constraint, definitions over prohibitions, and which
+    prohibitions deliberately remain — with a length check against the source
+    template to catch re-explanation creeping back in
+  - `upgrade.md` gives a decision rule for the hard call in any upgrade:
+    project-specific content is the user's and must survive, while an
+    instruction repeated within a file is stale template and should collapse
+  - `upgrade.md` lists the v3-and-earlier residue that is safe to replace
+    without asking, scoped so it can be deleted once those installs age out
+  - The upgrade summary is now composed from `CHANGELOG.md` for the user's
+    actual version delta, instead of always showing the v2→v3 story
+- `/design` now produces a concrete reference artifact — a self-contained HTML
+  mockup for UI work, real payloads for an API, a schema diff for data model
+  changes — and `/create-plan` and `/implement-plan` build against it rather
+  than against prose describing it. `/guide design` describes the artifact as
+  part of a good design, rather than counting code snippets against one
+- `/create-plan` phases now specify test files and named test cases instead of
+  "add tests for X" checkboxes
+- `/guide tips` no longer pins its closing section to a specific model release.
+  It had gone stale twice, and most of what it said ("give complete context
+  upfront", "`/implement-plan` is the auto-mode candidate") describes the
+  workflow rather than any one model. The durable advice stays under a
+  model-neutral heading; the release-specific steering phrases and effort
+  defaults are gone, since `effort:` lives in each skill's frontmatter anyway
+
+### Fixed
+
+- `codebase-pattern-finder` had a malformed code fence that rendered its own
+  operating guidelines (Pattern Categories, Important Guidelines, What NOT to
+  Do) inside a code block
+- `/setup` listed a `read-ticket` skill and a `ticket-reader` agent in its
+  output tree that no reference template ever backed, and `/research-codebase`
+  pointed at "the project's ticket-reading agent" to match. Both dropped;
+  `branch-ticket-detector` already fetches ticket contents, and a one-off
+  lookup of a related ticket doesn't need a subagent
+
 ### Added
 
 - herdr phase markers: each workflow skill tags its herdr tab with an emoji
@@ -13,6 +79,11 @@ Format based on [Keep a Changelog](https://keepachangelog.com).
   `scripts/herdr-phase.sh` that no-ops outside herdr, so it's harmless for
   projects whose author doesn't use herdr
 - `/guide herdr` topic explaining the phase markers and the manual override
+- `.claude/.rpi-version`, written on every install and upgrade, so `/setup` can
+  tell which version generated a user's files. The changelog-driven upgrade
+  summary needs their version to pick the right entries, and nothing recorded
+  it before. Installs predating this fall back to inferring the major from the
+  file set — `/prepare-pr` means 3.x, `/review-changes` means 2.x
 
 ## [3.0.0] - 2026-06-03
 

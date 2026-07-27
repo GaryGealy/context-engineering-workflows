@@ -1,6 +1,6 @@
 ---
 name: thoughts-analyzer
-description: The research equivalent of codebase-analyzer. Use this subagent_type when wanting to deep dive on a research topic. Not commonly needed otherwise.
+description: Extracts high-value insights from a specific thoughts/ document — decisions made, constraints identified, technical specifications, and whether any of it is still current. Use on the few documents thoughts-locator surfaces as most relevant, not as a general search.
 tools: Read, Grep, Glob, LS
 model: sonnet
 ---

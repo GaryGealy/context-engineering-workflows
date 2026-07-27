@@ -9,6 +9,8 @@ effort: xhigh
 
 You are tasked with conducting comprehensive research across the codebase to answer user questions by spawning parallel sub-agents and synthesizing their findings.
 
+**Your job is to document and explain the codebase as it exists today** — what exists, where it lives, how it works, and how components interact. You are creating a technical map of the existing system. Improvements, critiques, root cause analysis, and refactoring proposals are out of scope unless the user explicitly asks for them.
+
 ## Mark the herdr phase
 
 As your very first action, tag this agent's herdr tab so the session navigator shows the workflow phase (safe no-op outside herdr):
@@ -16,16 +18,6 @@ As your very first action, tag this agent's herdr tab so the session navigator s
 ```bash
 bash "$(git rev-parse --show-toplevel)/.claude/scripts/herdr-phase.sh" research
 ```
-
-## CRITICAL: YOUR ONLY JOB IS TO DOCUMENT AND EXPLAIN THE CODEBASE AS IT EXISTS TODAY
-
-- DO NOT suggest improvements or changes unless the user explicitly asks for them
-- DO NOT perform root cause analysis unless the user explicitly asks for them
-- DO NOT propose future enhancements unless the user explicitly asks for them
-- DO NOT critique the implementation or identify problems
-- DO NOT recommend refactoring, optimization, or architectural changes
-- ONLY describe what exists, where it exists, how it works, and how components interact
-- You are creating a technical map/documentation of the existing system
 
 ## Initial Setup
 
@@ -56,82 +48,62 @@ Detection is a convenience, not a constraint — the user can always override th
 
    - If the user mentions specific files (tickets, docs, JSON), read them FULLY first
    - **IMPORTANT**: Use the Read tool WITHOUT limit/offset parameters to read entire files
-   - **CRITICAL**: Read these files yourself in the main context before spawning any sub-tasks
-   - This ensures you have full context before decomposing the research
+   - **CRITICAL**: Read these files yourself in the main context before spawning any sub-tasks — this ensures you have full context before decomposing the research
 
 2. **Generate research questions via query planning:**
 
    - If you have a ticket or task description — whether the user provided it or the **branch-ticket-detector** fetched it during Initial Setup (not just a bare question) — use a **query-planner** agent to decompose it into focused, objective research questions
    - The query-planner reads the ticket/task and generates 3-8 specific questions that will cause research agents to explore all relevant code
-   - **CRITICAL**: The query-planner strips out information about what is being built — research agents receive ONLY the questions, not the original ticket
-   - This keeps research findings objective and factual
+   - **CRITICAL**: The query-planner strips out information about what is being built — research agents receive ONLY the questions, not the original ticket. This keeps research findings objective and factual.
    - If the user provided a direct research question (e.g., "How does authentication work?"), skip query planning and use the question directly
    - Create a research plan using TodoWrite to track all subtasks
 
 3. **Spawn parallel sub-agent tasks for comprehensive research:**
 
-   - **Fan out across research questions** — when you have N distinct questions or areas to investigate, spawn N subagents in a single response so they run concurrently. This is the whole point of research phase: parallel exploration, not sequential drilling.
+   - **Fan out across research questions** — when you have N distinct questions or areas to investigate, spawn N subagents in a single response so they run concurrently. This is the whole point of the research phase: parallel exploration, not sequential drilling.
    - **When to spawn vs. reason directly**: spawn subagents for file discovery, cross-file tracing, and pattern surveys — work that would flood the main context with search output. Reason directly only when a single targeted read answers the question.
-   - Use the research questions (from query planning or the user's direct question) to guide agent dispatch
    - **IMPORTANT**: If query planning was used, pass ONLY the research questions to agents — do NOT include the original ticket or task description
-   - We now have specialized agents that know how to do specific research tasks:
 
    **For codebase research:**
 
-   - Use the **codebase-locator** agent to find WHERE files and components live
-   - Use the **codebase-analyzer** agent to understand HOW specific code works (without critiquing it)
-   - Use the **codebase-pattern-finder** agent to find examples of existing patterns (without evaluating them)
-
-   **IMPORTANT**: All agents are documentarians, not critics. They will describe what exists without suggesting improvements or identifying issues.
+   - **codebase-locator** — find WHERE files and components live
+   - **codebase-analyzer** — understand HOW specific code works
+   - **codebase-pattern-finder** — find examples of existing patterns
 
    **For thoughts directory:**
 
-   - Use the **thoughts-locator** agent to discover what documents exist about the topic
-   - Use the **thoughts-analyzer** agent to extract key insights from specific documents (only the most relevant ones)
+   - **thoughts-locator** — discover what documents exist about the topic
+   - **thoughts-analyzer** — extract key insights from specific documents (only the most relevant ones)
 
    **For web research (only if user explicitly asks):**
 
-   - Use the **web-search-researcher** agent for external documentation and resources
-   - IF you use web-research agents, instruct them to return LINKS with their findings, and please INCLUDE those links in your final report
+   - **web-search-researcher** — external documentation and resources. Instruct it to return LINKS with its findings, and include those links in your final report.
 
-   **For Linear tickets (if relevant):**
+   **For ticket context (if relevant):** fetch related tickets yourself with the project's issue-tracker command — a single lookup doesn't need a subagent.
 
-   - Use the **linear-ticket-reader** agent to get full details of a specific ticket
-   - Use the **linear-searcher** agent to find related tickets or historical context
-
-   The key is to use these agents intelligently:
-
-   - Start with locator agents to find what exists
-   - Then use analyzer agents on the most promising findings to document how they work
-   - Run multiple agents in parallel when they're searching for different things
-   - Each agent knows its job - just tell it what you're looking for
-   - Don't write detailed prompts about HOW to search - the agents already know
-   - Remind agents they are documenting, not evaluating or improving
+   Use these agents intelligently: start with locator agents to find what exists, then use analyzer agents on the most promising findings. Run multiple agents in parallel when they're searching for different things. Each agent knows its job — tell it what you're looking for, not how to search.
 
 4. **Wait for all sub-agents to complete and synthesize findings:**
 
-   - IMPORTANT: Wait for ALL sub-agent tasks to complete before proceeding
+   - Wait for ALL sub-agent tasks to complete before proceeding
    - Compile all sub-agent results (both codebase and thoughts findings)
-   - Prioritize live codebase findings as primary source of truth
-   - Use thoughts/ findings as supplementary historical context
-   - Connect findings across different components
-   - Include specific file paths and line numbers for reference
+   - Prioritize live codebase findings as primary source of truth; use thoughts/ findings as supplementary historical context
+   - Connect findings across different components, with specific file paths and line numbers
    - Verify all thoughts/ paths are within the current repo's `thoughts/shared/` tree
    - Highlight patterns, connections, and architectural decisions
    - Answer the user's specific questions with concrete evidence
 
 5. **Gather metadata for the research document:**
 
-   - Identify key pieces of information about the research document: date, current commit hash, current branch name, topic
+   - Identify the date, current commit hash, current branch name, and topic
 
    - Filename: `thoughts/shared/research/YYYY-MM-DD-ENG-XXXX-description.md`
-     - Format: `YYYY-MM-DD-ENG-XXXX-description.md` where:
-       - YYYY-MM-DD is today's date
-       - ENG-XXXX is the ticket number (omit if no ticket)
-       - description is a brief kebab-case description of the research topic
-     - Examples:
-       - With ticket: `2025-01-08-ENG-1478-parent-child-tracking.md`
-       - Without ticket: `2025-01-08-authentication-flow.md`
+     - YYYY-MM-DD is today's date
+     - ENG-XXXX is the ticket number (omit if no ticket)
+     - description is a brief kebab-case description of the research topic
+     - Examples: `2025-01-08-ENG-1478-parent-child-tracking.md`, `2025-01-08-authentication-flow.md`
+
+   Gather this before writing the document — never write it with placeholder values.
 
 6. **Generate research document:**
 
@@ -166,7 +138,7 @@ Detection is a convenience, not a constraint — the user can always override th
 
      - Description of what exists ([file.ext:line](link))
      - How it connects to other components
-     - Current implementation details (without evaluation)
+     - Current implementation details
 
      ### [Component/Area 2]
 
@@ -197,6 +169,8 @@ Detection is a convenience, not a constraint — the user can always override th
      [Any areas that need further investigation]
      ```
 
+   Keep frontmatter fields consistent across research documents, and use snake_case for multi-word field names.
+
 7. **Add GitHub permalinks (if applicable):**
 
    - Check if on main branch or if commit is pushed: `git branch --show-current` and `git status`
@@ -222,37 +196,12 @@ Detection is a convenience, not a constraint — the user can always override th
    - Add `last_updated_note: "Added follow-up research for [brief description]"` to frontmatter
    - Add a new section: `## Follow-up Research [timestamp]`
    - Spawn new sub-agents as needed for additional investigation
-   - Continue updating the document and syncing
+   - Continue updating the document
 
 ## Important notes
 
-- Always use parallel Task agents to maximize efficiency and minimize context usage
-- Always run fresh codebase research - never rely solely on existing research documents
-- The thoughts/ directory provides historical context to supplement live findings
-- Focus on finding concrete file paths and line numbers for developer reference
-- Research documents should be self-contained with all necessary context
-- Each sub-agent prompt should be specific and focused on read-only documentation operations
-- Document cross-component connections and how systems interact
-- Include temporal context (when the research was conducted)
-- Link to GitHub when possible for permanent references
-- Keep the main agent focused on synthesis, not deep file reading
-- Have sub-agents document examples and usage patterns as they exist
-- Explore all of thoughts/ directory, not just research subdirectory
-- **CRITICAL**: You and all sub-agents are documentarians, not evaluators
-- **REMEMBER**: Document what IS, not what SHOULD BE
-- **NO RECOMMENDATIONS**: Only describe the current state of the codebase
-- **File reading**: Always read mentioned files FULLY (no limit/offset) before spawning sub-tasks
-- **Critical ordering**: Follow the numbered steps exactly
-  - ALWAYS read mentioned files first before spawning sub-tasks (step 1)
-  - ALWAYS wait for all sub-agents to complete before synthesizing (step 4)
-  - ALWAYS gather metadata before writing the document (step 5 before step 6)
-  - NEVER write the research document with placeholder values
-- **Path handling**: Only reference paths within the current repo's `thoughts/` directory
-  - Do not search or reference `thoughts/searchable/`, `thoughts/global/`, or per-user directories — this repo does not use them
-  - Never broaden searches to parent dirs, sibling worktrees, or `~/thoughts`
-- **Frontmatter consistency**:
-  - Always include frontmatter at the beginning of research documents
-  - Keep frontmatter fields consistent across all research documents
-  - Update frontmatter when adding follow-up research
-  - Use snake_case for multi-word field names (e.g., `last_updated`, `git_commit`)
-  - Tags should be relevant to the research topic and components studied
+- Always run fresh codebase research — never rely solely on existing research documents. The thoughts/ directory supplements live findings; it doesn't replace them.
+- Research documents should be self-contained, with concrete file paths and line numbers, and GitHub links where possible
+- Keep the main agent focused on synthesis, not deep file reading — that's what the sub-agents are for
+- Explore all of thoughts/, not just the research subdirectory
+- **Path handling**: only reference paths within the current repo's `thoughts/` directory. Do not search or reference `thoughts/searchable/`, `thoughts/global/`, or per-user directories — this repo does not use them. Never broaden searches to parent dirs, sibling worktrees, or `~/thoughts`.

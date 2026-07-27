@@ -7,18 +7,17 @@ effort: high
 
 # Setup Research-Plan-Implement Workflow
 
-This skill analyzes your project's language, framework, and tooling, then intelligently adapts reference templates to create customized commands and agents in your `.claude/` directory.
+This skill analyzes a project's language, framework, and tooling, then adapts the reference templates into customized skills and agents in the project's `.claude/` directory.
 
-## What This Skill Does
+Supporting references in this skill's directory (`${CLAUDE_SKILL_DIR}`) — read each when you reach the step that needs it, not upfront:
 
-1. **Analyzes your project** by reading configuration files
-2. **Adapts reference templates** intelligently based on what it finds
-3. **Generates customized workflow** in `.claude/` directory
-4. **No templates or hardcoded logic** - uses AI reasoning to adapt
+- **`detection.md`** — what to read, what to extract, how to fill gaps (Steps 1-2)
+- **`adaptation.md`** — how to adapt each template: what must survive, what register to write in, where to use judgment (Step 5)
+- **`upgrade.md`** — upgrading an existing install: telling a user's customizations apart from stale template, and the migration paths
 
 ## Before You Start
 
-Before running setup, recommend the user create a branch for their work:
+Recommend the user create a branch first, so they can review the generated files as a diff:
 
 ```
 Tip: I recommend creating a branch before we set up the workflow — that way
@@ -27,426 +26,82 @@ you can review the generated files as a diff before merging them into your proje
   git checkout -b setup-rpi-workflow
 ```
 
-If they're already on a feature branch, that's fine — just make sure they're aware that setup will create files in `.claude/`.
+If they're already on a feature branch, that's fine — just make sure they know setup will create files in `.claude/`.
 
-## Workflow
+## Step 1: Analyze the project
 
-### Step 1: Analyze Current Project
+Read `detection.md`, then inspect the project: language, framework, package manager, test/lint/format/build/typecheck commands, database tooling, issue tracker, and whether `thoughts/` exists.
 
-Read project configuration files to understand the stack:
+Present what you found, marking anything you couldn't determine.
 
-**Files to check (read what exists):**
-- `package.json` - For Node/TypeScript projects
-- `Cargo.toml` - For Rust projects
-- `go.mod` - For Go projects
-- `pyproject.toml` or `requirements.txt` - For Python projects
-- `Makefile` - For build commands
-- Check if `thoughts/` directory exists
+**Then check for an existing installation** (see `detection.md`). If one exists, switch to `upgrade.md` instead of continuing here.
 
-**Extract key information:**
-- Primary language and framework
-- Package manager and available scripts
-- Test commands (unit, integration, e2e)
-- Linting and formatting commands
-- Build and type-checking commands
-- Database tools (Prisma, SQLAlchemy, Diesel, etc.)
-- Directory structure conventions
-- Issue/ticket tracking system:
-  - Check for Linear CLI installation: `which linear`
-  - Check for GitHub CLI: `which gh`
-  - Check for GitLab CLI: `which glab`
-  - Check for thoughts/tickets/ or thoughts/*/tickets/ directory
-  - Check .git/config for repo info (github.com, gitlab.com, linear.app)
+## Step 2: Fill in the gaps
 
-**Present findings to user:**
-```
-Detected project configuration:
-- Language: [TypeScript/Python/Go/Rust]
-- Framework: [SvelteKit/Next.js/Django/FastAPI/etc. or None]
-- Package Manager: [npm/cargo/go/pip/poetry]
-- Test Command: [npm run test:unit / cargo test / pytest / go test]
-- Lint Command: [npm run lint / cargo clippy / ruff / golangci-lint]
-- Format Command: [npm run format / cargo fmt / black / gofmt]
-- Build Command: [npm run build / cargo build / make build]
-- Database: [Prisma v6 / SQLAlchemy / Diesel / None]
-- Issue Tracking: [Linear / GitHub Issues / GitLab Issues / Local Files / None]
-- Has thoughts/ directory: [Yes/No]
-```
+Ask for whatever you couldn't detect, batched into as few turns as possible — see `detection.md` for the batching approach. Then present the complete configuration and confirm it before generating anything.
 
-**If anything couldn't be detected, mark it as:**
-```
-- Test Command: [Unable to detect - will ask]
-- Type Check Command: [Unable to detect - will ask]
-- Issue Tracking: [Unable to detect - will ask]
-```
+## Step 3: Ask preferences
 
-**Check for existing RPI installation:**
-- Check if `.claude/skills/research-codebase/SKILL.md` exists (v2 installation)
-- Check if `.claude/commands/research-codebase.md` exists (v1 installation)
-- If v2 found: this is a **v2 upgrade** — enter upgrade mode (see Upgrade Mode section below)
-- If v1 found: this is a **v1→v2 migration** — enter upgrade mode with migration (see Upgrade Mode section below)
-- If neither found: this is a **fresh install** — continue with Step 2
+1. **Thoughts directory** — use an existing `thoughts/`, or create one? What structure (`shared/research/` and `shared/plans/`, or custom)?
+2. **Additional commands** — any custom verification commands or project-specific testing notes to fold in?
+3. **Gitignore** — if `thoughts/` isn't ignored, recommend adding it: these are working artifacts, not source, and keeping them out of git keeps PRs clean. If thoughts files are already tracked, offer `git rm --cached -r thoughts/` to untrack without deleting.
+4. **Confirm** — ready to generate?
 
-### Step 2: Fill in Gaps with User Questions
+## Step 4: Read the reference templates
 
-For any commands or configuration that couldn't be auto-detected, ask the user in as few turns as possible — every user turn adds reasoning overhead, and the user would rather answer once than six times.
+All paths below are relative to this skill's directory (`${CLAUDE_SKILL_DIR}`), not the target project.
 
-**How to batch:**
-- These gap-fills are free-text (commands, paths) and don't fit `AskUserQuestion`'s 2-4-option-per-question shape. Instead, present all missing items together as a single consolidated prompt with one block the user can fill in:
+**Skills** (`reference/skills/*/SKILL.md`): research-codebase, design, create-plan, iterate-plan, implement-plan, prepare-pr, guide
 
-  ```
-  I couldn't auto-detect a few things. Please answer these together:
+**Agents** (`reference/agents/*.md`): codebase-analyzer, codebase-locator, codebase-pattern-finder, query-planner, web-search-researcher
 
-  1. Unit test command (e.g., npm run test:unit, pytest tests/unit):
-  2. Lint command (or "none"):
-  3. Format command (or "none"):
-  4. Type check command (or "skip"):
-  5. Build command (or "none"):
-  ```
+**Conditional agents:**
+- thoughts-analyzer, thoughts-locator — only if `thoughts/` is enabled
+- branch-ticket-detector — only if an issue tracker is configured
 
-- The one place `AskUserQuestion` fits is the issue-tracker choice (multiple-choice, 2-4 options). Use it there, batching follow-up CLI-availability questions into the same call when possible (max 4 questions per `AskUserQuestion` call).
-- Only split into multiple rounds if a later question genuinely depends on an earlier answer.
+**Script:** `reference/scripts/herdr-phase.sh` — copied verbatim, never adapted
 
-**If test command not found:**
-```
-I couldn't find a test command. How do you run tests in this project?
-- Example: npm test, cargo test, pytest, go test ./..., make test
-- Or type 'none' if no tests yet
-```
+Some skill directories also carry a `template.md` or `review-metadata-template.md`. These are progressive-disclosure files the generated skill loads on demand — copy them alongside their SKILL.md.
 
-**If unit test command not found (but general test exists):**
-```
-I found a test command ([detected command]), but no specific unit test command.
-How do you run unit tests specifically?
-- Example: npm run test:unit, cargo test --lib, pytest tests/unit
-- Or press Enter to use: [detected command]
-```
+## Step 5: Adapt each template
 
-**If integration test command not found:**
-```
-How do you run integration tests? (optional)
-- Example: npm run test:integration, pytest tests/integration
-- Or press Enter to skip
-```
+Read `adaptation.md` and work through the templates. The core of this skill is here: adapt by understanding what the project needs, not by substituting strings.
 
-**If e2e test command not found:**
-```
-How do you run end-to-end tests? (optional)
-- Example: npm run test:e2e, playwright test
-- Or press Enter to skip
-```
+## Step 6: Write the files
 
-**If lint command not found:**
-```
-I couldn't find a linting command. How do you lint code?
-- Example: npm run lint, cargo clippy, ruff check ., make lint
-- Or type 'none' if not using a linter
-```
-
-**If format command not found:**
-```
-I couldn't find a formatting command. How do you format code?
-- Example: npm run format, cargo fmt, black ., prettier --write .
-- Or type 'none' if not using a formatter
-```
-
-**If type check command not found (for typed languages):**
-```
-How do you type-check your code?
-- Example: npm run check, tsc --noEmit, mypy .
-- Or press Enter to skip if not applicable
-```
-
-**If build command not found:**
-```
-How do you build your project?
-- Example: npm run build, cargo build, make build, go build
-- Or type 'none' if no build step needed
-```
-
-**If database detected but migration command unclear:**
-```
-I detected [database name] but couldn't determine migration commands.
-How do you:
-1. Apply schema changes during development?
-   Example: npx prisma db push, python manage.py migrate
-2. Create formal migrations?
-   Example: npx prisma migrate dev, python manage.py makemigrations
-```
-
-**If issue tracking system not detected:**
-```
-How do you manage issues/tickets for this project?
-1. Linear (linear.app)
-2. GitHub Issues
-3. GitLab Issues
-4. Jira
-5. Local files (e.g., thoughts/tickets/)
-6. Other (please specify)
-7. None - no formal issue tracking
-
-Choice: [1-7]
-```
-
-**Follow-up based on choice:**
-
-If Linear (1):
-```
-I'll generate Linear integration commands for:
-- Reading ticket details
-- Updating ticket status
-- Creating research/plans linked to tickets
-
-Linear CLI detected: [Yes/No]
-If No: "Install with: npm install -g @linear/cli"
-```
-
-If GitHub Issues (2):
-```
-I'll generate GitHub Issues integration using gh CLI.
-GitHub CLI detected: [Yes/No]
-If No: "Install from: https://cli.github.com"
-```
-
-If GitLab Issues (3):
-```
-I'll generate GitLab Issues integration using glab CLI.
-GitLab CLI detected: [Yes/No]
-If No: "Install from: https://gitlab.com/gitlab-org/cli"
-```
-
-If Local files (5):
-```
-Where do you store ticket files?
-- Default: thoughts/[username]/tickets/
-- Custom path: [enter path]
-```
-
-If Other (6):
-```
-Please describe your issue tracking system:
-(I'll generate generic workflow without specific integrations)
-```
-
-If None (7):
-```
-No issue tracking integration will be generated.
-Plans and research can still reference work items manually.
-```
-
-**After filling gaps, present complete configuration:**
-```
-Complete project configuration:
-✓ Language: TypeScript
-✓ Framework: SvelteKit
-✓ Package Manager: npm
-✓ Test (unit): npm run test:unit
-✓ Test (integration): npm run test:integration
-✓ Test (e2e): playwright test
-✓ Lint: npm run lint
-✓ Format: npm run format
-✓ Type Check: npm run check
-✓ Build: npm run build
-✓ Database: Prisma v6
-  - Push schema: npx prisma@6 db push
-  - Create migration: npx prisma@6 migrate dev
-✓ Issue Tracking: GitHub Issues (gh CLI available)
-✓ thoughts/ directory: Yes
-
-Does this look correct?
-```
-
-### Step 3: Ask User Preferences
-
-Ask about configuration choices:
-
-1. **Thoughts Directory:**
-   - If `thoughts/` exists: "I found a thoughts/ directory. Use it for research and plans? (yes/no)"
-   - If not: "Would you like to use a thoughts/ directory for storing research and plans? (yes/no)"
-   - If yes: "What structure? (shared/research/ and shared/plans/ or custom?)"
-
-2. **Additional Commands:**
-   - "Any additional custom verification commands I should include?"
-   - "Any project-specific testing notes or requirements?"
-
-3. **Thoughts gitignore:**
-   - Check if `thoughts/` is in `.gitignore`
-   - If not: "I recommend adding `thoughts/` to `.gitignore`. These are working artifacts, not source code — keeping them out of git keeps your PRs clean. Add it? (yes/no)"
-   - If yes and thoughts files are already tracked in git:
-     "I see thoughts files are currently tracked. Want me to untrack them? This removes them from git tracking without deleting the local files. (yes/no)"
-     - If yes: run `git rm --cached -r thoughts/`
-
-4. **Final Confirmation:**
-   - "Ready to generate workflow files? (yes/no)"
-
-### Step 4: Read Reference Templates
-
-Read all reference templates from the plugin:
-
-**Skills to read:**
-- `skills/setup/reference/skills/research-codebase/SKILL.md`
-- `skills/setup/reference/skills/design/SKILL.md`
-- `skills/setup/reference/skills/create-plan/SKILL.md`
-- `skills/setup/reference/skills/iterate-plan/SKILL.md`
-- `skills/setup/reference/skills/implement-plan/SKILL.md`
-- `skills/setup/reference/skills/prepare-pr/SKILL.md`
-- `skills/setup/reference/skills/guide/SKILL.md`
-
-**Agents to read:**
-- `skills/setup/reference/agents/codebase-analyzer.md`
-- `skills/setup/reference/agents/codebase-locator.md`
-- `skills/setup/reference/agents/codebase-pattern-finder.md`
-- `skills/setup/reference/agents/query-planner.md`
-- `skills/setup/reference/agents/web-search-researcher.md`
-
-**Conditional agents (if user wants thoughts/):**
-- `skills/setup/reference/agents/thoughts-analyzer.md`
-- `skills/setup/reference/agents/thoughts-locator.md`
-
-**Conditional agent (if an issue tracker is configured — Linear/GitHub/GitLab/local files):**
-- `skills/setup/reference/agents/branch-ticket-detector.md`
-
-**Script (copied verbatim — see note below):**
-- `skills/setup/reference/scripts/herdr-phase.sh`
-
-**Note on the herdr-phase script:** This script is project-agnostic — it contains no
-commands, paths, or tooling to adapt. Copy it **verbatim** to `.claude/scripts/herdr-phase.sh`
-(do NOT rewrite it during Step 5). Each phase skill already includes a "Mark the herdr phase"
-step near the top that calls it. The script no-ops when not running inside herdr, so it's
-harmless on projects whose author never uses herdr — install it unconditionally.
-
-### Step 5: Intelligently Adapt Each Template
-
-For each template, reason about what needs to change based on the project analysis:
-
-**Common adaptations needed:**
-
-1. **Command Replacements:**
-   - `npm run test:unit` → `cargo test --lib` (Rust)
-   - `npm run test:unit` → `pytest tests/unit` (Python)
-   - `npm run test:unit` → `go test ./...` (Go)
-   - `npm run lint` → `cargo clippy` (Rust)
-   - `npm run lint` → `ruff check .` (Python)
-   - `npm run format` → `cargo fmt` (Rust)
-   - `npm run format` → `black .` (Python)
-   - `npx prisma@6 db push` → `python manage.py migrate` (Django)
-   - `npx prisma@6 db push` → `diesel migration run` (Rust)
-
-2. **Directory Structure:**
-   - `src/` → `pkg/` or `internal/` (Go)
-   - `tests/` → `__tests__/` (some Node projects)
-   - Framework-specific paths (e.g., `src/routes/` for SvelteKit)
-
-3. **Framework-Specific Guidance:**
-   - SvelteKit: Add notes about load functions, form actions, remote functions
-   - Django: Add notes about models, views, urls patterns
-   - Next.js: Add notes about app router, server actions
-   - Keep generic if no framework detected
-
-4. **Database Workflow:**
-   - Prisma: Include `npx prisma@6 db push` and `npx prisma@6 migrate dev` workflow
-   - Django: Include `makemigrations` and `migrate` workflow
-   - SQLAlchemy: Include Alembic migration workflow
-   - Remove database sections if no database detected
-
-5. **Thoughts Directory:**
-   - If enabled: Keep all thoughts/ references
-   - If disabled: Remove thoughts-specific sections, skip thoughts agents
-
-6. **Issue Tracking Integration:**
-   - If Linear: Add references to Linear ticket reading, status updates
-   - If GitHub: Add references to `gh issue view`, `gh issue list`
-   - If GitLab: Add references to `glab issue view`, `glab issue list`
-   - If Local files: Reference ticket file paths (e.g., `thoughts/tickets/ENG-123.md`)
-   - If None: Remove ticket-specific references, keep generic "task description"
-
-7. **Branch Ticket Detection:**
-   - The `branch-ticket-detector` agent lets `/research-codebase` (and optionally
-     `/design` and `/create-plan`) auto-detect the ticket from the current branch
-     when the user runs the command without arguments.
-   - In `branch-ticket-detector.md`, the "Issue Tracker" section has one subsection
-     per tracker. Keep only the subsection matching the detected tracker and delete
-     the rest, so the agent's identifier pattern and fetch command match the project.
-     For Local files, set the actual ticket file path used by this project.
-   - **If issue tracking is None**: do NOT generate `branch-ticket-detector.md`. In
-     `research-codebase.md`, strip the detection branch from "Initial Setup" and keep
-     only the plain "ask the user for a research question" fallback, so the skill
-     never references an agent that wasn't generated. Also drop the "run it with no
-     arguments" branch-detection mention from `guide/topics.md`.
-
-**Adaptation process:**
-- Read each template completely
-- Identify all project-specific references (commands, paths, tools)
-- Intelligently rewrite those sections for the detected project
-- Preserve the core workflow logic and agent behaviors
-- Maintain the documentarian philosophy (document what IS, not what SHOULD BE)
-
-### Step 6: Write Adapted Files
-
-Create the `.claude/` directory structure if it doesn't exist, then write adapted files:
-
-**Directory structure to create:**
 ```
 .claude/
 ├── skills/
-│   ├── research-codebase/
-│   │   └── SKILL.md
-│   ├── design/
-│   │   └── SKILL.md
-│   ├── create-plan/
-│   │   └── SKILL.md
-│   ├── iterate-plan/
-│   │   └── SKILL.md
-│   ├── implement-plan/
-│   │   └── SKILL.md
-│   ├── prepare-pr/
-│   │   └── SKILL.md
-│   ├── guide/
-│   │   └── SKILL.md
-│   └── read-ticket/              # Optional: if Linear/GitHub/GitLab
-│       └── SKILL.md
+│   ├── research-codebase/SKILL.md
+│   ├── design/SKILL.md + template.md
+│   ├── create-plan/SKILL.md + template.md
+│   ├── iterate-plan/SKILL.md
+│   ├── implement-plan/SKILL.md + review-metadata-template.md
+│   ├── prepare-pr/SKILL.md
+│   └── guide/SKILL.md + topics.md
 ├── scripts/
-│   └── herdr-phase.sh            # Copied verbatim; makes the herdr sidebar a phase board
+│   └── herdr-phase.sh                # verbatim, chmod +x
 └── agents/
     ├── codebase-analyzer.md
     ├── codebase-locator.md
     ├── codebase-pattern-finder.md
     ├── query-planner.md
     ├── web-search-researcher.md
-    ├── thoughts-analyzer.md         # Only if thoughts/ enabled
-    ├── thoughts-locator.md          # Only if thoughts/ enabled
-    ├── branch-ticket-detector.md    # Only if an issue tracker is configured
-    └── ticket-reader.md             # Optional: if Linear/GitHub/GitLab
+    ├── thoughts-analyzer.md          # if thoughts/ enabled
+    ├── thoughts-locator.md           # if thoughts/ enabled
+    └── branch-ticket-detector.md     # if an issue tracker is configured
 ```
 
-**Optional files based on issue tracking:**
+Write `.claude/.rpi-version` alongside them (see `upgrade.md` for what reads it):
 
-If using **Linear**, optionally generate:
-- `skills/read-ticket/SKILL.md` - Read Linear ticket details and save to thoughts/tickets/
-- `agents/linear-ticket-reader.md` - Agent specialized in fetching Linear tickets
-- Note: Only generate if user wants Linear integration
+```
+version: [the "version" field from ${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json]
+generated: YYYY-MM-DD
+```
 
-If using **GitHub Issues**, optionally generate:
-- `skills/read-issue/SKILL.md` - Read GitHub issue using `gh issue view`
-- Note: Uses gh CLI, no special agent needed
+The phase skills invoke the script via `"$(git rev-parse --show-toplevel)/.claude/scripts/herdr-phase.sh"`, so it resolves from any working directory and propagates to every worktree.
 
-If using **GitLab Issues**, optionally generate:
-- `skills/read-issue/SKILL.md` - Read GitLab issue using `glab issue view`
-- Note: Uses glab CLI, no special agent needed
-
-**Write each adapted skill and agent file:**
-- Use Write tool to create each file
-- Ensure adapted content matches the project's actual tooling
-- Preserve markdown formatting and frontmatter
-
-**Write the herdr-phase script:**
-- Write `skills/setup/reference/scripts/herdr-phase.sh` verbatim to `.claude/scripts/herdr-phase.sh` (no adaptation)
-- Make it executable: `chmod +x .claude/scripts/herdr-phase.sh`
-- The phase skills invoke it via `"$(git rev-parse --show-toplevel)/.claude/scripts/herdr-phase.sh"`, so it resolves from any working directory and is committed alongside the skills (propagates to every worktree)
-
-### Step 7: Present Summary and Next Steps
-
-Show the user what was created:
+## Step 7: Present the summary
 
 ```
 Created research-design-plan-implement workflow in .claude/
@@ -474,49 +129,46 @@ Quick start:
   /create-plan thoughts/shared/designs/2026-01-05-auth-redesign.md
   /implement-plan thoughts/shared/plans/2026-01-05-auth-redesign.md
   /prepare-pr
-  /guide
+
+These files are yours now — edit them freely as you learn what your team needs.
 ```
 
-### Step 8: Show Workflow Quick Tips
-
-After presenting the summary, show essential workflow concepts:
+## Step 8: Show workflow quick tips
 
 ```
 Understanding the Research -> Design -> Plan -> Implement -> Review Workflow
 
 This workflow uses "INTENTIONAL COMPACTION" to manage context windows:
 
-RESEARCH Phase (/research-codebase)
+RESEARCH (/research-codebase)
    Explores codebase without polluting main context
    Sub-agents handle messy file discovery
    Output: Clean research document with findings
 
-DESIGN Phase (/design)
+DESIGN (/design)
    Lightweight ~200-line alignment artifact
    Captures: current state, desired end state, patterns, testing approach
    This is your highest-leverage review moment
    Output: Design discussion document
 
-PLAN Phase (/create-plan)
+PLAN (/create-plan)
    Takes design as input — decisions already made
    Vertical phases (end-to-end slices, not horizontal layers)
    Per-phase testing baked in
    Output: Tactical implementation plan
 
-IMPLEMENT Phase (/implement-plan)
+IMPLEMENT (/implement-plan)
    Testing-aware: follows the testing approach from design/plan
    Generates review metadata as it goes
    Phase-by-phase with verification checkpoints
 
-REVIEW Phase (/prepare-pr)
+REVIEW (/prepare-pr)
    Commits outstanding work and opens the PR
    Writes the PR description as a review guide
    Guides human attention through the diff: critical vs mechanical
-   Test coverage map; can also update an existing PR's description
 
 ORIENTATION (/guide)
    Run anytime to see where you are and what's next
-   5-10 lines of contextual help
 
 Key Success Factors:
   Always research before designing
@@ -532,214 +184,24 @@ Attribution:
   GitHub: github.com/humanlayer/humanlayer
 ```
 
-### Step 9: Optional - Create thoughts/ Directory
+## Step 9: Create thoughts/ (optional)
 
-If user said yes to thoughts/ but it doesn't exist:
-
-```
-Would you like me to create the thoughts/ directory structure?
-  thoughts/
-  ├── shared/
-  │   ├── research/
-  │   ├── designs/
-  │   ├── plans/
-  │   └── review-metadata/
-  └── [username]/
-      ├── tickets/
-      └── notes/
-```
-
-## Upgrade Mode
-
-When existing RPI commands or skills are detected, enter upgrade mode:
-
-### Step U1: Extract Project Adaptations
-
-Read the existing commands/skills to extract project-specific details. Check both `.claude/commands/` (v1) and `.claude/skills/` (v2) locations:
-- Test commands (unit, integration, e2e)
-- Lint, format, build, typecheck commands
-- Database tools and migration commands
-- Framework-specific patterns (SvelteKit load functions, Django views, etc.)
-- Issue tracking integration
-- Thoughts directory configuration
-- Any custom additions the user made
-
-### Step U2: Show Upgrade Summary
+If the user wants `thoughts/` and it doesn't exist:
 
 ```
-Detected existing RPI installation. Here's what's changing:
-
-MIGRATION:
-  Commands are moving from .claude/commands/ to .claude/skills/ (new Claude Code convention)
-  Old command files will be removed after migration
-
-NEW skills:
-  /design — Lightweight design discussion before planning (~200 lines vs ~1000 line plans)
-  /prepare-pr — Commit, open the PR, and write its description as a review guide (critical vs mechanical changes); can also update an existing PR's description
-  /guide — Contextual orientation (where am I? what's next?)
-
-RETIRED skills:
-  /review-changes — Folded into /prepare-pr. If a .claude/skills/review-changes/ exists from an earlier install, it will be removed.
-
-NEW agents:
-  query-planner — Keeps research objective by separating questions from intent
-  branch-ticket-detector — Detects the ticket from your branch/worktree so
-    /research-codebase works with no arguments (only if an issue tracker is configured)
-
-NEW script:
-  scripts/herdr-phase.sh — When you work in herdr, each phase skill tags its tab
-    (🔬 🎨 📋 🔨 🔍) so the sidebar becomes a phase board. No-op outside herdr.
-
-UPDATED skills:
-  /research-codebase — Now uses query planning to keep research objective, and
-    auto-detects the ticket from your branch when run without arguments
-  /create-plan — Slimmed down (design decisions moved to /design), vertical phases, per-phase testing
-  /implement-plan — Testing-aware (adapts to TDD/conformance/manual), generates review metadata
-
-UNCHANGED:
-  /iterate-plan — Migrated to skills format, content unchanged
-
-Your project adaptations will be preserved:
-  - Test command: [extracted]
-  - Lint command: [extracted]
-  - [etc.]
-
-Ready to upgrade? (yes / let me see details for a specific skill)
+thoughts/
+├── shared/
+│   ├── research/
+│   ├── designs/
+│   ├── plans/
+│   └── review-metadata/
+└── [username]/
+    ├── tickets/
+    └── notes/
 ```
 
-### Step U3: Regenerate Files
+## Success criteria
 
-1. Read all new reference templates (Step 4)
-2. Adapt each template using the extracted project-specific details (Step 5)
-3. Write all files to `.claude/skills/` and `.claude/agents/` (Step 6). This includes
-   copying `scripts/herdr-phase.sh` verbatim to `.claude/scripts/herdr-phase.sh` and
-   `chmod +x`-ing it — the regenerated phase skills reference it. Overwrite an existing
-   copy so upgrades pick up script fixes.
-4. Remove old/retired files:
-   - `rm .claude/commands/research-codebase.md` (if exists)
-   - `rm .claude/commands/create-plan.md` (if exists)
-   - `rm .claude/commands/iterate-plan.md` (if exists)
-   - `rm .claude/commands/implement-plan.md` (if exists)
-   - `rm .claude/commands/read-ticket.md` (if exists)
-   - `rm -r .claude/skills/review-changes/` (if exists — retired, folded into /prepare-pr)
-   - Ask before removing: "I'll clean up the old .claude/commands/ files migrated to .claude/skills/, and remove the retired review-changes skill (now /prepare-pr). OK? (yes/no)"
-5. Handle thoughts gitignore (if not already configured)
-6. Show updated summary (Step 7) and workflow tips (Step 8)
+The setup worked when the project analysis was accurate, the user's preferences were captured, every template was adapted to this project's real tooling, the files are in `.claude/`, and the user knows what to run next.
 
-### Step U4: Create designs directory
-
-If `thoughts/shared/` exists but `thoughts/shared/designs/` doesn't:
-```
-mkdir -p thoughts/shared/designs thoughts/shared/review-metadata
-```
-
-## Important Guidelines
-
-**Be Intelligent, Not Mechanical:**
-- Don't use string replacement or templates
-- Use your understanding of the codebase to adapt
-- Reason about what makes sense for this project
-- Preserve the intent and workflow, not just the syntax
-
-**Preserve Core Patterns:**
-- Keep the documentarian philosophy (document what IS)
-- Keep the parallel sub-agent execution pattern
-- Keep the interactive planning approach
-- Keep the automated vs manual verification distinction
-
-**Handle Edge Cases:**
-- If multiple test commands exist, use the most comprehensive
-- If no linter/formatter found, omit those sections
-- If unclear about something, ask the user
-- If project has a Makefile, check if it has standard targets (test, lint, build)
-
-**Don't Overwrite Existing Files:**
-- Check if `.claude/skills/` or `.claude/commands/` directory already exists
-- If skills exist, enter upgrade mode (see Upgrade Mode section)
-- If only commands exist, enter migration + upgrade mode
-- If selective, show list and let user choose which to regenerate
-
-## Example Adaptations
-
-### TypeScript/SvelteKit → Python/Django
-
-**Before (from reference):**
-```markdown
-- [ ] Schema changes apply cleanly: `npx prisma@6 db push`
-- [ ] All unit tests pass: `npm run test:unit`
-- [ ] No linting errors: `npm run lint`
-```
-
-**After (adapted):**
-```markdown
-- [ ] Migrations apply cleanly: `python manage.py migrate`
-- [ ] All unit tests pass: `pytest tests/unit`
-- [ ] No linting errors: `ruff check .`
-```
-
-### TypeScript/SvelteKit → Rust/Axum
-
-**Before:**
-```markdown
-For frontend/backend communication outside of the initial page load context or form actions, use sveltekit remote functions
-```
-
-**After:**
-```markdown
-For API endpoints, follow the Axum router pattern with extractors and response types
-```
-
-### With Database → Without Database
-
-**Before:**
-```markdown
-### Database Migration Workflow
-
-When schema changes are required, follow this workflow:
-
-1. **During development/iteration**: Use `npx prisma@6 db push`
-2. **Final step**: Once finalized, create migration: `npx prisma@6 migrate dev --name description`
-```
-
-**After:**
-```markdown
-[Section removed - no database detected]
-```
-
-## Error Handling
-
-**If project type cannot be determined:**
-```
-I couldn't detect your project type. Could you tell me:
-- What language/framework are you using?
-- How do you run tests?
-- How do you lint/format code?
-```
-
-**If no test command found:**
-```
-I couldn't find a test command. Would you like to:
-1. Provide one manually
-2. Skip test-related sections
-3. Add placeholder (e.g., "TODO: add tests")
-```
-
-**If plugin reference files are missing:**
-```
-Error: Reference templates not found in plugin directory.
-Expected location: skills/setup/reference/
-This indicates a plugin installation issue.
-```
-
-## Success Criteria
-
-You've successfully completed this skill when:
-- [ ] Project analysis is accurate and shown to user
-- [ ] User preferences are captured
-- [ ] All reference templates are read
-- [ ] Each template is intelligently adapted (not just string-replaced)
-- [ ] Files are written to .claude/ directory
-- [ ] Summary is presented with next steps
-- [ ] User understands how to use the new commands
-
-The generated workflow should feel native to the project, not like a generic template that was forced to fit.
+The generated workflow should feel native to the project — not like a generic template forced to fit.
