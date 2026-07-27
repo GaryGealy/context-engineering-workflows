@@ -23,6 +23,15 @@ Format based on [Keep a Changelog](https://keepachangelog.com).
     JavaScript in an agent that runs against Rust, Go, and Python repos
   - Split the 745-line `setup` skill into a routing spine plus `detection.md`,
     `adaptation.md`, and `upgrade.md`, loaded only on the path that needs them
+  - Restated `/design`'s three `DO NOT` lines as a definition of what a design
+    doc is — same boundary, no fence
+  - Slimmed `/iterate-plan` (276 → 117 lines) by cutting worked interaction
+    examples and a subagent-spawning tutorial the agent descriptions cover
+  - Rewrote the `web-search-researcher` and `thoughts-analyzer` descriptions,
+    which were jokes; descriptions drive dispatch and count against the
+    skill-listing character cap
+  - Dropped `/implement-plan`'s "never use limit/offset" instruction, which
+    fought the Read tool's own guidance
 - `/design` now produces a concrete reference artifact — a self-contained HTML
   mockup for UI work, real payloads for an API, a schema diff for data model
   changes — and `/create-plan` and `/implement-plan` build against it rather
