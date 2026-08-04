@@ -17,7 +17,7 @@ set -euo pipefail
 command -v herdr >/dev/null 2>&1 || exit 0
 command -v python3 >/dev/null 2>&1 || exit 0
 
-python3 - "${1:-}" <<'PY'
+python3 - "${1:-}" "${HERDR_TAB_ID:-}" <<'PY'
 import json, subprocess, sys
 
 GLYPH = {
@@ -38,12 +38,19 @@ def herdr(*args):
     return subprocess.run(["herdr", *args], capture_output=True, text=True)
 
 
-try:
-    panes = json.loads(herdr("pane", "list").stdout)["result"]["panes"]
-except (json.JSONDecodeError, KeyError):
-    sys.exit(0)
+# HERDR_TAB_ID is exported into this agent's own pane, so it names the tab we
+# actually belong to. The focused-pane scan is only a fallback: whichever tab
+# the human happens to be looking at is not necessarily ours, and using it
+# stamps the phase glyph onto a sibling agent's tab.
+tab_id = sys.argv[2].strip() if len(sys.argv) > 2 else ""
 
-tab_id = next((p["tab_id"] for p in panes if p.get("focused")), None)
+if not tab_id:
+    try:
+        panes = json.loads(herdr("pane", "list").stdout)["result"]["panes"]
+    except (json.JSONDecodeError, KeyError):
+        sys.exit(0)
+    tab_id = next((p["tab_id"] for p in panes if p.get("focused")), None)
+
 if not tab_id:
     sys.exit(0)
 

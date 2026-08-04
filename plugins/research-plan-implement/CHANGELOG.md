@@ -3,6 +3,20 @@
 All notable changes to the `research-plan-implement` plugin are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com).
 
+## [Unreleased]
+
+### Fixed
+
+- `herdr-phase.sh` stamped the phase glyph onto the **focused** tab rather than
+  the agent's own tab, so in a multi-tab workspace the agent's label went stale
+  while a sibling tab (often a human-run orchestrator) collected a stray prefix
+  that later runs couldn't strip. The script now resolves its tab from
+  `$HERDR_TAB_ID`, which herdr exports into each pane, and keeps the
+  focused-pane scan only as a fallback. Existing installs carry a copy of this
+  script at `.claude/scripts/herdr-phase.sh` — re-run `/setup` to pick up the
+  fix, and clean up any stacked prefixes by hand with
+  `herdr tab rename <id> "<label>"`. ([#15](https://github.com/lucasnad27/claude-plugins/issues/15))
+
 ## [4.0.0] - 2026-07-27
 
 ### Changed
