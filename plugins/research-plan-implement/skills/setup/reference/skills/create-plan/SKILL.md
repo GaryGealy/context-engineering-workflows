@@ -158,6 +158,19 @@ Adapt the testing approach from the design doc:
 - If the design says manual testing: specify what to exercise and what to observe
 - If the design doesn't specify: run whatever automated checks exist (lint, typecheck, build)
 
+## The Completion Block
+
+Every phase ends with an empty `### Completion` block that `/implement-plan` fills in when that phase finishes. Emit it for every phase, with the stub fields from the template and `Status: not started`. Don't fill any of it in yourself — you're writing a spec, not a record.
+
+It exists because implementation phases are often run by separate agents with fresh context. The plan is the only thing all of them read, so it's where a finished phase leaves what the next one needs: what it actually built versus what this plan specified, what the user waived, and what a later phase now has to account for. Without the block, that knowledge lives only in the context of an agent that has already exited.
+
+Keep it distinct from the review metadata `/implement-plan` writes alongside the plan. The split is by audience:
+
+- **Completion block** — what changed *relative to the plan*. Read by the next phase and by `/iterate-plan`.
+- **Review metadata** — per-file Critical / Mechanical / Tests triage. Read by `/prepare-pr`.
+
+The same fact rarely belongs in both.
+
 ## Important Guidelines
 
 1. **Design decisions are already made** — Don't re-litigate. The design doc has the rationale.

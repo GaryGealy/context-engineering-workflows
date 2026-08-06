@@ -81,7 +81,9 @@ Get confirmation before editing.
 
 Make surgical edits — preserve what doesn't need changing. Keep file:line references accurate, maintain the existing structure unless the change is structural, and keep new content at the same quality bar as the original: specific paths, measurable criteria, project-appropriate verification commands.
 
-Check consistency as you go. A new phase should follow the existing phase pattern; a scope change should update "What We're NOT Doing"; an approach change should update "Implementation Approach."
+Check consistency as you go. A new phase should follow the existing phase pattern (including an empty `### Completion` block); a scope change should update "What We're NOT Doing"; an approach change should update "Implementation Approach."
+
+**Never edit a filled-in `### Completion` block.** It's the record of what a finished phase actually did, often written by an agent that has since exited, and later phases read it as their only memory of earlier ones. Restructuring a phase that's already complete is the case to watch: carry its Completion block across intact. If your change invalidates something a completed phase recorded, say so in the *new* phase's spec rather than rewriting history.
 
 ### Step 5: Present the changes
 
