@@ -5,6 +5,57 @@ Format based on [Keep a Changelog](https://keepachangelog.com).
 
 ## [Unreleased]
 
+The `### Completion` block and the incremental review metadata below come from
+one gap: the templates assumed a single agent spanning every phase of a plan,
+accumulating notes in its own context. Running a fresh agent per phase — which
+is the point of the workflow — deletes that context at every boundary. Anything
+a later phase or `/prepare-pr` needs now has to be on disk before a phase stops,
+so both files that outlive a phase gained a per-phase record.
+
+### Added
+
+- Plans now carry a `### Completion` block per phase. `/create-plan` emits it
+  empty; `/implement-plan` fills it in before the pause message with the
+  phase's deviations, anything the user waived or left unproven, and anything a
+  later phase has to account for. The plan is the one file every phase agent
+  reads, so it's where a finished phase leaves what the next one needs.
+  - `/iterate-plan` carries filled-in blocks across intact and never edits
+    them — they're the record of a phase whose author has already exited
+  - `/prepare-pr` reads them for the deviations and waivers that belong in the
+    PR description
+  - Splits cleanly from the review metadata by audience: the completion block
+    is what changed relative to the plan, the metadata is per-file review
+    triage
+
+### Changed
+
+- `/implement-plan` now builds review metadata **incrementally, one section per
+  phase**, instead of writing it once after the last phase. Under the old
+  design a phase-5 agent had to re-derive the per-file triage by reading a diff
+  it never wrote — which is the exact cost the metadata existed to eliminate,
+  just moved from `/prepare-pr` to the last phase:
+  - The metadata file's basename now **mirrors the plan's**, so an agent with no
+    memory of earlier phases finds it in one Read instead of globbing a
+    directory by date
+  - Each phase appends a `## Phase N` section covering only the files it
+    touched — Needs careful review / Mechanical / Tests / Deliberate non-fixes —
+    written while the reasoning is still in context, before the pause message
+  - The last phase adds a `## Summary` for the cross-cutting reads no single
+    phase owns: what to open first, what's unproven across the whole change,
+    what a later phase superseded
+  - A section reconstructed after the fact is headed `(reconstructed from the
+    diff — not authored in-phase)`, so downstream readers can tell author-grade
+    triage from reader-grade
+  - `review-metadata-template.md` reshaped from one flat document into the
+    per-phase sections, with a back-link to the plan it belongs to
+- `/prepare-pr` reads the metadata by mirroring the plan's basename rather than
+  matching recent dates, and treats reconstructed sections as claims to verify
+  against the diff rather than author intent to repeat. It also reads the plan
+  itself now, not just the design doc.
+- `/implement-plan`'s review metadata is no longer described as optional, and is
+  written silently — it's plumbing between two skills, not a deliverable, and
+  the user shouldn't have to decide about it on every phase.
+
 ### Fixed
 
 - `herdr-phase.sh` stamped the phase glyph onto the **focused** tab rather than
@@ -16,6 +67,11 @@ Format based on [Keep a Changelog](https://keepachangelog.com).
   script at `.claude/scripts/herdr-phase.sh` — re-run `/setup` to pick up the
   fix, and clean up any stacked prefixes by hand with
   `herdr tab rename <id> "<label>"`. ([#15](https://github.com/lucasnad27/claude-plugins/issues/15))
+- `/implement-plan` gave contradictory instructions about small plan deviations,
+  telling the agent both to record them in the review metadata and to leave them
+  to the plan. Deviations now go wherever they aren't already: cross-referenced
+  when the plan carries per-phase completion blocks, recorded in the metadata
+  when it doesn't.
 
 ## [4.0.0] - 2026-07-27
 

@@ -56,10 +56,18 @@ observable behavior that means this phase is done]
 
 **After automated verification passes, pause for manual confirmation before proceeding to the next phase.**
 
+### Completion
+_`/implement-plan` fills this in when the phase finishes. Leave it as-is when writing the plan._
+
+- **Status**: not started
+- **Deviations**: —
+- **Waived or unproven**: —
+- **Later phases must know**: —
+
 ---
 
 ## Phase 2: [Descriptive Name]
-[Same structure — vertical slice with per-phase testing]
+[Same structure — vertical slice with per-phase testing, ending in its own Completion block]
 
 ---
 

@@ -65,6 +65,30 @@ Ready to upgrade? (yes / let me see details for a specific skill)
 
 If you couldn't pin their version down, say so in the summary and show the union of the candidate ranges rather than picking one silently — an extra line about a change they already have is cheaper than not mentioning one they don't.
 
+For an upgrade **from v4.0**, the skill set is unchanged and only the handoffs between phases moved:
+
+```
+Same skills, same workflow. What changed is what a phase leaves behind when it
+finishes — both files that outlive a phase now carry a per-phase record. This
+matters if you start a fresh agent per phase; it's invisible if you don't.
+
+  - Plans gained a ### Completion block per phase. /create-plan emits it empty,
+    /implement-plan fills it in with deviations, waivers, and anything a later
+    phase has to know. /iterate-plan won't touch a filled-in one.
+  - Review metadata is now written incrementally — each phase appends its own
+    section as it finishes, instead of one agent writing the whole file after
+    the last phase. The per-file triage is now written by the agent that wrote
+    the code, while it still has the reasoning.
+  - The metadata file's name mirrors the plan's, so a fresh phase agent finds
+    it without globbing.
+  - /prepare-pr reads both, and knows to double-check any metadata section
+    marked as reconstructed after the fact.
+
+Nothing about how you invoke the skills changes. Plans already in flight have
+no Completion blocks; the skills detect that and fall back rather than
+retrofitting them mid-implementation.
+```
+
 For an upgrade **from v3**, the honest summary is that the workflow didn't change but the templates were rewritten:
 
 ```

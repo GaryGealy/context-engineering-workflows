@@ -1,26 +1,38 @@
 # Review Metadata: [Feature Name]
 
-## Files Created
-- `path/to/new-file.ext` — [brief purpose]
+Plan: `thoughts/shared/plans/YYYY-MM-DD-description.md`
 
-## Files Modified
-- `path/to/modified-file.ext` — [what changed and why]
+One section per phase, appended as each phase completes. Do not rewrite earlier
+sections — a later phase that supersedes an earlier one says so in its own
+section, or in the Summary.
 
-## Substantive vs Mechanical
-### Needs careful review:
-- `path/to/file.ext:45-89` — Core business logic for [feature]
-- `path/to/file.ext:12-34` — Security-sensitive: [what]
+## Phase 1 — [title]
 
-### Mechanical/boilerplate:
-- `path/to/types.ext` — Type definitions mirroring schema
-- `path/to/file.ext` — Import reorganization only
+### Needs careful review
 
-## Test Coverage
-### Covered by tests:
-- [Feature X] — tested in `tests/path/test.ext`
+- `path/to/file.ext:45-89` — [what makes it load-bearing or security-sensitive]
 
-### Not covered by tests:
-- [Feature Y] — [why: e.g., "UI interaction, needs manual testing"]
+### Mechanical
 
-## Plan Deviations
-- [Description of deviation and why]
+- `path/to/types.ext` — [type mirror / import move / copy-only edit]
+
+### Tests
+
+- **Proves**: [what this phase's tests actually establish] — `tests/path/test.ext`
+- **Does not prove**: [what can't be shown end to end, and why]
+
+### Deliberate non-fixes
+
+- [known-imperfect thing left alone, and why it was a decision]
+
+## Phase 2 — [title]
+
+[…same shape…]
+
+## Summary
+
+_Written on the last phase only._
+
+- **Open first**: [the files a reviewer should read before the rest]
+- **Unproven across the change**: [what no test or manual step covers]
+- **Superseded**: [anything a later phase changed about an earlier one]

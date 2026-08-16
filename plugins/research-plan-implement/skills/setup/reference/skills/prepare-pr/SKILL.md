@@ -45,7 +45,8 @@ If the mode is ambiguous, state your assumption and proceed; don't stall on a qu
 
 4. **Check for supporting context (all optional):**
    - A design doc in `thoughts/shared/designs/` matching the recent dates or the branch name — read it to understand the *intent* behind the change.
-   - Review metadata in `thoughts/shared/review-metadata/` matching recent dates (produced by `/implement-plan`) — use it to categorize files accurately.
+   - The plan in `thoughts/shared/plans/` this branch implemented. Its per-phase `### Completion` blocks record what was actually built versus specified — deviations, anything the user waived, anything left unproven. Those belong in the PR description; a reviewer reading the plan alongside the diff will otherwise wonder why they differ.
+   - Review metadata produced by `/implement-plan`, at `thoughts/shared/review-metadata/` under **the same basename as the plan**. If you found a plan, that path is deterministic — read it directly rather than globbing; fall back to matching recent dates only when there's no plan in hand. It carries a per-phase Critical / Mechanical / Tests triage written by the agent that wrote the code, so it categorizes files far more accurately than the diff can.
    - The issue/ticket the work is tied to, if the project tracks them — link it in the PR.
    - These make the description sharper, but the review guide works from the diff alone (e.g. when preparing a PR for someone else's branch).
 
@@ -135,5 +136,6 @@ For long sections, wrap the lower-priority blocks (Mechanical Changes, full Test
 3. **Explain *why* something is critical** — don't just flag it, say what could go wrong.
 4. **Mechanical doesn't mean unimportant** — it means it follows an established pattern and doesn't need creative review.
 5. **Works without metadata.** With no design doc or review metadata, analyze purely from the diff. Less precise, still useful — and exactly the situation when preparing a PR for a coworker's branch.
-6. **Confirm before outward-facing or irreversible actions** — committing, pushing, creating the PR. The review guide itself is cheap; the git operations are not.
-7. **Match the repo's conventions** — commit message style, PR title format, ticket linking. Read recent history rather than imposing a new style.
+6. **Trust in-phase triage over reconstructed triage.** A metadata section headed `(reconstructed from the diff — not authored in-phase)` was written by an agent reading the diff, not the one that wrote the code. Check those claims against the diff before repeating them. Unflagged sections came from the author — take them at face value.
+7. **Confirm before outward-facing or irreversible actions** — committing, pushing, creating the PR. The review guide itself is cheap; the git operations are not.
+8. **Match the repo's conventions** — commit message style, PR title format, ticket linking. Read recent history rather than imposing a new style.

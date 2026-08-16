@@ -71,11 +71,71 @@ Before implementing each phase, read its Verification section and adapt your wor
 
 The testing approach was decided in `/design` and specified per-phase in `/create-plan`. Follow it — don't decide on a different approach.
 
-## Review Metadata
+## The Completion Block
 
-As you implement each phase, keep a lightweight log for `/prepare-pr`. After completing all phases (or when the user runs `/prepare-pr`), save this to `thoughts/shared/review-metadata/YYYY-MM-DD-description.md` using the template from `review-metadata-template.md` in this skill's directory.
+Each phase in the plan ends with a `### Completion` block that `/create-plan` left empty. **Fill in your phase's block before the pause message**, replacing the stub fields:
 
-This metadata makes the PR description that `/prepare-pr` writes much more accurate, but it's optional — `/prepare-pr` works without it by analyzing the diff directly.
+```markdown
+### Completion
+- **Status**: ✅ complete — 2026-08-06
+- **Deviations**: extracted the guard into `lib/permissions.ts` instead of inlining it
+  in the handler; the plan assumed one call site and there were three
+- **Waived or unproven**: the audit-table write has no local sink, so the phase's tests
+  cover the call but not the row landing
+- **Later phases must know**: the guard now takes a `scope` argument, so Phase 3's
+  endpoint list needs it too
+```
+
+Write `none` where a field genuinely has nothing, rather than deleting the field — a missing field reads as "the agent forgot," and `none` reads as "checked, nothing to report."
+
+The next phase is likely a fresh agent with no memory of yours, and the plan is the only file it's guaranteed to read. Anything it needs from you goes here or it's gone.
+
+Keep this distinct from the review metadata below. The split is by audience:
+
+- **Completion block** — what changed *relative to the plan*. Read by the next phase and by `/iterate-plan`.
+- **Review metadata** — per-file Critical / Mechanical / Tests triage. Read by `/prepare-pr`.
+
+If a plan predates this convention and has no `### Completion` blocks, don't retrofit them mid-implementation — record the same information in your review-metadata section instead.
+
+## Review Metadata (write silently — never surface it)
+
+`/prepare-pr` needs a **per-file Critical / Mechanical / Tests triage** so it doesn't have to re-derive one from a large diff. That triage is only cheap to write while you still hold the reasoning for the code you just wrote — so it is built up **incrementally, at the end of every phase**, never reconstructed wholesale at the end.
+
+**Write your section when the phase's automated checks pass, before the pause message.** Do this on every phase, including when you're running several back-to-back and skipping the intermediate pauses. Assume the next phase runs in a fresh context with no memory of yours: anything a later phase or `/prepare-pr` needs from you has to be on disk before you stop.
+
+### Where it lives
+
+Mirror the plan's filename into `thoughts/shared/review-metadata/`:
+
+```
+thoughts/shared/plans/YYYY-MM-DD-description.md
+thoughts/shared/review-metadata/YYYY-MM-DD-description.md
+```
+
+Same basename, always — that's how a fresh agent finds the file without guessing. **Read it before you write.** If it exists, append your section with Edit and leave the earlier ones alone; never Write over a file that already has phases in it. If it doesn't exist, create it from `review-metadata-template.md` in this skill's directory.
+
+### What each phase contributes
+
+One `## Phase N — <title>` section covering **only the files that phase touched**:
+
+- **Needs careful review** — `file.ext:45-89`, and what makes it load-bearing or security-sensitive. This is the part only you can write; an agent reading your diff later recovers it partially at best.
+- **Mechanical** — the boilerplate a reviewer can skim: type mirrors, import moves, copy-only edits.
+- **Tests** — what your phase's tests actually prove, and **what they don't**. If something can't be proven (an out-of-band sink, a flow with no local harness, a step the user waived), say so here so the PR states it plainly instead of implying proof.
+- **Deliberate non-fixes** — anything known-imperfect you consciously left alone. It reads as an oversight in review unless the metadata says it was a decision.
+
+Deviations go wherever they aren't already: if the plan carries a per-phase completion block, cross-reference it and pull forward only the deviations that change how a reviewer should read the diff. If it doesn't, record them here.
+
+### On the last phase
+
+After appending your own section, add a short `## Summary` — the cross-cutting reads no single phase owns: which files a reviewer should open first, what's left unproven across the whole change, and anything a later phase superseded in an earlier one.
+
+### If an earlier phase left no section
+
+Phases get skipped, and a plan can be resumed by an agent that never ran the earlier ones. Reconstruct what you can from the plan's completed-phase notes and `git diff`, and head each reconstructed section with `(reconstructed from the diff — not authored in-phase)`. That flag is the point: it tells `/prepare-pr` which triage came from the author and which from a reader.
+
+### Never surface it
+
+This file is plumbing between two skills, not a deliverable. **Do not mention it, offer it, or ask whether to write it** — not in phase-completion messages, not in the final summary, not as a follow-up suggestion. The user should never have to decide about it.
 
 ## Verification Approach
 
@@ -85,6 +145,7 @@ After implementing a phase:
 - Fix any issues before proceeding
 - Update your progress in both the plan and your todos
 - Check off completed items in the plan file itself using Edit
+- **Fill in the phase's `### Completion` block** — see "The Completion Block" above
 - **Pause for human verification**: After completing all automated verification for a phase, pause and inform the human that the phase is ready for manual testing. Use this format:
 
   ```
@@ -107,7 +168,7 @@ do not check off items in the manual testing steps until confirmed by the user.
 
 When things don't match the plan exactly:
 
-- **Small deviations** (function signature changed, slightly different file path): Note it in your review metadata and keep going. Mention it in your phase completion message.
+- **Small deviations** (function signature changed, slightly different file path): Record it where the Review Metadata section says deviations go, and keep going. Mention it in your phase completion message.
 - **Structural deviations** (approach won't work, missing dependency, wrong assumption): STOP and present the issue clearly:
 
   ```
@@ -140,5 +201,6 @@ If the plan has existing checkmarks:
 - Trust that completed work is done
 - Pick up from the first unchecked item
 - Verify previous work only if something seems off
+- Read the review-metadata file (same basename as the plan, under `thoughts/shared/review-metadata/`) to see which phases have already contributed a triage section — you append to it, you don't restart it
 
 Remember: You're implementing a solution, not just checking boxes. Keep the end goal in mind and maintain forward momentum.
