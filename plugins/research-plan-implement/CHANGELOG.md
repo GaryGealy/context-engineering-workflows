@@ -3,7 +3,7 @@
 All notable changes to the `research-plan-implement` plugin are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com).
 
-## [Unreleased]
+## [4.1.0] - 2026-08-15
 
 The `### Completion` block and the incremental review metadata below come from
 one gap: the templates assumed a single agent spanning every phase of a plan,
