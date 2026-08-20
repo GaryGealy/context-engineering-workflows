@@ -36,6 +36,10 @@ Install hints if a CLI is missing:
 - GitHub: https://cli.github.com
 - GitLab: https://gitlab.com/gitlab-org/cli
 
+## Detecting the editors
+
+Which editors run the workflow decides one thing only: whether setup writes `.vscode/settings.json` (see `adaptation.md`). Look for `.vscode/` in the project and `~/.claude/` on the machine, and treat both as present-until-contradicted rather than exclusive — plenty of teams run both. Confirm in Step 3; don't infer silently.
+
 ## Presenting findings
 
 Show what you found as a compact list — language, framework, package manager, test/lint/format/build/typecheck commands, database, issue tracking, and whether `thoughts/` exists. Mark anything you couldn't determine as needing input rather than guessing.

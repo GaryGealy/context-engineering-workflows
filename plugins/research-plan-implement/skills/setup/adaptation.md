@@ -32,6 +32,20 @@ Otherwise the generated skills reference an agent that doesn't exist.
 
 `reference/scripts/herdr-phase.sh` is project-agnostic — no commands, paths, or tooling to adapt. Copy it **verbatim** to `.claude/scripts/herdr-phase.sh` and `chmod +x` it. Do not rewrite it. It no-ops outside herdr, so install it unconditionally; each phase skill already calls it.
 
+## VS Code Copilot chat
+
+VS Code reads `.claude/skills/` and `.claude/agents/` directly and maps Claude frontmatter as it loads: `model: opus|sonnet|haiku` to the matching Copilot models, and `Bash`, `Grep`, `Glob`, `Read`, `Edit`, `Write`, `WebSearch`, `WebFetch`, `Task` to its own tools. Generate one set of files; both editors read them. There is no second copy to keep in sync.
+
+Two tool names have no equivalent and get dropped from an agent's `tools`: `LS` and `TodoWrite`. Leave both in place — Claude Code uses them, and neither is load-bearing on the VS Code side.
+
+What Copilot does need is the setting. If it's a target, merge into `.vscode/settings.json`:
+
+```json
+{ "chat.useAgentSkills": true }
+```
+
+**Merge, don't overwrite.** Projects keep real configuration there. Read what exists, add the one key, and leave the rest — including formatting and comments — untouched. Create the file only if it's absent.
+
 ## What must survive adaptation
 
 Four behaviors carry the workflow. Change the tooling around them freely; if any of them doesn't make it into the generated files, the adaptation failed.

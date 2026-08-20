@@ -45,7 +45,8 @@ Ask for whatever you couldn't detect, batched into as few turns as possible — 
 1. **Thoughts directory** — use an existing `thoughts/`, or create one? What structure (`shared/research/` and `shared/plans/`, or custom)?
 2. **Additional commands** — any custom verification commands or project-specific testing notes to fold in?
 3. **Gitignore** — if `thoughts/` isn't ignored, recommend adding it: these are working artifacts, not source, and keeping them out of git keeps PRs clean. If thoughts files are already tracked, offer `git rm --cached -r thoughts/` to untrack without deleting.
-4. **Confirm** — ready to generate?
+4. **Editors** — will this workflow run in Claude Code, VS Code Copilot chat, or both? The generated files are identical either way; the answer only decides whether setup also writes `.vscode/settings.json`. Lead with whatever you detected.
+5. **Confirm** — ready to generate?
 
 ## Step 4: Read the reference templates
 
@@ -92,6 +93,8 @@ Read `adaptation.md` and work through the templates. The core of this skill is h
     └── branch-ticket-detector.md     # if an issue tracker is configured
 ```
 
+If VS Code Copilot chat is one of the targets from Step 3, also merge `"chat.useAgentSkills": true` into `.vscode/settings.json` — see `adaptation.md`. Without it the skills sit on disk and never load.
+
 Write `.claude/.rpi-version` alongside them (see `upgrade.md` for what reads it):
 
 ```
@@ -109,6 +112,7 @@ Created research-design-plan-implement workflow in .claude/
 Generated files:
 - 7 skills: /research-codebase, /design, /create-plan, /iterate-plan, /implement-plan, /prepare-pr, /guide
 - [N] agents: query-planner, codebase-locator, codebase-analyzer, pattern-finder, web-search-researcher, [+thoughts agents if enabled]
+- 1 settings merge: .vscode/settings.json — chat.useAgentSkills (only if VS Code Copilot is a target)
 - 1 script: scripts/herdr-phase.sh — tags each tab with its workflow phase in the herdr sidebar (no-op outside herdr; run /guide herdr to learn more)
 
 Adapted for your project:
