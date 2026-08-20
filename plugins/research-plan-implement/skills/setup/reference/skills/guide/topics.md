@@ -388,6 +388,37 @@ bash .claude/scripts/herdr-phase.sh clear    # strip the marker, keep the featur
 - Safe no-op outside herdr (CI, plain terminals, headless agents) — nothing to configure.
 - Each worktree picks this up once its branch contains the script + skill changes.
 
+## Topic: copilot
+
+### Running This Workflow in VS Code Copilot Chat
+
+The generated files work unchanged in VS Code's Copilot chat. VS Code scans `.claude/skills/` and `.claude/agents/` alongside its own `.github/` equivalents, so there is nothing to port and nothing to keep in sync.
+
+**Enable it** — one setting, in workspace or user settings:
+
+```json
+{ "chat.useAgentSkills": true }
+```
+
+Then type `/` in the chat input. The phase skills appear as slash commands, the same as in Claude Code.
+
+**What VS Code maps for you:**
+
+| Frontmatter | Becomes |
+|-------------|---------|
+| `model: opus` / `sonnet` / `haiku` | Claude Opus 4.6 / Sonnet 4.5 / Haiku 4.5 (copilot) |
+| `Bash` | `execute` |
+| `Grep` / `Glob` | `search/textSearch` / `search/fileSearch` |
+| `Read` / `Edit` / `Write` | `read/readFile` / `edit/editFiles` / `edit/createFile` |
+| `WebSearch` / `WebFetch` | `web` |
+| `Task` | `agent` — the subagent fan-out `/research-codebase` runs on |
+
+**What it drops:** `LS` and `TodoWrite` have no VS Code equivalent and are skipped from an agent's `tools` list. Neither is load-bearing — `Glob` covers directory listing, and todo tracking isn't what the research agents are for. `effort:` and `allowed-tools:` aren't in Copilot's schema either; its parser reads keys by name, so unknown ones sit inert rather than erroring.
+
+**Nested subagents** are off by default (`chat.subagents.allowInvocationsFromSubagents`). This workflow never needs them — a phase skill spawning research agents is one level deep.
+
+Verified against VS Code 1.132. These are internal mapping tables rather than a documented contract, so if a phase skill stops showing up under `/`, check that setting first.
+
 ## Attribution
 
 This workflow is inspired by **HumanLayer's** research on AI-assisted development, with additional influences from **CRISPY/Dex** (design-before-planning, instruction budgets) and **Simon Willison** (TDD, conformance-driven development).

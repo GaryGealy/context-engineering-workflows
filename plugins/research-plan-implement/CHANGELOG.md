@@ -3,6 +3,22 @@
 All notable changes to the `research-plan-implement` plugin are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com).
 
+## [Unreleased]
+
+### Added
+
+- Setup asks which editors will run the workflow. VS Code reads `.claude/skills/`
+  and `.claude/agents/` natively and maps Claude frontmatter on load — `model:
+  opus|sonnet|haiku` to the matching Copilot models, and `Bash`/`Grep`/`Glob`/
+  `Read`/`Edit`/`Write`/`WebSearch`/`WebFetch`/`Task` to its own tools — so the
+  generated files already run in Copilot chat unchanged. What was missing was the
+  one setting that loads them, `chat.useAgentSkills`, now merged into
+  `.vscode/settings.json` when Copilot is a target. Upgrades are offered the same
+  merge, since installs predating this won't have it.
+- `/guide copilot` — what VS Code maps, what it drops (`LS` and `TodoWrite` have
+  no equivalent and are skipped; neither is load-bearing), and why nested
+  subagents stay off.
+
 ## [4.1.0] - 2026-08-15
 
 The `### Completion` block and the incremental review metadata below come from

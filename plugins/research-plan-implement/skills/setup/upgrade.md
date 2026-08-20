@@ -118,8 +118,9 @@ Your project adaptations and any edits you made are preserved.
    - `.claude/commands/{research-codebase,create-plan,iterate-plan,implement-plan}.md` — migrated to skills
    - `.claude/commands/read-ticket.md` — retired; `branch-ticket-detector` fetches tickets now
    - `.claude/skills/review-changes/` — retired, folded into `/prepare-pr`
-5. Handle the thoughts gitignore if it isn't configured yet
-6. Show the summary and workflow tips (Steps 7-8 of the main skill)
+5. Ask whether they also run this workflow in VS Code Copilot chat. An install predating this option won't have `.vscode/settings.json` set up — if they say yes, merge the setting per `adaptation.md`.
+6. Handle the thoughts gitignore if it isn't configured yet
+7. Show the summary and workflow tips (Steps 7-8 of the main skill)
 
 ## Step U4: Create missing directories
 

@@ -121,6 +121,27 @@ The plugin creates this structure in your project:
     └── web-search-researcher.md
 ```
 
+### Editors
+
+The generated files run in **Claude Code** and **VS Code Copilot chat** from a single copy — VS Code scans `.claude/skills/` and `.claude/agents/` alongside its own `.github/` equivalents, and maps Claude frontmatter as it loads:
+
+| Frontmatter | VS Code equivalent |
+|-------------|--------------------|
+| `model: opus` / `sonnet` / `haiku` | Claude Opus 4.6 / Sonnet 4.5 / Haiku 4.5 (copilot) |
+| `Bash` | `execute` |
+| `Grep` / `Glob` | `search/textSearch` / `search/fileSearch` |
+| `Read` / `Edit` / `Write` | `read/readFile` / `edit/editFiles` / `edit/createFile` |
+| `WebSearch` / `WebFetch` | `web` |
+| `Task` | `agent` — the subagent fan-out `/research-codebase` runs on |
+
+Copilot needs one setting to load them, which `/setup` merges into `.vscode/settings.json` when you name it as a target:
+
+```json
+{ "chat.useAgentSkills": true }
+```
+
+Type `/` in the Copilot chat input and the phase skills appear as slash commands. `LS` and `TodoWrite` have no VS Code equivalent and are dropped from an agent's tools; neither is load-bearing. Run `/guide copilot` for the full picture.
+
 ### Example: TypeScript/SvelteKit Project
 
 **Before running setup:**
