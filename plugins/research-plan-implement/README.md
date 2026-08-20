@@ -11,12 +11,12 @@ Analyzes your codebase, aligns on design, creates detailed plans, implements fea
 First, add this marketplace to Claude Code:
 
 1. Run `/marketplace add`
-2. Enter: `lucasnad27/claude-plugins`
+2. Enter: `GaryGealy/context-engineering-workflows`
 
 ### Install the Plugin
 
 ```bash
-/plugin add lucasnad27/claude-plugins/research-plan-implement
+/plugin add GaryGealy/context-engineering-workflows/research-plan-implement
 ```
 
 ### Upgrading from v1
