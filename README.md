@@ -1,6 +1,6 @@
-# Claude Code Plugins
+# Context Engineering Workflows
 
-A collection of Claude Code plugins for enhanced development workflows.
+Plugins that manage AI coding-agent context windows through intentional compaction. Runs in Claude Code and VS Code Copilot chat.
 
 ## Plugins
 
@@ -24,14 +24,16 @@ A comprehensive workflow plugin for managing AI agent context windows through in
 
 **Installation:**
 ```bash
-/plugin add lucasnad27/claude-plugins/research-plan-implement
+/plugin add GaryGealy/context-engineering-workflows/research-plan-implement
 ```
 
 [Read the full documentation →](plugins/research-plan-implement/README.md)
 
 ## Attribution
 
-This workflow is inspired by [HumanLayer's](https://humanlayer.dev) research on context engineering for AI-assisted development:
+The `research-plan-implement` plugin was created by [Lucas Culbertson](https://github.com/lucasnad27) in [lucasnad27/claude-plugins](https://github.com/lucasnad27/claude-plugins). This repository is a fork that continues it — most notably adding VS Code Copilot chat as a supported editor in v4.2.0.
+
+The workflow itself is inspired by [HumanLayer's](https://humanlayer.dev) research on context engineering for AI-assisted development:
 - **Website:** [humanlayer.dev](https://humanlayer.dev)
 - **GitHub:** [humanlayer/humanlayer](https://github.com/humanlayer/humanlayer)
 - **AI Engineering Talk:** [YouTube](https://youtu.be/rmvDxxNubIg?si=WtKgAdi6MydW8u-i)
