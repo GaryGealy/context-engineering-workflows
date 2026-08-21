@@ -15,17 +15,26 @@ A comprehensive workflow plugin for managing AI agent context windows through in
 - 📊 **Context Management** - Keep utilization at 40-60% for optimal results
 
 **Commands:**
-- `/research-codebase` - Research how features work
-- `/create-plan` - Create implementation plans
-- `/iterate-plan` - Update existing plans
-- `/implement-plan` - Execute plans with verification
-- `/workflow-guide` - Interactive workflow guide
-- `/setup` - Generate project-specific workflow
+- `/research-codebase` - Document how features work today
+- `/design` - Align on approach before planning
+- `/create-plan` - Turn a design into vertical phases with per-phase testing
+- `/iterate-plan` - Update an existing plan
+- `/implement-plan` - Execute phase-by-phase with verification
+- `/prepare-pr` - Commit, open the PR, write it as a review guide
+- `/guide` - Orientation any time; `/guide <topic>` for deep dives
+- `/setup` - Generate the project-specific workflow
 
 **Installation:**
-```bash
+
+Claude Code:
+```
+/plugin marketplace add GaryGealy/context-engineering-workflows
 /plugin add GaryGealy/context-engineering-workflows/research-plan-implement
 ```
+
+VS Code (Copilot chat) — `Cmd/Ctrl+Shift+P` → **Chat: Install Plugin From Source** → `GaryGealy/context-engineering-workflows`, then set `"chat.useAgentSkills": true`.
+
+Then run `/setup` in your project. Full instructions, including what teammates need (nothing), are in the [plugin README](plugins/research-plan-implement/README.md#installation).
 
 [Read the full documentation →](plugins/research-plan-implement/README.md)
 

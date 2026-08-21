@@ -6,18 +6,63 @@ Analyzes your codebase, aligns on design, creates detailed plans, implements fea
 
 ## Installation
 
-### Add the Marketplace
+This plugin is a **generator**. You install it once per machine, then run `/setup` in each project to produce that project's workflow files. Those files get committed, so teammates install nothing — see [For your teammates](#for-your-teammates).
 
-First, add this marketplace to Claude Code:
+### Claude Code
 
-1. Run `/marketplace add`
-2. Enter: `GaryGealy/context-engineering-workflows`
+Add the marketplace:
 
-### Install the Plugin
+```
+/plugin marketplace add GaryGealy/context-engineering-workflows
+```
 
-```bash
+Then install the plugin:
+
+```
 /plugin add GaryGealy/context-engineering-workflows/research-plan-implement
 ```
+
+### VS Code (Copilot chat)
+
+VS Code's Agent Plugins resolver reads `.claude-plugin/marketplace.json` as one of its four recognized manifest formats, so this repo installs as-is — there's no separate VS Code package.
+
+1. `Cmd/Ctrl+Shift+P` → **Chat: Install Plugin From Source**
+2. Enter `GaryGealy/context-engineering-workflows`
+3. Turn on agent skills in your settings:
+
+   ```json
+   { "chat.useAgentSkills": true }
+   ```
+
+Requires VS Code 1.108 or newer; on older builds the setting is named `github.copilot.chat.skillTool.enabled`.
+
+To browse it alongside your other plugins, open the Extensions view and filter by `@agentPlugins`. To subscribe to the whole marketplace rather than one plugin, add the repo to `chat.plugins.marketplaces` (or run **Chat: Manage Plugin Marketplaces**).
+
+### Then, in your project
+
+```bash
+cd my-project
+```
+
+```
+/setup     # generates this project's workflow files
+/guide     # orientation, any time
+```
+
+Name VS Code as a target during `/setup` and it also merges `chat.useAgentSkills` into `.vscode/settings.json` for you.
+
+### For your teammates
+
+They don't install the plugin. `/setup` writes real files into the repository:
+
+```
+.claude/skills/         # the phase commands
+.claude/agents/         # the research subagents
+.claude/scripts/        # herdr phase markers
+.vscode/settings.json   # chat.useAgentSkills, if VS Code is a target
+```
+
+Commit those and anyone who clones has the workflow. Claude Code picks it up automatically; VS Code picks it up too, since it scans `.claude/skills/` and `.claude/agents/` natively and the committed `.vscode/settings.json` supplies the setting. Run `/guide copilot` for what VS Code maps and what it drops.
 
 ### Upgrading from v1
 
