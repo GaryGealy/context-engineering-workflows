@@ -34,7 +34,7 @@ Claude Code:
 
 VS Code (Copilot chat) — `Cmd/Ctrl+Shift+P` → **Chat: Install Plugin From Source** → `GaryGealy/context-engineering-workflows`, then set `"chat.useAgentSkills": true`.
 
-Then run `/setup` in your project. Full instructions, including what teammates need (nothing), are in the [plugin README](plugins/research-plan-implement/README.md#installation).
+Then run `/research-plan-implement setup` in your project. Full instructions, including what teammates need (nothing), are in the [plugin README](plugins/research-plan-implement/README.md#installation).
 
 [Read the full documentation →](plugins/research-plan-implement/README.md)
 
