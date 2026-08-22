@@ -45,7 +45,7 @@ Ask for whatever you couldn't detect, batched into as few turns as possible — 
 1. **Thoughts directory** — use an existing `thoughts/`, or create one? What structure (`shared/research/` and `shared/plans/`, or custom)?
 2. **Additional commands** — any custom verification commands or project-specific testing notes to fold in?
 3. **Gitignore** — if `thoughts/` isn't ignored, recommend adding it: these are working artifacts, not source, and keeping them out of git keeps PRs clean. If thoughts files are already tracked, offer `git rm --cached -r thoughts/` to untrack without deleting.
-4. **Editors** — will this workflow run in Claude Code, VS Code Copilot chat, or both? The generated files are identical either way; the answer only decides whether setup also writes `.vscode/settings.json`. Lead with whatever you detected.
+4. **Editors** — will this workflow run in Claude Code, VS Code Copilot chat, or both? This one is load-bearing, not cosmetic: naming VS Code strips `model:` and `effort:` from every generated skill and agent, because a skill carrying `model:` hangs Copilot chat until VS Code is restarted (see `adaptation.md`). Claude Code-only installs keep those fields and the per-skill model pinning they buy; VS Code installs run everything on the model selected in chat. It also decides whether setup writes `.vscode/settings.json`. Lead with whatever you detected, and say what the tradeoff costs if they pick both.
 5. **Confirm** — ready to generate?
 
 ## Step 4: Read the reference templates
@@ -93,7 +93,10 @@ Read `adaptation.md` and work through the templates. The core of this skill is h
     └── branch-ticket-detector.md     # if an issue tracker is configured
 ```
 
-If VS Code Copilot chat is one of the targets from Step 3, also merge `"chat.useAgentSkills": true` into `.vscode/settings.json` — see `adaptation.md`. Without it the skills sit on disk and never load.
+If VS Code Copilot chat is one of the targets from Step 3, two things change — both covered in `adaptation.md`:
+
+1. **Strip `model:` and `effort:`** from every generated `SKILL.md` and agent file. Non-negotiable: leaving `model:` in place hangs Copilot chat on invocation, and recovery is a full VS Code restart.
+2. **Merge** `"chat.useAgentSkills": true` into `.vscode/settings.json`.
 
 Write `.claude/.rpi-version` alongside them (see `upgrade.md` for what reads it):
 
@@ -113,6 +116,7 @@ Generated files:
 - 7 skills: /research-codebase, /design, /create-plan, /iterate-plan, /implement-plan, /prepare-pr, /guide
 - [N] agents: query-planner, codebase-locator, codebase-analyzer, pattern-finder, web-search-researcher, [+thoughts agents if enabled]
 - 1 settings merge: .vscode/settings.json — chat.useAgentSkills (only if VS Code Copilot is a target)
+- model:/effort: frontmatter — [kept for Claude Code | stripped, since VS Code Copilot is a target]
 - 1 script: scripts/herdr-phase.sh — tags each tab with its workflow phase in the herdr sidebar (no-op outside herdr; run /guide herdr to learn more)
 
 Adapted for your project:
