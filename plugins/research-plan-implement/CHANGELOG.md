@@ -22,6 +22,18 @@ Format based on [Keep a Changelog](https://keepachangelog.com).
   ids like `'Claude Sonnet 4.5 (copilot)'` rather than the bare `sonnet` these
   templates carry, and whether a bare value hangs an agent is unconfirmed. A
   mid-workflow restart is expensive enough to guess safely.
+- **The `/setup` skill itself no longer carries `model:` or `effort:`.** It had
+  the bug it fixes: the README tells VS Code users to install the plugin into
+  Copilot and run `/setup` there, and that invocation hung on the skill's own
+  `model: opus`. Setup now runs on the session's selected model in both editors
+  and says so up front, asking the user to switch if the session is on something
+  small — it reads a whole codebase and writes fifteen files.
+- The strip is now done by `scripts/strip-copilot-frontmatter.sh` rather than by
+  omitting lines while writing each file. Fifteen files edited by eye is one
+  missed `model:` away from a wedged editor, and the miss is invisible until a
+  user invokes that one skill. The script rewrites only the leading frontmatter
+  block, leaves body text alone, is idempotent, and re-scans afterwards so a
+  survivor fails the run instead of shipping.
 
 ### Changed
 

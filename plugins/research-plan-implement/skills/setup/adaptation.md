@@ -44,6 +44,8 @@ VS Code reads `.claude/skills/` and `.claude/agents/` directly, so both editors 
 
 Claude Code-only installs keep both fields — that is where they do their work (opus/xhigh for research and planning, haiku/low for guide). The cost of stripping them is that VS Code runs every skill on whichever model the user has selected in chat; it offers no per-skill override. That tradeoff is why Step 3 asks which editors are targets.
 
+**Strip mechanically, not by hand.** The reference templates keep `model:` and `effort:`, so every generated file starts out carrying them. Write the files normally and then run `scripts/strip-copilot-frontmatter.sh` over `.claude/skills` and `.claude/agents` (Step 6). Omitting the lines by eye across fifteen files is exactly the kind of thing that misses one, and one miss costs the user a wedged editor. The script touches only the leading frontmatter block, leaves body text alone, is idempotent, and verifies itself before exiting.
+
 Everything else about the generated files is identical for both editors. The skill frontmatter is the only thing to branch on.
 
 ### Agent frontmatter: strip `model:` and `effort:` too, for now

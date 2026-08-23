@@ -1,8 +1,6 @@
 ---
 name: setup
 description: Generate project-specific research/plan/implement workflow by analyzing your project and intelligently adapting reference templates
-model: opus
-effort: high
 ---
 
 # Setup Research-Plan-Implement Workflow
@@ -14,8 +12,15 @@ Supporting references in this skill's directory (`${CLAUDE_SKILL_DIR}`) — read
 - **`detection.md`** — what to read, what to extract, how to fill gaps (Steps 1-2)
 - **`adaptation.md`** — how to adapt each template: what must survive, what register to write in, where to use judgment (Step 5)
 - **`upgrade.md`** — upgrading an existing install: telling a user's customizations apart from stale template, and the migration paths
+- **`scripts/strip-copilot-frontmatter.sh`** — run over the generated tree when VS Code is a target (Step 6); a setup-time tool, not copied into the project
 
 ## Before You Start
+
+This skill carries no `model:` or `effort:` frontmatter, for the same reason it strips
+those fields from what it generates: a `model:` key hangs VS Code Copilot chat on
+invocation, and this skill has to be runnable in both editors. It reads a whole codebase
+and writes fifteen files, so it wants a capable model at high effort — if the session is
+on something small, say so and let the user switch before Step 1.
 
 Recommend the user create a branch first, so they can review the generated files as a diff:
 
@@ -95,7 +100,14 @@ Read `adaptation.md` and work through the templates. The core of this skill is h
 
 If VS Code Copilot chat is one of the targets from Step 3, two things change — both covered in `adaptation.md`:
 
-1. **Strip `model:` and `effort:`** from every generated `SKILL.md` and agent file. Non-negotiable: leaving `model:` in place hangs Copilot chat on invocation, and recovery is a full VS Code restart.
+1. **Strip `model:` and `effort:`** from every generated `SKILL.md` and agent file. Don't do this by hand while writing them — write the files normally, then run the script over the whole tree from the project root:
+
+   ```bash
+   bash "${CLAUDE_SKILL_DIR}/scripts/strip-copilot-frontmatter.sh"
+   ```
+
+   It edits only the leading frontmatter block, is idempotent, and re-scans afterwards to prove no field survived. A non-zero exit means a file is still carrying one — stop and fix it before telling the user setup succeeded. This is non-negotiable and mechanical for a reason: a single missed `model:` hangs Copilot chat on invocation, and recovery is a full VS Code restart.
+
 2. **Merge** `"chat.useAgentSkills": true` into `.vscode/settings.json`.
 
 Write `.claude/.rpi-version` alongside them (see `upgrade.md` for what reads it):
