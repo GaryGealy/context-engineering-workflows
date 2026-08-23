@@ -34,17 +34,42 @@ Otherwise the generated skills reference an agent that doesn't exist.
 
 ## VS Code Copilot chat
 
-VS Code reads `.claude/skills/` and `.claude/agents/` directly and maps Claude frontmatter as it loads: `model: opus|sonnet|haiku` to the matching Copilot models, and `Bash`, `Grep`, `Glob`, `Read`, `Edit`, `Write`, `WebSearch`, `WebFetch`, `Task` to its own tools. Generate one set of files; both editors read them. There is no second copy to keep in sync.
+VS Code reads `.claude/skills/` and `.claude/agents/` directly, so both editors load one set of files and there is no second copy to keep in sync. But they read frontmatter differently, and one difference will hang the editor.
 
-Two tool names have no equivalent and get dropped from an agent's `tools`: `LS` and `TodoWrite`. Leave both in place — Claude Code uses them, and neither is load-bearing on the VS Code side.
+### Strip `model:` and `effort:` from generated SKILL.md files
 
-What Copilot does need is the setting. If it's a target, merge into `.vscode/settings.json`:
+**When VS Code Copilot is a target, no generated `SKILL.md` may carry `model:` or `effort:`.**
+
+`model:` is not part of VS Code's SKILL.md spec — the documented fields are `name`, `description`, `argument-hint`, `user-invocable`, and `disable-model-invocation`. A skill carrying `model:` wedges the chat session when invoked: no output, no error, and no subsequent command works until VS Code is restarted. The key triggers it regardless of value, so a Copilot-format id like `'Claude Opus 4.5 (copilot)'` is not a workaround. `effort:` is undocumented the same way and goes with it.
+
+Claude Code-only installs keep both fields — that is where they do their work (opus/xhigh for research and planning, haiku/low for guide). The cost of stripping them is that VS Code runs every skill on whichever model the user has selected in chat; it offers no per-skill override. That tradeoff is why Step 3 asks which editors are targets.
+
+**Strip mechanically, not by hand.** The reference templates keep `model:` and `effort:`, so every generated file starts out carrying them. Write the files normally and then run `scripts/strip-copilot-frontmatter.sh` over `.claude/skills` and `.claude/agents` (Step 6). Omitting the lines by eye across fifteen files is exactly the kind of thing that misses one, and one miss costs the user a wedged editor. The script touches only the leading frontmatter block, leaves body text alone, is idempotent, and verifies itself before exiting.
+
+Everything else about the generated files is identical for both editors. The skill frontmatter is the only thing to branch on.
+
+### Agent frontmatter: strip `model:` and `effort:` too, for now
+
+VS Code *does* support `model:` on custom agents, but expects Copilot ids like `'Claude Sonnet 4.5 (copilot)'` — not the bare `sonnet` these templates carry. Whether a bare value hangs an agent the way it hangs a skill is **unverified**. Until it is, strip both fields from generated agents when VS Code is a target: the failure mode is severe enough (a restart, mid-workflow) that guessing the safe way is worth the lost pinning.
+
+### The setting
+
+If Copilot is a target, merge into `.vscode/settings.json`:
 
 ```json
 { "chat.useAgentSkills": true }
 ```
 
 **Merge, don't overwrite.** Projects keep real configuration there. Read what exists, add the one key, and leave the rest — including formatting and comments — untouched. Create the file only if it's absent.
+
+Note that current VS Code docs describe `chat.agentSkillsLocations` instead, and list `.claude/skills` among its defaults, with skills enabled by default since 1.109 — so this merge may be a no-op on current builds. It is harmless, and kept for older ones.
+
+### Unverified claims to re-check before relying on them
+
+Earlier versions of this file asserted a frontmatter mapping that turned out not to exist. Two neighbouring claims came from the same source and have **not** been confirmed:
+
+- That VS Code maps `Bash`/`Grep`/`Glob`/`Read`/`Edit`/`Write`/`WebSearch`/`WebFetch`/`Task` in an agent's `tools:` to its own tools. VS Code's own agent examples use names like `['read', 'search', 'web']`. A wrong tool name degrades an agent rather than hanging it, so this is lower severity — but don't cite it as fact.
+- That `LS` and `TodoWrite` are simply dropped. Same provenance, same status.
 
 ## What must survive adaptation
 

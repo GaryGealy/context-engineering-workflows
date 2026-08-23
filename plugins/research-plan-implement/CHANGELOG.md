@@ -3,6 +3,53 @@
 All notable changes to the `research-plan-implement` plugin are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com).
 
+## [Unreleased]
+
+### Fixed
+
+- **Skills generated for VS Code no longer carry `model:` or `effort:`.** A
+  `SKILL.md` with `model:` in its frontmatter hangs Copilot chat the moment the
+  skill is invoked — no output, no error, and every later command in the session
+  is dead until VS Code restarts. The key triggers it regardless of value, so a
+  Copilot-format id is not a workaround; `model:` simply is not in VS Code's
+  SKILL.md spec, which documents `name`, `description`, `argument-hint`,
+  `user-invocable`, and `disable-model-invocation`. Setup strips both fields when
+  VS Code is a target, and the upgrade path strips them from installs generated
+  by 4.2.0, where all seven skills carried them. Claude Code-only installs keep
+  the fields and the per-skill model pinning they buy.
+- Agents generated for VS Code have `model:` and `effort:` stripped as well. This
+  one is precautionary: VS Code supports `model:` on custom agents but expects
+  ids like `'Claude Sonnet 4.5 (copilot)'` rather than the bare `sonnet` these
+  templates carry, and whether a bare value hangs an agent is unconfirmed. A
+  mid-workflow restart is expensive enough to guess safely.
+- **The `/setup` skill itself no longer carries `model:` or `effort:`.** It had
+  the bug it fixes: the README tells VS Code users to install the plugin into
+  Copilot and run `/setup` there, and that invocation hung on the skill's own
+  `model: opus`. Setup now runs on the session's selected model in both editors
+  and says so up front, asking the user to switch if the session is on something
+  small — it reads a whole codebase and writes fifteen files.
+- The strip is now done by `scripts/strip-copilot-frontmatter.sh` rather than by
+  omitting lines while writing each file. Fifteen files edited by eye is one
+  missed `model:` away from a wedged editor, and the miss is invisible until a
+  user invokes that one skill. The script rewrites only the leading frontmatter
+  block, leaves body text alone, is idempotent, and re-scans afterwards so a
+  survivor fails the run instead of shipping.
+
+### Changed
+
+- 4.2.0 documented a frontmatter mapping table — `model: opus` resolving to
+  Claude Opus, `Bash` to `execute`, and so on — and stated that unrecognized keys
+  "sit inert rather than erroring." The hang above disproves that, and the table
+  was never sourced from documented VS Code behaviour. It is retracted from
+  `adaptation.md`, `/guide copilot`, and the README. The tool-name half is now
+  marked unverified rather than restated: VS Code's own agent examples use names
+  like `['read', 'search', 'web']`, and a wrong tool name should degrade an agent
+  rather than hang it.
+- `chat.useAgentSkills` is still merged when VS Code is a target, but no longer
+  described as required. Current VS Code documents `chat.agentSkillsLocations`,
+  lists `.claude/skills` among its defaults, and has had skills on by default
+  since 1.109.
+
 ## [4.2.0] - 2026-08-20
 
 ### Added
