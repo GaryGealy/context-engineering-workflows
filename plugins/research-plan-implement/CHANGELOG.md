@@ -3,7 +3,11 @@
 All notable changes to the `research-plan-implement` plugin are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com).
 
-## [Unreleased]
+## [5.0.0] - 2026-08-27
+
+Breaking: a workflow command changed name. `/design` is now `/design-doc`.
+Existing installs keep working until you re-run `/setup`, which renames the
+skill and asks before removing the old directory.
 
 ### Changed
 
