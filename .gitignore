@@ -1,2 +1,4 @@
 .claude/settings.local.json
 thoughts/
+.DS_Store
+out.txt
