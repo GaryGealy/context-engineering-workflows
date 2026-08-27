@@ -79,7 +79,7 @@ Read `adaptation.md` and work through the templates. The core of this skill is h
 .claude/
 ├── skills/
 │   ├── research-codebase/SKILL.md
-│   ├── design/SKILL.md + template.md
+│   ├── design-doc/SKILL.md + template.md
 │   ├── create-plan/SKILL.md + template.md
 │   ├── iterate-plan/SKILL.md
 │   ├── implement-plan/SKILL.md + review-metadata-template.md
@@ -97,6 +97,8 @@ Read `adaptation.md` and work through the templates. The core of this skill is h
     ├── thoughts-locator.md           # if thoughts/ enabled
     └── branch-ticket-detector.md     # if an issue tracker is configured
 ```
+
+**Keep these directory names exactly as written.** They double as the skill names users type, and each one is chosen to clear Claude Code's built-in skills. `design-doc` in particular must not be shortened to `design`: that name belongs to a built-in (Claude Design's canvas tool), which wins the collision and leaves the generated skill uninvokable.
 
 If VS Code Copilot chat is one of the targets from Step 3, two things change — both covered in `adaptation.md`:
 
@@ -125,7 +127,7 @@ The phase skills invoke the script via `"$(git rev-parse --show-toplevel)/.claud
 Created research-design-plan-implement workflow in .claude/
 
 Generated files:
-- 7 skills: /research-codebase, /design, /create-plan, /iterate-plan, /implement-plan, /prepare-pr, /guide
+- 7 skills: /research-codebase, /design-doc, /create-plan, /iterate-plan, /implement-plan, /prepare-pr, /guide
 - [N] agents: query-planner, codebase-locator, codebase-analyzer, pattern-finder, web-search-researcher, [+thoughts agents if enabled]
 - 1 settings merge: .vscode/settings.json — chat.useAgentSkills (only if VS Code Copilot is a target)
 - model:/effort: frontmatter — [kept for Claude Code | stripped, since VS Code Copilot is a target]
@@ -140,12 +142,12 @@ Adapted for your project:
 - Issue tracking: [detected system]
 
 Workflow:
-  /research-codebase -> /design -> /create-plan -> /implement-plan -> /prepare-pr
+  /research-codebase -> /design-doc -> /create-plan -> /implement-plan -> /prepare-pr
   /guide (run anytime for orientation)
 
 Quick start:
   /research-codebase "How does authentication work?"
-  /design thoughts/shared/research/2026-01-05-auth-flow.md
+  /design-doc thoughts/shared/research/2026-01-05-auth-flow.md
   /create-plan thoughts/shared/designs/2026-01-05-auth-redesign.md
   /implement-plan thoughts/shared/plans/2026-01-05-auth-redesign.md
   /prepare-pr
@@ -165,7 +167,7 @@ RESEARCH (/research-codebase)
    Sub-agents handle messy file discovery
    Output: Clean research document with findings
 
-DESIGN (/design)
+DESIGN (/design-doc)
    Lightweight ~200-line alignment artifact
    Captures: current state, desired end state, patterns, testing approach
    This is your highest-leverage review moment

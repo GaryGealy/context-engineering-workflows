@@ -76,7 +76,7 @@ Note: v2 moves generated files from `.claude/commands/` to `.claude/skills/` to 
 2. Run setup: `/setup`
 3. Learn the workflow: `/guide`
 4. Start researching: `/research-codebase "How does auth work?"`
-5. Align on design: `/design thoughts/shared/research/2026-04-02-auth.md`
+5. Align on design: `/design-doc thoughts/shared/research/2026-04-02-auth.md`
 
 ## What You Get
 
@@ -86,7 +86,7 @@ Note: v2 moves generated files from `.claude/commands/` to `.claude/skills/` to 
 
 **Generated Skills** (after running `/setup`):
 - `/research-codebase` - Research using parallel sub-agents, create research documents
-- `/design` - Align on design approach through collaborative discussion before planning
+- `/design-doc` - Align on design approach through collaborative discussion before planning
 - `/create-plan` - Create detailed implementation plans through interactive research
 - `/iterate-plan` - Update plans based on feedback or new discoveries
 - `/implement-plan` - Execute plans with automated verification and testing checkpoints
@@ -282,7 +282,7 @@ This spawns parallel agents to:
 ### 2. Align on Design
 
 ```bash
-/design thoughts/shared/research/2026-04-02-auth-research.md
+/design-doc thoughts/shared/research/2026-04-02-auth-research.md
 ```
 
 This:
@@ -469,7 +469,7 @@ Generated files moved from `.claude/commands/` to `.claude/skills/`. Re-run `/se
 ### Design Example
 
 ```bash
-/design thoughts/shared/research/2026-04-02-database-migrations.md
+/design-doc thoughts/shared/research/2026-04-02-database-migrations.md
 ```
 
 **Process:**

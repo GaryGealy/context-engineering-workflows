@@ -30,7 +30,7 @@ When this command is invoked:
 
    ```
    I'll help you create an implementation plan. Please provide:
-   1. The design document (from /design) — required
+   1. The design document (from /design-doc) — required
    2. Optionally, the research doc or ticket reference
 
    Tip: /create-plan thoughts/shared/designs/2026-01-05-auth-redesign.md
