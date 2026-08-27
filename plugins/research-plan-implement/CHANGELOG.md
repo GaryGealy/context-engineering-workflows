@@ -3,6 +3,23 @@
 All notable changes to the `research-plan-implement` plugin are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com).
 
+## [Unreleased]
+
+### Changed
+
+- **The generated `/design` skill is now `/design-doc`.** `design` is the name of
+  a Claude Code built-in (Claude Design's canvas tool), and the built-in wins the
+  collision: the generated skill never appears in the session's skill listing, so
+  the second phase of the workflow is uninvokable on a fresh install while the
+  other six skills work. The template directory, the skill's `name` field, and
+  every cross-reference in the generated skills now use `design-doc`. The six
+  other generated names were checked against the built-in set and are clear.
+- Upgrades rename an existing install: the summary shown before an upgrade gains
+  a RENAMED section, and `.claude/skills/design/` is removed after
+  `design-doc/` is written — asked for first, like the other retired paths.
+  Leaving the old directory behind would leave a skill that still loses the name
+  race and never runs.
+
 ## [4.2.1] - 2026-08-23
 
 ### Fixed

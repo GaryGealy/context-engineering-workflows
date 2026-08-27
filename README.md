@@ -18,7 +18,7 @@ A comprehensive workflow plugin for managing AI agent context windows through in
 **Commands:**
 
 - `/research-codebase` - Document how features work today
-- `/design` - Align on approach before planning
+- `/design-doc` - Align on approach before planning
 - `/create-plan` - Turn a design into vertical phases with per-phase testing
 - `/iterate-plan` - Update an existing plan
 - `/implement-plan` - Execute phase-by-phase with verification

@@ -7,7 +7,7 @@ Present the content for the requested topic. Keep it practical and scannable.
 ### The Workflow
 
 ```
-/research-codebase → /design → /create-plan → /implement-plan → /prepare-pr
+/research-codebase → /design-doc → /create-plan → /implement-plan → /prepare-pr
                                 /guide (run anytime)
 ```
 
@@ -20,7 +20,7 @@ This workflow uses **intentional compaction** — periodically pausing work and 
 **The five phases:**
 
 1. **Research** (`/research-codebase`) — Explore the codebase. Sub-agents do the messy file discovery. Output: clean research document. Run it with no arguments and it detects the ticket from your current branch and researches against that.
-2. **Design** (`/design`) — ~200-line alignment artifact. Current state, desired end state, patterns, testing approach. Your highest-leverage review moment.
+2. **Design** (`/design-doc`) — ~200-line alignment artifact. Current state, desired end state, patterns, testing approach. Your highest-leverage review moment.
 3. **Plan** (`/create-plan`) — Vertical implementation phases with per-phase testing. Takes the design as input — decisions are already made.
 4. **Implement** (`/implement-plan`) — Testing-aware, phase-by-phase execution. Generates review metadata as it goes.
 5. **Review** (`/prepare-pr`) — Commit, open the PR, and write its description as a guided tour of the diff: critical vs mechanical changes. Can also update an existing PR's description.
@@ -235,7 +235,7 @@ This workflow uses **intentional compaction** — periodically pausing work and 
 **Greenfield Feature:**
 ```bash
 /research-codebase "How are similar features implemented?"
-/design thoughts/shared/research/2026-01-05-feature.md
+/design-doc thoughts/shared/research/2026-01-05-feature.md
 /create-plan thoughts/shared/designs/2026-01-05-feature.md
 /implement-plan thoughts/shared/plans/2026-01-05-feature.md
 /prepare-pr
@@ -244,7 +244,7 @@ This workflow uses **intentional compaction** — periodically pausing work and 
 **Bug Fix:**
 ```bash
 /research-codebase "Why is X failing?"
-/design thoughts/shared/research/2026-01-05-bug.md
+/design-doc thoughts/shared/research/2026-01-05-bug.md
 /create-plan thoughts/shared/designs/2026-01-05-bug.md
 /implement-plan thoughts/shared/plans/2026-01-05-bug.md
 /prepare-pr
@@ -253,7 +253,7 @@ This workflow uses **intentional compaction** — periodically pausing work and 
 **Refactoring:**
 ```bash
 /research-codebase "How does module X work currently?"
-/design thoughts/shared/research/2026-01-05-refactor.md
+/design-doc thoughts/shared/research/2026-01-05-refactor.md
 /create-plan thoughts/shared/designs/2026-01-05-refactor.md
 /implement-plan thoughts/shared/plans/2026-01-05-refactor.md
 /prepare-pr
@@ -263,7 +263,7 @@ This workflow uses **intentional compaction** — periodically pausing work and 
 ```bash
 # Day 1: Research, design, plan
 /research-codebase "How should feature X integrate?"
-/design thoughts/shared/research/2026-01-05-feature.md
+/design-doc thoughts/shared/research/2026-01-05-feature.md
 /create-plan thoughts/shared/designs/2026-01-05-feature.md
 
 # Day 2+: Implement (resumes from last checkpoint)
@@ -375,7 +375,7 @@ When you run inside [herdr](https://herdr.dev), each phase skill tags its own ta
 
 **Glyphs:** 🔬 research · 🎨 design · 📋 plan · 🔨 implement · 🔍 review
 
-**How it works:** each phase skill (`/research-codebase`, `/design`, `/create-plan`, `/iterate-plan`, `/implement-plan`, `/prepare-pr`) runs `.claude/scripts/herdr-phase.sh <phase>` as its first action. It rewrites *this tab's* label, swapping any prior phase glyph for the new one — so `336-global-sidebar` becomes `🎨 336-global-sidebar` during design, then `🔨 336-global-sidebar` during implementation. It persists until the next phase skill overwrites it.
+**How it works:** each phase skill (`/research-codebase`, `/design-doc`, `/create-plan`, `/iterate-plan`, `/implement-plan`, `/prepare-pr`) runs `.claude/scripts/herdr-phase.sh <phase>` as its first action. It rewrites *this tab's* label, swapping any prior phase glyph for the new one — so `336-global-sidebar` becomes `🎨 336-global-sidebar` during design, then `🔨 336-global-sidebar` during implementation. It persists until the next phase skill overwrites it.
 
 **Manual override** — set or clear a tab's phase without invoking a skill:
 
