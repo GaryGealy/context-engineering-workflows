@@ -19,7 +19,7 @@ Add the marketplace:
 Then install the plugin:
 
 ```
-/plugin add GaryGealy/context-engineering-workflows/research-plan-implement
+/plugin install research-plan-implement@research-plan-implement-workflow
 ```
 
 ### VS Code (Copilot chat)
