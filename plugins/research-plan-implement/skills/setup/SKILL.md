@@ -59,7 +59,7 @@ All paths below are relative to this skill's directory (`${CLAUDE_SKILL_DIR}`), 
 
 **Script:** `reference/scripts/herdr-phase.sh` — copied verbatim, never adapted
 
-Some skill directories also carry a `template.md` or `review-metadata-template.md`. These are progressive-disclosure files the generated skill loads on demand — copy them alongside their SKILL.md.
+Some skill directories also carry a sibling file — `template.md`, `review-metadata-template.md`, `topics.md`, `tuicr-walkthrough.md`. These are progressive-disclosure files the generated skill loads on demand — copy them alongside their SKILL.md.
 
 ## Step 5: Adapt each template
 
@@ -75,7 +75,7 @@ Read `adaptation.md` and work through the templates. The core of this skill is h
 │   ├── create-plan/SKILL.md + template.md
 │   ├── iterate-plan/SKILL.md
 │   ├── implement-plan/SKILL.md + review-metadata-template.md
-│   ├── prepare-pr/SKILL.md
+│   ├── prepare-pr/SKILL.md + tuicr-walkthrough.md
 │   └── guide/SKILL.md + topics.md
 ├── scripts/
 │   └── herdr-phase.sh                # verbatim, chmod +x
@@ -163,8 +163,9 @@ IMPLEMENT (/implement-plan)
 
 REVIEW (/prepare-pr)
    Commits outstanding work and opens the PR
-   Writes the PR description as a review guide
-   Guides human attention through the diff: critical vs mechanical
+   Lands a numbered review guide: a short index in the description,
+   the detail as inline comments anchored to the diff
+   Optionally walks the PR with you in tuicr, stop by stop
 
 ORIENTATION (/guide)
    Run anytime to see where you are and what's next
@@ -173,7 +174,7 @@ Key Success Factors:
   Always research before designing
   Design is your highest-leverage review moment
   Plans use vertical slices with per-phase testing
-  Run /prepare-pr to commit, open the PR, and write its review-guide description
+  Run /prepare-pr to commit, open the PR, and land the review guide as inline stops
   Run /guide if you forget where you are
 
 Attribution:

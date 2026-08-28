@@ -40,6 +40,7 @@ Plans are carefully designed, but reality can be messy. Your job is to:
 - Implement each phase fully before moving to the next
 - Verify your work makes sense in the broader codebase context
 - Update checkboxes in the plan as you complete sections
+- **Fix the root cause, not the symptom.** A phase that names a bug names a symptom. Before editing, check every caller of the function you're about to touch — one guard in the shared function is both the smaller diff and the real fix, where a guard per call site leaves every caller nobody filed a ticket about still broken.
 
 ## Testing-Aware Implementation
 
@@ -70,6 +71,35 @@ Before implementing each phase, read its Verification section and adapt your wor
 2. Run whatever automated checks exist (lint, typecheck, build, existing tests)
 
 The testing approach was decided in `/design` and specified per-phase in `/create-plan`. Follow it — don't decide on a different approach.
+
+## Comments: default to none
+
+Implementing from a plan makes over-commenting easy: you finish a phase holding all the design rationale in context, and the reflex is to park it in the source. **The plan and the design doc are where rationale lives. The source is not.**
+
+A comment has to survive two tests before you write it:
+
+- **Would a competent developer reading this code be surprised?** Not "is this interesting" — *surprised*. A non-obvious constraint, a workaround for a library's actual behavior, a deliberate omission that looks like a bug. If the code plainly says what it does, say nothing.
+- **Is it under three lines?** If it needs a paragraph, it's design rationale wearing a comment's clothes. Cut it to the single surprising fact, or leave it in the plan.
+
+Do **not** write:
+
+- **Narration** — "Fetch the user, then check the role." The call and the type already said that.
+- **History** — "previously X, now Y", "moved here in Phase 2", "this used to live in `utils/`". Git and the plan hold history.
+- **Symmetry notes** — "the read-only sibling of the helper above." Ambient structure, not a question.
+- **Justification of the ordinary** — why you validated input, wrapped a multi-statement write in a transaction, or followed an established repo pattern. Following the convention is the default; it needs no defense.
+- **Restated design decisions** — the reasoning chain for a choice already argued in the design doc. Keep the one-line verdict if the code looks wrong without it; drop the argument.
+
+Do write, tersely:
+
+```
+// The unique index spans soft-removed rows, so a re-add has to clear the tombstone first.
+```
+
+That names a fact invisible in the code, which would cause a real bug if someone "simplified" it away.
+
+A deliberate simplification with a known ceiling — a global lock, an O(n^2) scan over a list you're assuming stays small — belongs in the phase's `### Completion` block under **Waived or unproven**, where `/prepare-pr` will find it. Add a one-line comment at the call site *as well* only when the ceiling can't be seen from the code.
+
+When a phase completes, re-read every comment you added in it and delete the ones that don't clear both bars. Comment fluff is cheaper to cut at the end of a phase than to argue about in review.
 
 ## The Completion Block
 

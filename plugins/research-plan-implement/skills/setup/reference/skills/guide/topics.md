@@ -23,7 +23,7 @@ This workflow uses **intentional compaction** — periodically pausing work and 
 2. **Design** (`/design`) — ~200-line alignment artifact. Current state, desired end state, patterns, testing approach. Your highest-leverage review moment.
 3. **Plan** (`/create-plan`) — Vertical implementation phases with per-phase testing. Takes the design as input — decisions are already made.
 4. **Implement** (`/implement-plan`) — Testing-aware, phase-by-phase execution. Generates review metadata as it goes.
-5. **Review** (`/prepare-pr`) — Commit, open the PR, and write its description as a guided tour of the diff: critical vs mechanical changes. Can also update an existing PR's description.
+5. **Review** (`/prepare-pr`) — Commit, open the PR, and land a numbered review guide: a short index in the description, the detail as inline comments anchored to the diff. Can also write a guide onto a PR opened outside the loop.
 
 **Strategic human review points:**
 
@@ -175,25 +175,30 @@ This workflow uses **intentional compaction** — periodically pausing work and 
 
 ### Review Phase Deep Dive
 
-**Purpose:** Make reviewing large PRs fast and focused. Get a guided tour of what matters.
+**Purpose:** Make reviewing a large PR fast and focused, by saying where to look — anchored to the lines it's about.
 
 **When to use it:**
 - After implementation is complete — to commit and open the PR
-- When a PR already exists and just needs a good description (pass the PR number)
+- When a PR already exists and just needs a guide (pass the PR number)
 - When preparing a PR for a coworker's branch
 
-**The PR description (review guide) tells reviewers:**
-- What's critical (read carefully)
-- What's mechanical (safe to skim)
-- What's tested and what's not
-- Suggested review order
+**The review guide is a numbered list of stops.** A stop is a file, a line or range, a type, and a *claim to test* — not a description of what the code does. The reviewer can already see the code; what they can't see is what you want them to decide.
+
+One artifact, three places it appears:
+- **Inline review comments on the PR** — the detail, anchored to the line. Each is a resolvable thread, so reviewers tick stops off as they go.
+- **A numbered index in the PR description** — one line per stop, so the guide reads without opening the diff.
+- **A tuicr session**, if you walk it — GitHub review threads render natively in `tuicr pr <n>`, so a posted guide needs no seeding.
+
+**Stop types:** `issue` (you believe something is wrong), `note` (verify this is correct), `suggestion` (decide whether you accept this), `yagni` (an abstraction with one caller that could be inlined until it has two).
 
 **Best practices:**
-- Run `/prepare-pr` to commit, push, and open the PR in one pass
-- Pass an existing PR number to refresh its description if it was created outside the loop
-- Focus reading time on the "Critical Review" section
-- Use the test coverage map to identify risk areas
-- If something critical is untested, add tests before merging
+- 6-10 stops for a typical PR. Fewer than 4 isn't guiding; more than 12 emphasizes nothing.
+- Keep the description under 60 lines. If it's longer, the detail belongs in a stop.
+- Mechanical files get one line, not an inventory. A reviewer who wants the file list opens the Files tab.
+- Walk the PR with the author before anyone else is asked to look — findings become commits on the open PR.
+- If something critical is untested, say so under **Not tested** rather than implying proof.
+
+**Flags:** `--no-stops` keeps the whole guide in the description (use on forges without inline review comments); `--walk` / `--no-walk` forces or suppresses the tuicr walkthrough.
 
 ## Topic: context
 
@@ -313,7 +318,7 @@ This workflow uses **intentional compaction** — periodically pausing work and 
 - If blocked, update the plan — don't diverge
 
 **Review:**
-- Run /prepare-pr to commit, open the PR, and write its review-guide description
+- Run /prepare-pr to commit, open the PR, and land the review guide as inline stops
 - Focus on "Critical Review" sections
 - Check the test coverage map
 - Pass an existing PR number to refresh its description
