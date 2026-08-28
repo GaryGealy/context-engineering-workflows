@@ -14,7 +14,7 @@ Adapt each template by reasoning about what the project actually needs — read 
 
 **Database workflow.** Include the detected tool's develop-then-migrate cycle (Prisma `db push` → `migrate dev`, Django `makemigrations` → `migrate`, Alembic revisions, Diesel migrations). Remove database sections entirely if there's no database.
 
-**Thoughts directory.** If disabled, strip thoughts-specific sections and skip the thoughts agents.
+**Artifacts directory.** The templates write to `.rpi/`, flat, with the type as the filename's last segment — `YYYY-MM-DD-[TICKET-]description-{research,design,plan,review}.md`. If the user chose a different root, rewrite every occurrence: the `ls -lt .rpi/*-plan.md` commands in `guide/SKILL.md`, the example paths in `guide/topics.md`, and the `path: ".rpi"` search scope in `artifact-locator`. The naming convention itself doesn't change — `/implement-plan` and `/prepare-pr` find the review metadata by swapping a plan's `-plan` suffix for `-review`, and that only works if both ends agree.
 
 **Issue tracking.** Wire in the detected tracker's commands (`gh issue view`, `glab issue view`, Linear MCP/CLI, or local ticket file paths). If there's no tracker, remove ticket-specific references and fall back to generic "task description" language.
 
@@ -55,7 +55,7 @@ So while adapting:
 - **Add project specifics, not explanation.** Their test command, their patterns, their framework's idioms — yes. A paragraph on why documenting beats critiquing — no, it's already there once.
 - **Don't restate a rule for emphasis.** If you find yourself writing "remember," you're duplicating something above.
 - **Prefer defining over forbidding.** "A design doc is ~200 lines of alignment; file-by-file changes belong in `/create-plan`" beats three `DO NOT` bullets. Same boundary, less to reconcile.
-- **Keep the prohibitions that guard a real cost.** A few remain deliberately — the repo-local search scope in `thoughts-locator`, "don't check off manual testing until the user confirms" in `/implement-plan`, the read-only contract in `branch-ticket-detector`. These earn their place because being wrong is expensive. Carry them through.
+- **Keep the prohibitions that guard a real cost.** A few remain deliberately — the repo-local search scope in `artifact-locator`, "don't check off manual testing until the user confirms" in `/implement-plan`, the read-only contract in `branch-ticket-detector`. These earn their place because being wrong is expensive. Carry them through.
 
 **A check worth running:** if your adapted file is materially longer than the template it came from, look at what you added. Project-specific detail is why you're here. Re-explanation of something the template already says is the thing to cut.
 

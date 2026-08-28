@@ -19,11 +19,13 @@ First, add this marketplace to Claude Code:
 /plugin add lucasnad27/claude-plugins/research-plan-implement
 ```
 
-### Upgrading from v1
+### Upgrading
 
-If you installed v1 of this plugin, re-run `/setup` in your project to upgrade your generated workflow files to v2. The setup skill will detect existing files and ask which to regenerate.
+Re-run `/setup` in your project. It detects the installed version, shows what's changing, and asks which files to regenerate.
 
-Note: v2 moves generated files from `.claude/commands/` to `.claude/skills/` to align with Claude Code's current conventions. Re-running `/setup` will create the new skill files alongside (or in place of) the old command files.
+From v4.1 or earlier, it also asks where you want workflow artifacts to live: keep `thoughts/shared/`, move to the new `.rpi/` default, or name your own root. Moving relocates the artifacts, renames them to the flat convention, and rewrites the links between them.
+
+From v1, note that generated files moved from `.claude/commands/` to `.claude/skills/`.
 
 ## Quick Start
 
@@ -31,7 +33,7 @@ Note: v2 moves generated files from `.claude/commands/` to `.claude/skills/` to 
 2. Run setup: `/setup`
 3. Learn the workflow: `/guide`
 4. Start researching: `/research-codebase "How does auth work?"`
-5. Align on design: `/design thoughts/shared/research/2026-04-02-auth.md`
+5. Align on design: `/design .rpi/2026-04-02-auth-research.md`
 
 ## What You Get
 
@@ -55,8 +57,8 @@ Note: v2 moves generated files from `.claude/commands/` to `.claude/skills/` to 
 - `query-planner` - Decompose complex research questions into targeted sub-queries
 - `branch-ticket-detector` - Detect the ticket from your branch/worktree so `/research-codebase` works with no arguments (if an issue tracker is configured)
 - `web-search-researcher` - Research external docs and resources
-- `thoughts-locator` - Find documents in thoughts/ directory (optional)
-- `thoughts-analyzer` - Extract insights from thought documents (optional)
+- `artifact-locator` - Find prior research, designs, plans, and tickets under `.rpi/`
+- `artifact-analyzer` - Extract decisions and constraints from one of those documents
 
 **Generated Script:**
 - `scripts/herdr-phase.sh` - If you run inside [herdr](https://herdr.dev), each workflow skill tags its tab with a phase emoji (🔬 research · 🎨 design · 📋 plan · 🔨 implement · 🔍 review) so the session sidebar becomes a phase board. Safe no-op outside herdr — nothing to configure. Run `/guide herdr` for details.
@@ -116,10 +118,23 @@ The plugin creates this structure in your project:
     ├── codebase-pattern-finder.md
     ├── query-planner.md
     ├── branch-ticket-detector.md # If an issue tracker is configured
-    ├── thoughts-analyzer.md      # If thoughts/ enabled
-    ├── thoughts-locator.md       # If thoughts/ enabled
+    ├── artifact-analyzer.md
+    ├── artifact-locator.md
     └── web-search-researcher.md
 ```
+
+The skills write their artifacts to `.rpi/` by default — flat, with the type as the filename's last segment:
+
+```
+.rpi/
+├── 2026-01-05-auth-research.md    # /research-codebase
+├── 2026-01-05-auth-design.md      # /design
+├── 2026-01-05-auth-design.html    #   ...and its mockup, when the work has a shape
+├── 2026-01-05-auth-plan.md        # /create-plan, /iterate-plan
+└── 2026-01-05-auth-review.md      # /implement-plan
+```
+
+A dated name keeps one feature's whole chain sorted together, and a directory only this workflow writes to takes a one-line `.gitignore` entry without stepping on anything else in the repo. Setup asks before settling on a root, so `.output/`, `notes/`, or anything else works — the naming convention stays either way, since `/prepare-pr` finds a plan's review metadata by swapping `-plan` for `-review`.
 
 ### Example: TypeScript/SvelteKit Project
 
@@ -214,12 +229,12 @@ This spawns parallel agents to:
 - Locate auth-related files
 - Analyze how authentication is implemented
 - Find usage patterns and examples
-- Create a research document in `thoughts/shared/research/`
+- Create a research document at `.rpi/*-research.md`
 
 ### 2. Align on Design
 
 ```bash
-/design thoughts/shared/research/2026-04-02-auth-research.md
+/design .rpi/2026-04-02-auth-research.md
 ```
 
 This:
@@ -228,12 +243,12 @@ This:
 - Asks clarifying questions about approach and constraints
 - Explores tradeoffs between implementation options
 - Produces a concrete reference artifact where the work has a shape worth rendering — a self-contained HTML mockup for UI work, real request/response payloads for an API, a schema diff for a data model change
-- Creates a design doc in `thoughts/shared/designs/` that the plan will reference
+- Creates a design doc at `.rpi/*-design.md` that the plan will reference
 
 ### 3. Create Implementation Plan
 
 ```bash
-/create-plan thoughts/tickets/add-oauth-support.md
+/create-plan .rpi/add-oauth-support-ticket.md
 ```
 
 This:
@@ -241,12 +256,12 @@ This:
 - Reads the ticket and any referenced design docs
 - Researches relevant code patterns
 - Asks clarifying questions
-- Creates detailed plan in `thoughts/shared/plans/`
+- Creates detailed plan at `.rpi/*-plan.md`
 
 ### 4. Iterate on Plan
 
 ```bash
-/iterate-plan thoughts/shared/plans/2025-01-05-add-oauth.md
+/iterate-plan .rpi/2025-01-05-add-oauth-plan.md
 ```
 
 Update the plan based on feedback, new discoveries, or changed requirements.
@@ -254,7 +269,7 @@ Update the plan based on feedback, new discoveries, or changed requirements.
 ### 5. Implement the Plan
 
 ```bash
-/implement-plan thoughts/shared/plans/2025-01-05-add-oauth.md
+/implement-plan .rpi/2025-01-05-add-oauth-plan.md
 ```
 
 This:
@@ -385,6 +400,10 @@ The plugin adapts based on what it finds in config files. If it gets something w
 2. Manually edit the generated `.claude/` files
 3. File an issue so we can improve detection
 
+### My artifacts are still in `thoughts/shared/`
+
+Nothing breaks — an upgrade only moves them if you ask it to. Re-run `/setup` and pick `.rpi/` (or your own root) when it asks; it relocates the files, renames them to the flat convention, and rewrites the links between them. Picking "keep what I have" is equally supported, and the generated skills keep writing where they do today.
+
 ### Upgrading from v1 to v2
 
 Generated files moved from `.claude/commands/` to `.claude/skills/`. Re-run `/setup` to generate the new skill files. You can safely delete the old `commands/` files once the new skills are confirmed working.
@@ -399,14 +418,14 @@ Generated files moved from `.claude/commands/` to `.claude/skills/`. Re-run `/se
 
 **Output:**
 
-- Research document at `thoughts/shared/research/2026-04-02-database-migrations.md`
+- Research document at `.rpi/2026-04-02-database-migrations-research.md`
 - Includes file references, code examples, and architecture notes
 - Documents current state without recommendations
 
 ### Design Example
 
 ```bash
-/design thoughts/shared/research/2026-04-02-database-migrations.md
+/design .rpi/2026-04-02-database-migrations-research.md
 ```
 
 **Process:**
@@ -414,7 +433,7 @@ Generated files moved from `.claude/commands/` to `.claude/skills/`. Re-run `/se
 1. Reviews existing research
 2. Asks about constraints (downtime tolerance, rollback requirements, etc.)
 3. Explores migration strategy options
-4. Creates design doc at `thoughts/shared/designs/2026-04-02-migration-strategy.md`
+4. Creates design doc at `.rpi/2026-04-02-migration-strategy-design.md`
 
 ### Planning Example
 
@@ -427,12 +446,12 @@ Generated files moved from `.claude/commands/` to `.claude/skills/`. Re-run `/se
 1. Asks clarifying questions
 2. Researches existing auth code
 3. Proposes implementation phases
-4. Creates plan at `thoughts/shared/plans/2026-04-02-add-2fa.md`
+4. Creates plan at `.rpi/2026-04-02-add-2fa-plan.md`
 
 ### Implementation Example
 
 ```bash
-/implement-plan thoughts/shared/plans/2026-04-02-add-2fa.md
+/implement-plan .rpi/2026-04-02-add-2fa-plan.md
 ```
 
 **Process:**

@@ -1,6 +1,6 @@
 # Review Metadata: [Feature Name]
 
-Plan: `thoughts/shared/plans/YYYY-MM-DD-description.md`
+Plan: `.rpi/YYYY-MM-DD-description-plan.md`
 
 One section per phase, appended as each phase completes. Do not rewrite earlier
 sections — a later phase that supersedes an earlier one says so in its own

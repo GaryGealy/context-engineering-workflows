@@ -19,13 +19,13 @@ You provide contextual orientation for the research-design-plan-implement workfl
 ### Current Workspace State
 
 Recent research docs:
-!`ls -lt thoughts/shared/research/ 2>/dev/null | head -3`
+!`ls -lt .rpi/*-research.md 2>/dev/null | head -3`
 
 Recent design docs:
-!`ls -lt thoughts/shared/designs/ 2>/dev/null | head -3`
+!`ls -lt .rpi/*-design.md 2>/dev/null | head -3`
 
 Recent plan docs:
-!`ls -lt thoughts/shared/plans/ 2>/dev/null | head -3`
+!`ls -lt .rpi/*-plan.md 2>/dev/null | head -3`
 
 Git status:
 !`git status --short 2>/dev/null`
