@@ -6,11 +6,24 @@ Format based on [Keep a Changelog](https://keepachangelog.com).
 ## [5.0.0] - Unreleased
 
 > **Release gate — do not cut this release until the README is rewritten.**
-> The README still describes v4's `/prepare-pr` — "writes the PR description as a
-> review guide" in six places, with no mention of stops, inline review comments, the
-> tuicr walkthrough, or the comment discipline. Its Philosophy section predates all of
-> it too. Rewrite both, then run `/cut-a-release`. If you'd rather ship first, say so
-> explicitly and open an issue for the README instead of letting this note rot.
+> Two things are owed:
+>
+> 1. **The workflow description is stale.** The README still describes v4's
+>    `/prepare-pr` as writing "the PR description as a review guide" — in six places —
+>    with no mention of stops, inline review comments, the tuicr walkthrough, or the
+>    comment discipline. Its Philosophy section predates all of it too.
+> 2. **Ponytail is owed credit, and doesn't have it yet.** The Notes below record what
+>    was adapted, but a changelog entry is not attribution a reader will find. Add
+>    [ponytail](https://github.com/DietrichGebert/ponytail) (MIT, by DietrichGebert) to
+>    the README's **Attribution → Additional influences** list, alongside CRISPY/Dex and
+>    Simon Willison — and to the attribution block `/setup` prints in Step 8, which is
+>    the copy users actually see. Credit the specific borrowings, not the whole skill:
+>    the reuse-before-writing ladder, root-cause-over-symptom, and treating a
+>    one-caller abstraction as a reviewable finding.
+>
+> Do both, then run `/cut-a-release`. If you'd rather ship first, say so explicitly and
+> open an issue for the README instead of letting this note rot — but the attribution
+> is the half that shouldn't wait for a docs pass.
 
 Two independent changes ship together.
 
