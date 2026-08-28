@@ -7,7 +7,7 @@ Present the content for the requested topic. Keep it practical and scannable.
 ### The Workflow
 
 ```
-/research-codebase → /design → /create-plan → /implement-plan → /prepare-pr
+/research-codebase → /design-doc → /create-plan → /implement-plan → /prepare-pr
                                 /guide (run anytime)
 ```
 
@@ -20,7 +20,7 @@ This workflow uses **intentional compaction** — periodically pausing work and 
 **The five phases:**
 
 1. **Research** (`/research-codebase`) — Explore the codebase. Sub-agents do the messy file discovery. Output: clean research document. Run it with no arguments and it detects the ticket from your current branch and researches against that.
-2. **Design** (`/design`) — ~200-line alignment artifact. Current state, desired end state, patterns, testing approach. Your highest-leverage review moment.
+2. **Design** (`/design-doc`) — ~200-line alignment artifact. Current state, desired end state, patterns, testing approach. Your highest-leverage review moment.
 3. **Plan** (`/create-plan`) — Vertical implementation phases with per-phase testing. Takes the design as input — decisions are already made.
 4. **Implement** (`/implement-plan`) — Testing-aware, phase-by-phase execution. Generates review metadata as it goes.
 5. **Review** (`/prepare-pr`) — Commit, open the PR, and land a numbered review guide: a short index in the description, the detail as inline comments anchored to the diff. Can also write a guide onto a PR opened outside the loop.
@@ -240,7 +240,7 @@ One artifact, three places it appears:
 **Greenfield Feature:**
 ```bash
 /research-codebase "How are similar features implemented?"
-/design .rpi/2026-01-05-feature-research.md
+/design-doc .rpi/2026-01-05-feature-research.md
 /create-plan .rpi/2026-01-05-feature-design.md
 /implement-plan .rpi/2026-01-05-feature-plan.md
 /prepare-pr
@@ -249,7 +249,7 @@ One artifact, three places it appears:
 **Bug Fix:**
 ```bash
 /research-codebase "Why is X failing?"
-/design .rpi/2026-01-05-bug-research.md
+/design-doc .rpi/2026-01-05-bug-research.md
 /create-plan .rpi/2026-01-05-bug-design.md
 /implement-plan .rpi/2026-01-05-bug-plan.md
 /prepare-pr
@@ -258,7 +258,7 @@ One artifact, three places it appears:
 **Refactoring:**
 ```bash
 /research-codebase "How does module X work currently?"
-/design .rpi/2026-01-05-refactor-research.md
+/design-doc .rpi/2026-01-05-refactor-research.md
 /create-plan .rpi/2026-01-05-refactor-design.md
 /implement-plan .rpi/2026-01-05-refactor-plan.md
 /prepare-pr
@@ -268,7 +268,7 @@ One artifact, three places it appears:
 ```bash
 # Day 1: Research, design, plan
 /research-codebase "How should feature X integrate?"
-/design .rpi/2026-01-05-feature-research.md
+/design-doc .rpi/2026-01-05-feature-research.md
 /create-plan .rpi/2026-01-05-feature-design.md
 
 # Day 2+: Implement (resumes from last checkpoint)
@@ -380,7 +380,7 @@ When you run inside [herdr](https://herdr.dev), each phase skill tags its own ta
 
 **Glyphs:** 🔬 research · 🎨 design · 📋 plan · 🔨 implement · 🔍 review
 
-**How it works:** each phase skill (`/research-codebase`, `/design`, `/create-plan`, `/iterate-plan`, `/implement-plan`, `/prepare-pr`) runs `.claude/scripts/herdr-phase.sh <phase>` as its first action. It rewrites *this tab's* label, swapping any prior phase glyph for the new one — so `336-global-sidebar` becomes `🎨 336-global-sidebar` during design, then `🔨 336-global-sidebar` during implementation. It persists until the next phase skill overwrites it.
+**How it works:** each phase skill (`/research-codebase`, `/design-doc`, `/create-plan`, `/iterate-plan`, `/implement-plan`, `/prepare-pr`) runs `.claude/scripts/herdr-phase.sh <phase>` as its first action. It rewrites *this tab's* label, swapping any prior phase glyph for the new one — so `336-global-sidebar` becomes `🎨 336-global-sidebar` during design, then `🔨 336-global-sidebar` during implementation. It persists until the next phase skill overwrites it.
 
 **Manual override** — set or clear a tab's phase without invoking a skill:
 

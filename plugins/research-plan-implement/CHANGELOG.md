@@ -106,6 +106,14 @@ now bounded.
   one implementation or a config value nobody sets goes under **What We're NOT Doing**
   for the user to overrule.
 - `/guide`'s `review` topic and phase tips describe the stop model.
+- **The `/design` skill is now `/design-doc`.** Same inputs, same ~200-line
+  artifact, same `-design.md` output — only the skill's name changed. Every
+  cross-reference in the other skills points at it, and the herdr phase glyph is
+  still 🎨.
+  - Upgrades write `.claude/skills/design-doc/` and remove the old
+    `.claude/skills/design/` after asking. Local edits have to be carried
+    across first — a rename can't merge them for you.
+  - Aliases, scripts, and team docs that invoke `/design` need updating by hand.
 
 ### Added
 

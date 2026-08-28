@@ -1,5 +1,5 @@
 ---
-name: design
+name: design-doc
 description: Create a lightweight design discussion document for human-agent alignment before planning
 model: opus
 effort: xhigh
@@ -41,7 +41,7 @@ When this command is invoked:
    1. A research document (from /research-codebase) or describe what you want to build
    2. Optionally, a ticket or task reference
 
-   Tip: /design .rpi/2026-01-05-auth-flow-research.md
+   Tip: /design-doc .rpi/2026-01-05-auth-flow-research.md
    ```
 
    Then wait for the user's input.

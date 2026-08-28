@@ -30,7 +30,7 @@ MIGRATION (v1 only):
   Old command files will be removed after migration
 
 NEW skills:
-  /design — Lightweight design discussion before planning (~200 lines vs ~1000 line plans)
+  /design-doc — Lightweight design discussion before planning (~200 lines vs ~1000 line plans)
   /prepare-pr — Commit, open the PR, and write its description as a review guide
   /guide — Contextual orientation (where am I? what's next?)
 
@@ -49,7 +49,7 @@ NEW script:
 UPDATED skills:
   /research-codebase — Query planning keeps research objective; auto-detects the
     ticket from your branch when run without arguments
-  /create-plan — Slimmed down (design decisions moved to /design), vertical phases
+  /create-plan — Slimmed down (design decisions moved to /design-doc), vertical phases
   /implement-plan — Testing-aware (TDD/conformance/manual), generates review metadata
 
 UNCHANGED:
@@ -67,7 +67,7 @@ Ready to upgrade? (yes / let me see details for a specific skill)
 
 If you couldn't pin their version down, say so in the summary and show the union of the candidate ranges rather than picking one silently — an extra line about a change they already have is cheaper than not mentioning one they don't.
 
-For an upgrade **from v4.1**, the skill set is unchanged. Artifacts move, and
+For an upgrade **from v4.1**, artifacts move, one skill is renamed, and
 `/prepare-pr` and `/implement-plan` change shape:
 
 ```
@@ -110,7 +110,15 @@ artifacts and rewrites the links between them, so nothing goes stale.
     the root cause rather than the reported symptom, and check for an existing
     helper / stdlib / installed dependency before specifying new code.
 
-Nothing about how you invoke the skills changes.
+The /design skill is now /design-doc. Same inputs, same ~200-line artifact.
+
+  - .claude/skills/design/ is replaced by .claude/skills/design-doc/. The old
+    directory is removed during the upgrade — you'll be asked first.
+  - Every reference to /design in the other skills now points at /design-doc.
+  - The output is still a design doc, and the herdr phase glyph is still 🎨.
+
+Anything of your own that invokes /design — aliases, scripts, notes to your
+team — needs updating by hand.
 ```
 
 **Heads-up if the user has customized `/prepare-pr`:** this release rewrites most of it, so the
@@ -153,7 +161,7 @@ is how the templates are written, for the Claude 5 generation of models:
   - Several "DO NOT" fences became plain definitions of what the artifact is.
   - The research agents lost a long invented example that anchored them to one
     way of looking; they now carry an output contract instead.
-  - /design gained the ability to produce a concrete reference artifact — an
+  - /design-doc gained the ability to produce a concrete reference artifact — an
     HTML mockup, real payloads, a schema diff — that /create-plan and
     /implement-plan build against instead of prose.
   - /create-plan phases now name real test files and cases instead of
@@ -237,6 +245,7 @@ Substitute the chosen root for `.rpi/` throughout if they named their own. Nothi
    - `.claude/commands/read-ticket.md` — retired; `branch-ticket-detector` fetches tickets now
    - `.claude/skills/review-changes/` — retired, folded into `/prepare-pr`
    - `.claude/agents/{thoughts-locator,thoughts-analyzer}.md` — renamed to `artifact-locator` / `artifact-analyzer`. Carry any customization across into the new file before removing the old one, then check whether `/research-codebase` or `/iterate-plan` still name the old agents.
+   - `.claude/skills/design/` — renamed to `design-doc/`; carry any customizations into the new directory before removing the old one
 5. Handle the gitignore for the artifacts directory if it isn't configured yet
 6. Show the summary and workflow tips (Steps 7-8 of the main skill)
 
@@ -268,7 +277,7 @@ The current templates were rewritten for the Claude 5 generation of models — s
 
 - **The documentarian rule stated three times per agent** in `codebase-analyzer`, `codebase-locator`, and `codebase-pattern-finder` — an opening `CRITICAL` block, a "What NOT to Do" list, and a closing "you are a documentarian, not a critic" paragraph. The current template states it once, in the `description` plus one line of body.
 - **A ~120-line invented pagination example** in `codebase-pattern-finder`, plus a malformed code fence that swallowed its own guidelines section.
-- **`/design`'s "CRITICAL: THIS IS NOT A PLAN"** block of `DO NOT` lines, now a positive definition of what a design doc is.
+- **`/design-doc`'s "CRITICAL: THIS IS NOT A PLAN"** block of `DO NOT` lines, now a positive definition of what a design doc is.
 - **`/implement-plan`'s "never use limit/offset"** instruction, removed — it fights the Read tool's own guidance.
 - **`/iterate-plan`'s "Example Interaction Flows"** and subagent-spawning tutorial, both cut.
 - **Joke descriptions** on `web-search-researcher` and `thoughts-analyzer` (now `artifact-analyzer`). Descriptions drive dispatch, so these were rewritten to describe what the agent actually does.

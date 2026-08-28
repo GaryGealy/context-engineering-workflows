@@ -51,7 +51,7 @@ Ask for whatever you couldn't detect, batched into as few turns as possible — 
 
 All paths below are relative to this skill's directory (`${CLAUDE_SKILL_DIR}`), not the target project.
 
-**Skills** (`reference/skills/*/SKILL.md`): research-codebase, design, create-plan, iterate-plan, implement-plan, prepare-pr, guide
+**Skills** (`reference/skills/*/SKILL.md`): research-codebase, design-doc, create-plan, iterate-plan, implement-plan, prepare-pr, guide
 
 **Agents** (`reference/agents/*.md`): codebase-analyzer, codebase-locator, codebase-pattern-finder, query-planner, web-search-researcher, artifact-locator, artifact-analyzer
 
@@ -71,7 +71,7 @@ Read `adaptation.md` and work through the templates. The core of this skill is h
 .claude/
 ├── skills/
 │   ├── research-codebase/SKILL.md
-│   ├── design/SKILL.md + template.md
+│   ├── design-doc/SKILL.md + template.md
 │   ├── create-plan/SKILL.md + template.md
 │   ├── iterate-plan/SKILL.md
 │   ├── implement-plan/SKILL.md + review-metadata-template.md
@@ -105,7 +105,7 @@ The phase skills invoke the script via `"$(git rev-parse --show-toplevel)/.claud
 Created research-design-plan-implement workflow in .claude/
 
 Generated files:
-- 7 skills: /research-codebase, /design, /create-plan, /iterate-plan, /implement-plan, /prepare-pr, /guide
+- 7 skills: /research-codebase, /design-doc, /create-plan, /iterate-plan, /implement-plan, /prepare-pr, /guide
 - [N] agents: query-planner, codebase-locator, codebase-analyzer, pattern-finder, web-search-researcher, artifact-locator, artifact-analyzer[, branch-ticket-detector]
 - 1 script: scripts/herdr-phase.sh — tags each tab with its workflow phase in the herdr sidebar (no-op outside herdr; run /guide herdr to learn more)
 
@@ -119,12 +119,12 @@ Adapted for your project:
 - Artifacts directory: [chosen root] (flat; type is the filename suffix)
 
 Workflow:
-  /research-codebase -> /design -> /create-plan -> /implement-plan -> /prepare-pr
+  /research-codebase -> /design-doc -> /create-plan -> /implement-plan -> /prepare-pr
   /guide (run anytime for orientation)
 
 Quick start:
   /research-codebase "How does authentication work?"
-  /design .rpi/2026-01-05-auth-flow-research.md
+  /design-doc .rpi/2026-01-05-auth-flow-research.md
   /create-plan .rpi/2026-01-05-auth-redesign-design.md
   /implement-plan .rpi/2026-01-05-auth-redesign-plan.md
   /prepare-pr
@@ -144,7 +144,7 @@ RESEARCH (/research-codebase)
    Sub-agents handle messy file discovery
    Output: Clean research document with findings
 
-DESIGN (/design)
+DESIGN (/design-doc)
    Lightweight ~200-line alignment artifact
    Captures: current state, desired end state, patterns, testing approach
    This is your highest-leverage review moment
@@ -192,7 +192,7 @@ Attribution:
 .rpi/
 ├── 2026-01-05-auth-research.md
 ├── 2026-01-05-auth-design.md
-├── 2026-01-05-auth-design.html      # optional mockup from /design
+├── 2026-01-05-auth-design.html      # optional mockup from /design-doc
 ├── 2026-01-05-auth-plan.md
 └── 2026-01-05-auth-review.md
 ```

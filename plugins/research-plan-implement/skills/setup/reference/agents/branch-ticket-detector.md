@@ -1,6 +1,6 @@
 ---
 name: branch-ticket-detector
-description: Infers the ticket/issue a developer is working on from the current git branch and worktree, then fetches its details. Used by /research-codebase (and optionally /design, /create-plan) as a fallback when the user runs the command without naming a ticket or question.
+description: Infers the ticket/issue a developer is working on from the current git branch and worktree, then fetches its details. Used by /research-codebase (and optionally /design-doc, /create-plan) as a fallback when the user runs the command without naming a ticket or question.
 tools: Bash, Read
 model: sonnet
 effort: low
