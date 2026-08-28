@@ -70,7 +70,7 @@ Before implementing each phase, read its Verification section and adapt your wor
 1. Implement the phase
 2. Run whatever automated checks exist (lint, typecheck, build, existing tests)
 
-The testing approach was decided in `/design` and specified per-phase in `/create-plan`. Follow it — don't decide on a different approach.
+The testing approach was decided in `/design-doc` and specified per-phase in `/create-plan`. Follow it — don't decide on a different approach.
 
 ## Comments: default to none
 

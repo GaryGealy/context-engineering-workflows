@@ -33,7 +33,7 @@ From v1, note that generated files moved from `.claude/commands/` to `.claude/sk
 2. Run setup: `/setup`
 3. Learn the workflow: `/guide`
 4. Start researching: `/research-codebase "How does auth work?"`
-5. Align on design: `/design .rpi/2026-04-02-auth-research.md`
+5. Align on design: `/design-doc .rpi/2026-04-02-auth-research.md`
 
 ## What You Get
 
@@ -43,7 +43,7 @@ From v1, note that generated files moved from `.claude/commands/` to `.claude/sk
 
 **Generated Skills** (after running `/setup`):
 - `/research-codebase` - Research using parallel sub-agents, create research documents
-- `/design` - Align on design approach through collaborative discussion before planning
+- `/design-doc` - Align on design approach through collaborative discussion before planning
 - `/create-plan` - Create detailed implementation plans through interactive research
 - `/iterate-plan` - Update plans based on feedback or new discoveries
 - `/implement-plan` - Execute plans with automated verification and testing checkpoints
@@ -100,7 +100,7 @@ The plugin creates this structure in your project:
 ├── skills/
 │   ├── research-codebase/
 │   │   └── SKILL.md
-│   ├── design/
+│   ├── design-doc/
 │   │   └── SKILL.md
 │   ├── create-plan/
 │   │   └── SKILL.md
@@ -128,7 +128,7 @@ The skills write their artifacts to `.rpi/` by default — flat, with the type a
 ```
 .rpi/
 ├── 2026-01-05-auth-research.md    # /research-codebase
-├── 2026-01-05-auth-design.md      # /design
+├── 2026-01-05-auth-design.md      # /design-doc
 ├── 2026-01-05-auth-design.html    #   ...and its mockup, when the work has a shape
 ├── 2026-01-05-auth-plan.md        # /create-plan, /iterate-plan
 └── 2026-01-05-auth-review.md      # /implement-plan
@@ -234,7 +234,7 @@ This spawns parallel agents to:
 ### 2. Align on Design
 
 ```bash
-/design .rpi/2026-04-02-auth-research.md
+/design-doc .rpi/2026-04-02-auth-research.md
 ```
 
 This:
@@ -425,7 +425,7 @@ Generated files moved from `.claude/commands/` to `.claude/skills/`. Re-run `/se
 ### Design Example
 
 ```bash
-/design .rpi/2026-04-02-database-migrations-research.md
+/design-doc .rpi/2026-04-02-database-migrations-research.md
 ```
 
 **Process:**
