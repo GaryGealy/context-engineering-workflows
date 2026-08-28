@@ -95,6 +95,12 @@ so this is about verifying the phasing and testing approach make sense.
 
 Iterate based on feedback.
 
+## Plan the smallest thing that works
+
+Phases specify what gets built, so this is where speculative work gets locked in. Before specifying new code for a phase, check in order: does this codebase already have a helper, util, or pattern that covers it; does the standard library or the framework cover it; does an already-installed dependency cover it.
+
+An interface with one implementation, a config value nobody sets, a layer with one caller, an abstraction for a second case that doesn't exist yet — all cheap to delete from a plan and expensive to delete from a merged PR. If the design implies one, put it under **What We're NOT Doing** and let the user overrule you.
+
 ## Vertical Phase Design
 
 **Prefer vertical slices over horizontal layers.** A vertical slice is a phase where you can take a real action and validate a real assumption — not just create infrastructure that sits untested until later.

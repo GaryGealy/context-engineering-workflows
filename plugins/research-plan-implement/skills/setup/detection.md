@@ -82,7 +82,7 @@ file set implies:
 
 | Evidence | Version |
 |---|---|
-| `.claude/agents/artifact-locator.md` exists | 4.2+ |
+| `.claude/agents/artifact-locator.md` exists | 5.0+ |
 | `.claude/skills/prepare-pr/` exists | 3.x–4.1 |
 | `.claude/skills/review-changes/` exists | 2.x |
 | only `.claude/commands/` | 1.x |

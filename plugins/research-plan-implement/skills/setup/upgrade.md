@@ -67,7 +67,8 @@ Ready to upgrade? (yes / let me see details for a specific skill)
 
 If you couldn't pin their version down, say so in the summary and show the union of the candidate ranges rather than picking one silently — an extra line about a change they already have is cheaper than not mentioning one they don't.
 
-For an upgrade **from v4.1**, the only change is where artifacts live and what the agents that read them are called:
+For an upgrade **from v4.1**, the skill set is unchanged. Artifacts move, and
+`/prepare-pr` and `/implement-plan` change shape:
 
 ```
 The default artifacts directory moved from thoughts/shared/ to .rpi/, and it's
@@ -90,9 +91,32 @@ artifacts and rewrites the links between them, so nothing goes stale.
     a thoughts/ directory the workflow wrote to anyway.
   - Setup no longer asks how to structure the directory — the subdirectory names
     are fixed.
+  - /prepare-pr no longer writes the whole guide into the PR description. It
+    builds one numbered list of stops — a file, a line, a type, and a claim to
+    test — and renders it in up to three places: inline review comments on the
+    PR (the detail), a numbered index in the description (under 60 lines), and
+    a tuicr session if you walk it. Pass --no-stops to keep everything in the
+    description, which is also the default on non-GitHub forges.
+  - Each stop is a resolvable GitHub thread, so reviewers tick them off as they
+    go — and `tuicr pr <n>` renders them natively, with no seeding step.
+  - /prepare-pr gained a sibling reference, tuicr-walkthrough.md, for walking a
+    PR with the author stop by stop. Optional: skipped if tuicr isn't installed.
+  - /implement-plan gained "Comments: default to none" — a two-test bar for
+    every comment, an explicit list of what not to write (narration, history,
+    symmetry notes, justification of the ordinary, restated design decisions),
+    and an end-of-phase re-read. Deliberate simplifications go in the phase's
+    Completion block, not in a source comment.
+  - /implement-plan and /create-plan both bias toward the smaller change: fix
+    the root cause rather than the reported symptom, and check for an existing
+    helper / stdlib / installed dependency before specifying new code.
 
 Nothing about how you invoke the skills changes.
 ```
+
+**Heads-up if the user has customized `/prepare-pr`:** this release rewrites most of it, so the
+usual "preserve theirs, replace stale template" heuristic is weaker than normal here. Diff their
+copy against the v4 template before overwriting, and show them anything that isn't v4 boilerplate
+rather than deciding for them.
 
 For an upgrade **from v4.0**, the skill set is unchanged and only the handoffs between phases moved:
 
@@ -140,7 +164,7 @@ Your project adaptations and any edits you made are preserved.
 
 ## Step U3: Confirm the artifacts directory
 
-`.rpi/` is the default as of v4.2 — hidden, flat, and owned entirely by this workflow, so nothing else in the repo lands in it. An existing install almost certainly writes to `thoughts/shared/` with a directory per type; `detection.md` tells you how to recover the root it actually uses. Never assume it.
+`.rpi/` is the default as of v5.0 — hidden, flat, and owned entirely by this workflow, so nothing else in the repo lands in it. An existing install almost certainly writes to `thoughts/shared/` with a directory per type; `detection.md` tells you how to recover the root it actually uses. Never assume it.
 
 Ask with `AskUserQuestion`:
 

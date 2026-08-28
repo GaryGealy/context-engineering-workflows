@@ -16,6 +16,8 @@ Adapt each template by reasoning about what the project actually needs — read 
 
 **Artifacts directory.** The templates write to `.rpi/`, flat, with the type as the filename's last segment — `YYYY-MM-DD-[TICKET-]description-{research,design,plan,review}.md`. If the user chose a different root, rewrite every occurrence: the `ls -lt .rpi/*-plan.md` commands in `guide/SKILL.md`, the example paths in `guide/topics.md`, and the `path: ".rpi"` search scope in `artifact-locator`. The naming convention itself doesn't change — `/implement-plan` and `/prepare-pr` find the review metadata by swapping a plan's `-plan` suffix for `-review`, and that only works if both ends agree.
 
+**Forge.** `/prepare-pr` posts its review guide as inline comments on a GitHub pull request via `gh api`. On GitLab, Azure DevOps, or anywhere without `gh`, strip Step 6 and the tuicr PR-mode material, and make `--no-stops` behavior the default: the numbered guide stays in the description, with each index line expanded into its full stop text.
+
 **Issue tracking.** Wire in the detected tracker's commands (`gh issue view`, `glab issue view`, Linear MCP/CLI, or local ticket file paths). If there's no tracker, remove ticket-specific references and fall back to generic "task description" language.
 
 ## branch-ticket-detector
@@ -28,13 +30,22 @@ The agent's "Issue Tracker" section has one subsection per tracker. **Keep only 
 
 Otherwise the generated skills reference an agent that doesn't exist.
 
+## prepare-pr/tuicr-walkthrough.md
+
+Copy it essentially verbatim — it documents a third-party TUI, not the project. Two things to touch:
+
+- The **standard checks** in "Applying fixes mid-walk" become the project's real commands.
+- If the forge isn't GitHub, the "stops are already there" path doesn't exist. Lead with the local-seeding fallback instead of demoting it, and drop the `resolveReviewThread` GraphQL.
+
+Don't trim the gotchas to save space. Each one is a silent failure someone already hit; they are the reason the file exists.
+
 ## The herdr-phase script
 
 `reference/scripts/herdr-phase.sh` is project-agnostic — no commands, paths, or tooling to adapt. Copy it **verbatim** to `.claude/scripts/herdr-phase.sh` and `chmod +x` it. Do not rewrite it. It no-ops outside herdr, so install it unconditionally; each phase skill already calls it.
 
 ## What must survive adaptation
 
-Four behaviors carry the workflow. Change the tooling around them freely; if any of them doesn't make it into the generated files, the adaptation failed.
+Six behaviors carry the workflow. Change the tooling around them freely; if any of them doesn't make it into the generated files, the adaptation failed.
 
 **The documentarian split.** Research agents describe what exists; they don't critique or recommend. Design and planning are where opinions belong. Each agent states this once — in its `description` and one line of body — so it's easy to drop by accident while rewriting. Carry it through.
 
@@ -43,6 +54,10 @@ Four behaviors carry the workflow. Change the tooling around them freely; if any
 **Interactive planning.** `/design` and `/create-plan` stop and confirm with the user at defined points: the design's open questions, the plan's phase outline. Keep those checkpoints, and keep the batching guidance that stops them turning into a question-per-turn drip.
 
 **The automated vs. manual verification split.** Plans separate what an agent can verify itself from what needs a human. This distinction drives the pause-between-phases behavior in `/implement-plan`. Adapt the commands; keep the two categories.
+
+**One stop list, rendered up to three ways.** `/prepare-pr` builds the stop list once, then renders it as inline review comments, as a numbered index in the description, and — if the author walks it — as the thing you narrate in tuicr. The failure mode is letting the three drift apart, or reinflating the description back into per-file prose sections. Keep the length budget.
+
+**Comment discipline.** `/implement-plan`'s "Comments: default to none" is a user-visible outcome, not boilerplate — it is the difference between a diff a human wants to read and one padded with restated design rationale. Keep both tests (would a reader be *surprised*; is it under three lines) and keep the end-of-phase re-read. Swap the example comment for one in the project's language.
 
 ## The register these templates are written in
 
