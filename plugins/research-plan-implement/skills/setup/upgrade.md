@@ -6,13 +6,15 @@ Reference for the setup skill when an existing RPI installation is detected.
 
 `.claude/skills/` and `.claude/agents/` are shared directories. A real project will have skills from other plugins and skills the team wrote themselves sitting right alongside the RPI ones — often many more of them than yours.
 
-Your scope is exactly the files listed in Step 6 of `SKILL.md`, plus the retired files named in Step U3 below. Everything else in those directories is out of bounds: don't regenerate it, don't "tidy" it, don't remove it because it looks unfamiliar, and don't apply the residue rules below to it. A skill you don't recognize is almost certainly someone else's, not an old version of yours.
+Your scope is exactly the files listed in Step 6 of `SKILL.md`, plus the retired files named in Step U4 below. Everything else in those directories is out of bounds: don't regenerate it, don't "tidy" it, don't remove it because it looks unfamiliar, and don't apply the residue rules below to it. A skill you don't recognize is almost certainly someone else's, not an old version of yours.
 
 If a project skill happens to share a name with one of yours, stop and ask rather than overwriting.
 
+The artifacts migration in Step U3 is the one part of an upgrade that reaches outside `.claude/`. It moves the workflow's own output directories and nothing else — see the constraints there.
+
 ## Step U1: Extract project adaptations
 
-Read the existing commands/skills to recover the project-specific details, checking both `.claude/commands/` (v1) and `.claude/skills/` (v2+): test commands (unit, integration, e2e), lint/format/build/typecheck commands, database tooling and migration commands, framework-specific patterns, issue tracking integration, thoughts directory configuration, and any custom additions the user made.
+Read the existing commands/skills to recover the project-specific details, checking both `.claude/commands/` (v1) and `.claude/skills/` (v2+): test commands (unit, integration, e2e), lint/format/build/typecheck commands, database tooling and migration commands, framework-specific patterns, issue tracking integration, the artifacts directory the install writes to, and any custom additions the user made.
 
 These are the user's answers from their original setup. Reuse them rather than re-interrogating the project.
 
@@ -65,6 +67,33 @@ Ready to upgrade? (yes / let me see details for a specific skill)
 
 If you couldn't pin their version down, say so in the summary and show the union of the candidate ranges rather than picking one silently — an extra line about a change they already have is cheaper than not mentioning one they don't.
 
+For an upgrade **from v4.1**, the only change is where artifacts live and what the agents that read them are called:
+
+```
+The default artifacts directory moved from thoughts/shared/ to .rpi/, and it's
+flat — no subdirectory per type. The type is now the filename's last segment:
+
+  thoughts/shared/plans/2026-01-05-auth.md  ->  .rpi/2026-01-05-auth-plan.md
+
+A dated name keeps one feature's whole chain sorted together, and a hidden root
+that only this workflow writes to can be gitignored in one line without stepping
+on anything else in the repo.
+
+You choose what happens to your install: keep thoughts/shared/ exactly as it is,
+move to .rpi/, or name your own root. Moving relocates and renames the existing
+artifacts and rewrites the links between them, so nothing goes stale.
+
+  - thoughts-locator and thoughts-analyzer are now artifact-locator and
+    artifact-analyzer. The names no longer assume a directory name, since the
+    location is yours to pick. The old agent files are retired.
+  - The two agents are now always generated. Previously they were conditional on
+    a thoughts/ directory the workflow wrote to anyway.
+  - Setup no longer asks how to structure the directory — the subdirectory names
+    are fixed.
+
+Nothing about how you invoke the skills changes.
+```
+
 For an upgrade **from v4.0**, the skill set is unchanged and only the handoffs between phases moved:
 
 ```
@@ -109,7 +138,72 @@ is how the templates are written, for the Claude 5 generation of models:
 Your project adaptations and any edits you made are preserved.
 ```
 
-## Step U3: Regenerate
+## Step U3: Confirm the artifacts directory
+
+`.rpi/` is the default as of v4.2 — hidden, flat, and owned entirely by this workflow, so nothing else in the repo lands in it. An existing install almost certainly writes to `thoughts/shared/` with a directory per type; `detection.md` tells you how to recover the root it actually uses. Never assume it.
+
+Ask with `AskUserQuestion`:
+
+- **Keep `<current root>`** — nothing moves. The regenerated skills keep writing where they write today. This is the zero-risk answer, and the right one for anyone mid-implementation or with the old paths wired into their own tooling.
+- **Move to `.rpi/`** — adopt the new default. Existing artifacts move, get renamed to the flat convention, and the references between them are rewritten.
+- **Somewhere else** — they name a root (`.output/`, `notes/`, whatever). Same migration, different destination.
+
+Whatever they pick is the root you adapt every template against in Step U4. If they keep their current root, nothing moves and the rest of the upgrade proceeds unchanged. The flat naming is not optional either way — `/implement-plan` and `/prepare-pr` locate review metadata by swapping a plan's `-plan` suffix for `-review`.
+
+### Migrating the artifacts
+
+Only for the two answers that move files, and only before regenerating — the skills you write in Step U4 have to agree with what's on disk.
+
+This is a move **and** a rename: the type used to be the directory, and now it's the filename's last segment.
+
+```
+thoughts/shared/plans/2026-01-05-auth.md   →   .rpi/2026-01-05-auth-plan.md
+```
+
+**Move only what this workflow owns:** `research/`, `designs/`, `plans/`, `review-metadata/`, and `tickets/` and `prs/` if they exist. Everything else under the old root belongs to the user — list it and ask before touching it.
+
+1. **Move and rename each file.** The old default recommended gitignoring `thoughts/`, so most of these files are untracked and `git mv` will fail on them; use `git mv` where git tracks the file and plain `mv` where it doesn't. Never overwrite an existing destination — skip it and ask.
+
+   ```bash
+   mkdir -p .rpi
+   for d in research designs plans review-metadata tickets prs; do
+     case "$d" in
+       research) t=research ;; designs) t=design ;; plans) t=plan ;;
+       review-metadata) t=review ;; tickets) t=ticket ;; prs) t=pr ;;
+     esac
+     for f in "thoughts/shared/$d"/*.md "thoughts/shared/$d"/*.html; do
+       [ -e "$f" ] || continue
+       base=${f##*/}; dest=".rpi/${base%.*}-$t.${base##*.}"
+       if [ -e "$dest" ]; then echo "SKIP $f — $dest exists, ask first"; continue; fi
+       if git ls-files --error-unmatch "$f" >/dev/null 2>&1; then
+         git mv "$f" "$dest"
+       else
+         mv "$f" "$dest"
+       fi
+     done
+   done
+   ```
+
+   Only `.md` and `.html` move. If those directories hold anything else, say what you left behind.
+
+2. **Rewrite the cross-references inside the moved files.** Plans link their design and research docs, review metadata links its plan, research docs link each other. Every one of those paths just changed shape, so a rewrite that only swaps the prefix leaves them broken:
+
+   ```bash
+   grep -rl 'thoughts/shared/' .rpi/ | while read -r f; do
+     perl -pi -e 's{thoughts/shared/(research|designs|plans|review-metadata|tickets|prs)/([\w.-]+?)\.(md|html)}{".rpi/$2-" . {research=>"research",designs=>"design",plans=>"plan","review-metadata"=>"review",tickets=>"ticket",prs=>"pr"}->{$1} . ".$3"}ge' "$f"
+     echo "rewrote $f"
+   done
+   ```
+
+   Design mockups are `.html`, not just `.md`; the grep catches both. Report how many files it touched — zero means the move didn't land where you think it did. Then re-run the `grep -rl` to confirm nothing still points at the old tree.
+
+3. **Update `.gitignore`.** Replace the old root's entry with `.rpi/` — one line, the whole directory. That's the point of a dedicated root: there's nothing else in it to protect.
+
+4. **Clean up the old root.** If nothing is left under it, offer to remove it. If something is, leave it and say what's still there.
+
+Substitute the chosen root for `.rpi/` throughout if they named their own. Nothing outside these directories moves: this is a migration of the workflow's own output, not a repo-wide path rewrite.
+
+## Step U4: Regenerate
 
 1. Read all reference templates (Step 4 of the main skill)
 2. Adapt each one using the extracted details (see `adaptation.md`)
@@ -118,16 +212,17 @@ Your project adaptations and any edits you made are preserved.
    - `.claude/commands/{research-codebase,create-plan,iterate-plan,implement-plan}.md` — migrated to skills
    - `.claude/commands/read-ticket.md` — retired; `branch-ticket-detector` fetches tickets now
    - `.claude/skills/review-changes/` — retired, folded into `/prepare-pr`
-5. Handle the thoughts gitignore if it isn't configured yet
+   - `.claude/agents/{thoughts-locator,thoughts-analyzer}.md` — renamed to `artifact-locator` / `artifact-analyzer`. Carry any customization across into the new file before removing the old one, then check whether `/research-codebase` or `/iterate-plan` still name the old agents.
+5. Handle the gitignore for the artifacts directory if it isn't configured yet
 6. Show the summary and workflow tips (Steps 7-8 of the main skill)
 
-## Step U4: Create missing directories
-
-If `thoughts/shared/` exists but the newer subdirectories don't:
+## Step U5: Create the artifacts directory
 
 ```bash
-mkdir -p thoughts/shared/designs thoughts/shared/review-metadata
+mkdir -p .rpi
 ```
+
+Nothing to create inside it — the artifacts are flat files named for their type.
 
 ## Preserving customizations
 
@@ -152,7 +247,7 @@ The current templates were rewritten for the Claude 5 generation of models — s
 - **`/design`'s "CRITICAL: THIS IS NOT A PLAN"** block of `DO NOT` lines, now a positive definition of what a design doc is.
 - **`/implement-plan`'s "never use limit/offset"** instruction, removed — it fights the Read tool's own guidance.
 - **`/iterate-plan`'s "Example Interaction Flows"** and subagent-spawning tutorial, both cut.
-- **Joke descriptions** on `web-search-researcher` and `thoughts-analyzer`. Descriptions drive dispatch, so these were rewritten to describe what the agent actually does.
+- **Joke descriptions** on `web-search-researcher` and `thoughts-analyzer` (now `artifact-analyzer`). Descriptions drive dispatch, so these were rewritten to describe what the agent actually does.
 - **Hardcoded `npm` commands** in `/iterate-plan`'s success-criteria section, in a template that's supposed to be tooling-neutral. If the user's install has these and the project isn't Node, that's a bug to fix, not a customization to keep.
 
 Anything else that diverges from the templates is far more likely to be theirs. Treat this list as exhaustive for "safe to replace without asking."

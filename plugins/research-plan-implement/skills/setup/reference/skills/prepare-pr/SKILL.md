@@ -44,9 +44,9 @@ If the mode is ambiguous, state your assumption and proceed; don't stall on a qu
 3. **Read the full diff.** This is the source of truth for the description.
 
 4. **Check for supporting context (all optional):**
-   - A design doc in `thoughts/shared/designs/` matching the recent dates or the branch name — read it to understand the *intent* behind the change.
-   - The plan in `thoughts/shared/plans/` this branch implemented. Its per-phase `### Completion` blocks record what was actually built versus specified — deviations, anything the user waived, anything left unproven. Those belong in the PR description; a reviewer reading the plan alongside the diff will otherwise wonder why they differ.
-   - Review metadata produced by `/implement-plan`, at `thoughts/shared/review-metadata/` under **the same basename as the plan**. If you found a plan, that path is deterministic — read it directly rather than globbing; fall back to matching recent dates only when there's no plan in hand. It carries a per-phase Critical / Mechanical / Tests triage written by the agent that wrote the code, so it categorizes files far more accurately than the diff can.
+   - A design doc (`.rpi/*-design.md`) matching the recent dates or the branch name — read it to understand the *intent* behind the change.
+   - The plan (`.rpi/*-plan.md`) this branch implemented. Its per-phase `### Completion` blocks record what was actually built versus specified — deviations, anything the user waived, anything left unproven. Those belong in the PR description; a reviewer reading the plan alongside the diff will otherwise wonder why they differ.
+   - Review metadata produced by `/implement-plan`, at **the plan's name with `-plan` swapped for `-review`**. If you found a plan, that path is deterministic — read it directly rather than globbing; fall back to matching recent dates only when there's no plan in hand. It carries a per-phase Critical / Mechanical / Tests triage written by the agent that wrote the code, so it categorizes files far more accurately than the diff can.
    - The issue/ticket the work is tied to, if the project tracks them — link it in the PR.
    - These make the description sharper, but the review guide works from the diff alone (e.g. when preparing a PR for someone else's branch).
 

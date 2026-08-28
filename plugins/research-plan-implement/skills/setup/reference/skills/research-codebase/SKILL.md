@@ -1,6 +1,6 @@
 ---
 name: research-codebase
-description: Document codebase as-is with thoughts directory for historical context
+description: Document codebase as-is, with the .rpi/ directory for historical context
 model: opus
 effort: xhigh
 ---
@@ -70,10 +70,10 @@ Detection is a convenience, not a constraint — the user can always override th
    - **codebase-analyzer** — understand HOW specific code works
    - **codebase-pattern-finder** — find examples of existing patterns
 
-   **For thoughts directory:**
+   **For prior work under `.rpi/`:**
 
-   - **thoughts-locator** — discover what documents exist about the topic
-   - **thoughts-analyzer** — extract key insights from specific documents (only the most relevant ones)
+   - **artifact-locator** — discover what documents exist about the topic
+   - **artifact-analyzer** — extract key insights from specific documents (only the most relevant ones)
 
    **For web research (only if user explicitly asks):**
 
@@ -86,10 +86,10 @@ Detection is a convenience, not a constraint — the user can always override th
 4. **Wait for all sub-agents to complete and synthesize findings:**
 
    - Wait for ALL sub-agent tasks to complete before proceeding
-   - Compile all sub-agent results (both codebase and thoughts findings)
-   - Prioritize live codebase findings as primary source of truth; use thoughts/ findings as supplementary historical context
+   - Compile all sub-agent results (both codebase and document findings)
+   - Prioritize live codebase findings as primary source of truth; use `.rpi/` findings as supplementary historical context
    - Connect findings across different components, with specific file paths and line numbers
-   - Verify all thoughts/ paths are within the current repo's `thoughts/shared/` tree
+   - Verify all document paths are within the current repo's `.rpi/` tree
    - Highlight patterns, connections, and architectural decisions
    - Answer the user's specific questions with concrete evidence
 
@@ -97,11 +97,12 @@ Detection is a convenience, not a constraint — the user can always override th
 
    - Identify the date, current commit hash, current branch name, and topic
 
-   - Filename: `thoughts/shared/research/YYYY-MM-DD-ENG-XXXX-description.md`
+   - Filename: `.rpi/YYYY-MM-DD-ENG-XXXX-description-research.md`
      - YYYY-MM-DD is today's date
      - ENG-XXXX is the ticket number (omit if no ticket)
      - description is a brief kebab-case description of the research topic
-     - Examples: `2025-01-08-ENG-1478-parent-child-tracking.md`, `2025-01-08-authentication-flow.md`
+     - `-research` is the type suffix, and it's what distinguishes this file from the design and plan that follow it
+     - Examples: `.rpi/2025-01-08-ENG-1478-parent-child-tracking-research.md`, `.rpi/2025-01-08-authentication-flow-research.md`
 
    Gather this before writing the document — never write it with placeholder values.
 
@@ -153,16 +154,16 @@ Detection is a convenience, not a constraint — the user can always override th
 
      [Current patterns, conventions, and design implementations found in the codebase]
 
-     ## Historical Context (from thoughts/)
+     ## Historical Context (from .rpi/)
 
-     [Relevant insights from thoughts/ directory with references]
+     [Relevant insights from the .rpi/ directory with references]
 
-     - `thoughts/shared/something.md` - Historical decision about X
-     - `thoughts/shared/research/older-note.md` - Past exploration of Y
+     - `.rpi/2025-11-02-rate-limits-design.md` - Historical decision about X
+     - `.rpi/2025-09-18-auth-refactor-research.md` - Past exploration of Y
 
      ## Related Research
 
-     [Links to other research documents in thoughts/shared/research/]
+     [Links to other research documents in .rpi/]
 
      ## Open Questions
 
@@ -185,7 +186,7 @@ Detection is a convenience, not a constraint — the user can always override th
    - Include the path to the research document
    - Inform them about the Open Questions section:
      ```
-     I've created a comprehensive research document at `thoughts/shared/research/YYYY-MM-DD-description.md` — please review thoroughly.
+     I've created a comprehensive research document at `.rpi/YYYY-MM-DD-description-research.md` — please review thoroughly.
 
      When you're ready, I have some open questions based on this research. You can find them in the "Open Questions" section, or we can go through them together when you're ready.
      ```
@@ -200,8 +201,8 @@ Detection is a convenience, not a constraint — the user can always override th
 
 ## Important notes
 
-- Always run fresh codebase research — never rely solely on existing research documents. The thoughts/ directory supplements live findings; it doesn't replace them.
+- Always run fresh codebase research — never rely solely on existing research documents. The `.rpi/` directory supplements live findings; it doesn't replace them.
 - Research documents should be self-contained, with concrete file paths and line numbers, and GitHub links where possible
 - Keep the main agent focused on synthesis, not deep file reading — that's what the sub-agents are for
-- Explore all of thoughts/, not just the research subdirectory
-- **Path handling**: only reference paths within the current repo's `thoughts/` directory. Do not search or reference `thoughts/searchable/`, `thoughts/global/`, or per-user directories — this repo does not use them. Never broaden searches to parent dirs, sibling worktrees, or `~/thoughts`.
+- Explore all of `.rpi/`, not just the `*-research.md` files
+- **Path handling**: only reference paths within the current repo's `.rpi/` directory. Never broaden searches to parent dirs, sibling worktrees, or home-directory paths.

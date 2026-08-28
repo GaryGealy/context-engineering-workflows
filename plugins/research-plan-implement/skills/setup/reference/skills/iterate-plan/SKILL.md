@@ -40,9 +40,9 @@ For example:
 I'll help you iterate on an existing implementation plan.
 
 Which plan would you like to update? Please provide the path to the plan file
-(e.g., `thoughts/shared/plans/2025-10-16-feature.md`).
+(e.g., `.rpi/2025-10-16-feature-plan.md`).
 
-Tip: You can list recent plans with `ls -lt thoughts/shared/plans/ | head`
+Tip: You can list recent plans with `ls -lt .rpi/*-plan.md | head`
 ```
 
 ## Process
@@ -55,7 +55,7 @@ Read the plan file COMPLETELY — no limit/offset. Understand its structure, pha
 
 Simple changes (rewording criteria, splitting a phase, adjusting scope) need no research. Spawn agents only when the feedback requires new technical understanding or validation of an assumption.
 
-When you do: use **codebase-locator** to find relevant files, **codebase-analyzer** for implementation details, **codebase-pattern-finder** for similar patterns, and the **thoughts-*** agents for prior decisions. Run them in parallel, then read the files they surface fully into the main context before proceeding. Track the research with TodoWrite if it's more than a couple of tasks.
+When you do: use **codebase-locator** to find relevant files, **codebase-analyzer** for implementation details, **codebase-pattern-finder** for similar patterns, and the **artifact-*** agents for prior decisions. Run them in parallel, then read the files they surface fully into the main context before proceeding. Track the research with TodoWrite if it's more than a couple of tasks.
 
 ### Step 3: Present your understanding and confirm
 
@@ -88,7 +88,7 @@ Check consistency as you go. A new phase should follow the existing phase patter
 ### Step 5: Present the changes
 
 ```
-I've updated the plan at `thoughts/shared/plans/[filename].md`
+I've updated the plan at `.rpi/[filename]`
 
 Changes made:
 - [Specific change 1]

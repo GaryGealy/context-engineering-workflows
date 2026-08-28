@@ -3,6 +3,63 @@
 All notable changes to the `research-plan-implement` plugin are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com).
 
+## [Unreleased]
+
+`thoughts/shared/` was inherited from HumanLayer's original workflow, where it
+named a place for an agent's working notes. Two things were wrong with it. The
+name described a mood rather than a content type, and the directory-per-type
+hierarchy meant four `mkdir`s and four globs to express something a filename
+already says. Artifacts now live flat in `.rpi/`, and the agents that read them
+no longer have a directory name baked into their own.
+
+### Changed
+
+- **Default artifacts directory is `.rpi/`, and it's flat.** The type moved from
+  the directory into the filename's last segment:
+
+  ```
+  thoughts/shared/plans/2026-01-05-auth.md  ->  .rpi/2026-01-05-auth-plan.md
+  ```
+
+  Names are `YYYY-MM-DD-[TICKET-]description-{research,design,plan,review}.md`.
+  Date-first sorts one feature's whole chain together, which is the order you
+  actually read them in. A hidden root that only this workflow writes to also
+  takes a one-line `.gitignore` entry — under a shared directory you'd be
+  ignoring by glob and silently catching hand-written docs with it.
+- `/implement-plan` and `/prepare-pr` locate review metadata by **swapping a
+  plan's `-plan` suffix for `-review`** rather than mirroring a basename across
+  two directories. Same deterministic lookup, one less directory.
+- `thoughts-locator` and `thoughts-analyzer` are now **`artifact-locator` and
+  `artifact-analyzer`**. The location is the user's to choose, so the agent names
+  no longer assert one. `/research-codebase` and `/iterate-plan` reference the
+  new names.
+- The two agents are **always generated**. They were previously conditional on a
+  `thoughts/` directory the workflow wrote to regardless, so the condition never
+  meant anything.
+- `artifact-locator` categorizes by filename suffix instead of by directory, and
+  carries the one caveat a hidden root introduces: an unscoped search skips
+  `.rpi/`, so the directory has to be named explicitly (`path: ".rpi"`). Scoped
+  that way it reads normally even when gitignored.
+- Setup states the `.rpi/` default rather than asking how to structure a
+  directory, and takes an override for the root only. The naming convention is
+  fixed — the metadata lookup above depends on both ends agreeing.
+- The gitignore recommendation is one line, `.rpi/`.
+
+### Added
+
+- **Upgrade asks before moving anything.** An existing install picks one of
+  three: keep the root it has, adopt `.rpi/`, or name its own. Setup recovers the
+  current root by grepping the installed skills rather than assuming
+  `thoughts/shared/`.
+- Choosing to move **relocates, renames, and relinks**. Because the type moves
+  from the directory into the filename, a prefix swap isn't enough: every
+  cross-reference — plan to its design and research, review metadata to its plan,
+  design doc to its `.html` mockup — is rewritten per type. The migration handles
+  untracked files (the old default recommended gitignoring `thoughts/`, so most
+  of them are), skips rather than overwrites an occupied destination, reports
+  anything that isn't `.md` or `.html`, and leaves everything outside the
+  workflow's own directories alone.
+
 ## [4.1.0] - 2026-08-15
 
 The `### Completion` block and the incremental review metadata below come from

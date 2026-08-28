@@ -235,27 +235,27 @@ This workflow uses **intentional compaction** — periodically pausing work and 
 **Greenfield Feature:**
 ```bash
 /research-codebase "How are similar features implemented?"
-/design thoughts/shared/research/2026-01-05-feature.md
-/create-plan thoughts/shared/designs/2026-01-05-feature.md
-/implement-plan thoughts/shared/plans/2026-01-05-feature.md
+/design .rpi/2026-01-05-feature-research.md
+/create-plan .rpi/2026-01-05-feature-design.md
+/implement-plan .rpi/2026-01-05-feature-plan.md
 /prepare-pr
 ```
 
 **Bug Fix:**
 ```bash
 /research-codebase "Why is X failing?"
-/design thoughts/shared/research/2026-01-05-bug.md
-/create-plan thoughts/shared/designs/2026-01-05-bug.md
-/implement-plan thoughts/shared/plans/2026-01-05-bug.md
+/design .rpi/2026-01-05-bug-research.md
+/create-plan .rpi/2026-01-05-bug-design.md
+/implement-plan .rpi/2026-01-05-bug-plan.md
 /prepare-pr
 ```
 
 **Refactoring:**
 ```bash
 /research-codebase "How does module X work currently?"
-/design thoughts/shared/research/2026-01-05-refactor.md
-/create-plan thoughts/shared/designs/2026-01-05-refactor.md
-/implement-plan thoughts/shared/plans/2026-01-05-refactor.md
+/design .rpi/2026-01-05-refactor-research.md
+/create-plan .rpi/2026-01-05-refactor-design.md
+/implement-plan .rpi/2026-01-05-refactor-plan.md
 /prepare-pr
 ```
 
@@ -263,11 +263,11 @@ This workflow uses **intentional compaction** — periodically pausing work and 
 ```bash
 # Day 1: Research, design, plan
 /research-codebase "How should feature X integrate?"
-/design thoughts/shared/research/2026-01-05-feature.md
-/create-plan thoughts/shared/designs/2026-01-05-feature.md
+/design .rpi/2026-01-05-feature-research.md
+/create-plan .rpi/2026-01-05-feature-design.md
 
 # Day 2+: Implement (resumes from last checkpoint)
-/implement-plan thoughts/shared/plans/2026-01-05-feature.md
+/implement-plan .rpi/2026-01-05-feature-plan.md
 
 # Final: Review
 /prepare-pr
@@ -275,7 +275,7 @@ This workflow uses **intentional compaction** — periodically pausing work and 
 
 **Iterating on a Plan:**
 ```bash
-/iterate-plan thoughts/shared/plans/2026-01-05-feature.md
+/iterate-plan .rpi/2026-01-05-feature-plan.md
 # "Split Phase 2 into two phases"
 # "Update success criteria based on testing"
 ```

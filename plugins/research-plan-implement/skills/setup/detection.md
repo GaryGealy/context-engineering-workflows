@@ -15,7 +15,7 @@ Read whichever of these exist, and infer the stack from them:
 | `Makefile` | Often the real entry point — check for `test`, `lint`, `build` targets |
 | `.git/config` | Remote host hints at the issue tracker (github.com, gitlab.com) |
 
-Also check whether a `thoughts/` directory already exists.
+Also check where workflow artifacts should live. `.rpi/` is the default root; note whether it already exists, and whether an older `thoughts/` tree is present (see "Detecting an existing installation").
 
 ## What to extract
 
@@ -26,10 +26,11 @@ Also check whether a `thoughts/` directory already exists.
 - Database tooling and its migration workflow (Prisma, SQLAlchemy/Alembic, Django ORM, Diesel, Drizzle)
 - Directory structure conventions
 - Issue tracker
+- Existing artifacts directory, if any
 
 ## Detecting the issue tracker
 
-Check for CLIs (`which linear`, `which gh`, `which glab`), a `thoughts/tickets/` or `thoughts/*/tickets/` directory, and the git remote host. Note both what the project uses *and* whether the CLI is actually installed — the generated skills depend on it.
+Check for CLIs (`which linear`, `which gh`, `which glab`), ticket files (`.rpi/*-ticket.md`, or a `thoughts/*/tickets/` directory on an older install), and the git remote host. Note both what the project uses *and* whether the CLI is actually installed — the generated skills depend on it.
 
 Install hints if a CLI is missing:
 - Linear: `npm install -g @linear/cli`
@@ -38,7 +39,7 @@ Install hints if a CLI is missing:
 
 ## Presenting findings
 
-Show what you found as a compact list — language, framework, package manager, test/lint/format/build/typecheck commands, database, issue tracking, and whether `thoughts/` exists. Mark anything you couldn't determine as needing input rather than guessing.
+Show what you found as a compact list — language, framework, package manager, test/lint/format/build/typecheck commands, database, issue tracking, and the artifacts directory. Mark anything you couldn't determine as needing input rather than guessing.
 
 ## Filling gaps
 
@@ -60,6 +61,16 @@ Present the complete resolved configuration and get a yes before generating anyt
 - `.claude/commands/research-codebase.md` exists → **v1 migration**, see `upgrade.md`
 - Neither → **fresh install**, continue with Step 2
 
+### Where the existing install writes artifacts
+
+An upgrade must not assume `.rpi/`. Grep the installed skills for the paths they
+actually write to — `grep -ho '[A-Za-z._/-]*/\(research\|designs\|plans\|review-metadata\)/' .claude/skills/*/SKILL.md | sort -u` —
+and take the common root from that. It's usually `thoughts/shared/`, but a user who
+customized their install may have anything. Cross-check against what's on disk;
+if the skills and the filesystem disagree, show both and ask.
+
+`upgrade.md` uses this root as the "keep what you have" option.
+
 ### Which version is installed
 
 The upgrade summary is composed from the changelog entries between their version and
@@ -71,7 +82,8 @@ file set implies:
 
 | Evidence | Version |
 |---|---|
-| `.claude/skills/prepare-pr/` exists | 3.x |
+| `.claude/agents/artifact-locator.md` exists | 4.2+ |
+| `.claude/skills/prepare-pr/` exists | 3.x–4.1 |
 | `.claude/skills/review-changes/` exists | 2.x |
 | only `.claude/commands/` | 1.x |
 

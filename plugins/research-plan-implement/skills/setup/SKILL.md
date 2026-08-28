@@ -30,7 +30,7 @@ If they're already on a feature branch, that's fine — just make sure they know
 
 ## Step 1: Analyze the project
 
-Read `detection.md`, then inspect the project: language, framework, package manager, test/lint/format/build/typecheck commands, database tooling, issue tracker, and whether `thoughts/` exists.
+Read `detection.md`, then inspect the project: language, framework, package manager, test/lint/format/build/typecheck commands, database tooling, issue tracker, and where workflow artifacts should live.
 
 Present what you found, marking anything you couldn't determine.
 
@@ -42,9 +42,9 @@ Ask for whatever you couldn't detect, batched into as few turns as possible — 
 
 ## Step 3: Ask preferences
 
-1. **Thoughts directory** — use an existing `thoughts/`, or create one? What structure (`shared/research/` and `shared/plans/`, or custom)?
+1. **Artifacts directory** — where research, designs, plans, and review metadata get written. Default to `.rpi/`; state it rather than asking an open question, and let them name a different root if they want one. It's flat: the type is the filename's last segment (`-research`, `-design`, `-plan`, `-review`), so nothing nests. Don't offer to customize the naming.
 2. **Additional commands** — any custom verification commands or project-specific testing notes to fold in?
-3. **Gitignore** — if `thoughts/` isn't ignored, recommend adding it: these are working artifacts, not source, and keeping them out of git keeps PRs clean. If thoughts files are already tracked, offer `git rm --cached -r thoughts/` to untrack without deleting.
+3. **Gitignore** — recommend ignoring the artifacts root: these are working notes, not source, and keeping them out of git keeps PRs clean. One line, `.rpi/`. If artifacts are already tracked, offer `git rm --cached -r .rpi/` to untrack without deleting.
 4. **Confirm** — ready to generate?
 
 ## Step 4: Read the reference templates
@@ -53,11 +53,9 @@ All paths below are relative to this skill's directory (`${CLAUDE_SKILL_DIR}`), 
 
 **Skills** (`reference/skills/*/SKILL.md`): research-codebase, design, create-plan, iterate-plan, implement-plan, prepare-pr, guide
 
-**Agents** (`reference/agents/*.md`): codebase-analyzer, codebase-locator, codebase-pattern-finder, query-planner, web-search-researcher
+**Agents** (`reference/agents/*.md`): codebase-analyzer, codebase-locator, codebase-pattern-finder, query-planner, web-search-researcher, artifact-locator, artifact-analyzer
 
-**Conditional agents:**
-- thoughts-analyzer, thoughts-locator — only if `thoughts/` is enabled
-- branch-ticket-detector — only if an issue tracker is configured
+**Conditional agent:** branch-ticket-detector — only if an issue tracker is configured
 
 **Script:** `reference/scripts/herdr-phase.sh` — copied verbatim, never adapted
 
@@ -87,8 +85,8 @@ Read `adaptation.md` and work through the templates. The core of this skill is h
     ├── codebase-pattern-finder.md
     ├── query-planner.md
     ├── web-search-researcher.md
-    ├── thoughts-analyzer.md          # if thoughts/ enabled
-    ├── thoughts-locator.md           # if thoughts/ enabled
+    ├── artifact-locator.md
+    ├── artifact-analyzer.md
     └── branch-ticket-detector.md     # if an issue tracker is configured
 ```
 
@@ -108,7 +106,7 @@ Created research-design-plan-implement workflow in .claude/
 
 Generated files:
 - 7 skills: /research-codebase, /design, /create-plan, /iterate-plan, /implement-plan, /prepare-pr, /guide
-- [N] agents: query-planner, codebase-locator, codebase-analyzer, pattern-finder, web-search-researcher, [+thoughts agents if enabled]
+- [N] agents: query-planner, codebase-locator, codebase-analyzer, pattern-finder, web-search-researcher, artifact-locator, artifact-analyzer[, branch-ticket-detector]
 - 1 script: scripts/herdr-phase.sh — tags each tab with its workflow phase in the herdr sidebar (no-op outside herdr; run /guide herdr to learn more)
 
 Adapted for your project:
@@ -118,6 +116,7 @@ Adapted for your project:
 - Build command: [detected command]
 - Database: [detected tool and commands]
 - Issue tracking: [detected system]
+- Artifacts directory: [chosen root] (flat; type is the filename suffix)
 
 Workflow:
   /research-codebase -> /design -> /create-plan -> /implement-plan -> /prepare-pr
@@ -125,9 +124,9 @@ Workflow:
 
 Quick start:
   /research-codebase "How does authentication work?"
-  /design thoughts/shared/research/2026-01-05-auth-flow.md
-  /create-plan thoughts/shared/designs/2026-01-05-auth-redesign.md
-  /implement-plan thoughts/shared/plans/2026-01-05-auth-redesign.md
+  /design .rpi/2026-01-05-auth-flow-research.md
+  /create-plan .rpi/2026-01-05-auth-redesign-design.md
+  /implement-plan .rpi/2026-01-05-auth-redesign-plan.md
   /prepare-pr
 
 These files are yours now — edit them freely as you learn what your team needs.
@@ -184,20 +183,17 @@ Attribution:
   GitHub: github.com/humanlayer/humanlayer
 ```
 
-## Step 9: Create thoughts/ (optional)
+## Step 9: Create the artifacts directory
 
-If the user wants `thoughts/` and it doesn't exist:
+`mkdir -p` the chosen root if it doesn't exist. There's nothing to create inside it — the skills write flat files named for their type:
 
 ```
-thoughts/
-├── shared/
-│   ├── research/
-│   ├── designs/
-│   ├── plans/
-│   └── review-metadata/
-└── [username]/
-    ├── tickets/
-    └── notes/
+.rpi/
+├── 2026-01-05-auth-research.md
+├── 2026-01-05-auth-design.md
+├── 2026-01-05-auth-design.html      # optional mockup from /design
+├── 2026-01-05-auth-plan.md
+└── 2026-01-05-auth-review.md
 ```
 
 ## Success criteria
