@@ -3,7 +3,11 @@
 All notable changes to the `research-plan-implement` plugin are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com).
 
-## [Unreleased]
+## [6.0.0] - 2026-08-31
+
+Breaking: `/iterate-plan` is gone, and generated artifacts move from
+`thoughts/shared/` to a flat `.rpi/` root. Both are handled by re-running
+`/setup`, which asks before relocating anything or removing a retired skill.
 
 Merges upstream `research-plan-implement` v5.0.0 from
 [lucasnad27/claude-plugins](https://github.com/lucasnad27/claude-plugins). Upstream renamed
