@@ -3,6 +3,15 @@
 All notable changes to the `research-plan-implement` plugin are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com).
 
+## [Unreleased]
+
+### Fixed
+
+- Setup installs `herdr-phase.sh` with three separate Bash calls instead of a
+  chained `mkdir && cp && chmod`. The chained form reads as one multi-operation
+  command and is refused under stricter permission settings, which stranded
+  setup on its last step with every other file already written.
+
 ## [6.0.0] - 2026-08-31
 
 Breaking: `/iterate-plan` is gone, and generated artifacts move from

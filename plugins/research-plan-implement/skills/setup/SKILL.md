@@ -95,6 +95,9 @@ Read `adaptation.md` and work through the templates. The core of this skill is h
     └── branch-ticket-detector.md     # if an issue tracker is configured
 ```
 
+Copy `herdr-phase.sh` with the three separate Bash calls in `adaptation.md` — chaining
+`mkdir && cp && chmod` gets refused under stricter permission settings.
+
 **Keep these directory names exactly as written.** They double as the skill names users type, and each one is chosen to clear Claude Code's built-in skills. `design-doc` in particular must not be shortened to `design`: that name belongs to a built-in (Claude Design's canvas tool), which wins the collision and leaves the generated skill uninvokable.
 
 If VS Code Copilot chat is one of the targets from Step 3, two things change — both covered in `adaptation.md`:
