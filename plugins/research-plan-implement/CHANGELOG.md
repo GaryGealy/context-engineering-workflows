@@ -125,6 +125,12 @@ two rules worth keeping moved into `/create-plan`.
   isn't installed the skill says so once and moves on, and the stops are on the PR either
   way. Written against tuicr 0.24.0.
 
+- **The README leads with the *why*.** A diagram and a short argument for why the workflow
+  puts a human checkpoint at each of the six steps: agents decoupled code volume from
+  comprehension, and trust is what actually ships. Extensibility and the upgrade path are
+  now documented together, since telling the agent what tooling you use is the extension
+  mechanism and surviving an upgrade is what makes it worth doing.
+
 - **Commit convention is detected once at setup**, with a real example subject line from the
   repo's own history, and `/prepare-pr` uses it instead of re-inferring one per PR. Conventional
   Commits was the standing guess and plenty of repos don't use it.
