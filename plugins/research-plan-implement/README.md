@@ -1,24 +1,52 @@
 # Research → Design → Plan → Implement → Review
 
-**Context-aware workflow for AI-assisted development.**
+**Install the plugin, run `/setup`, and you have a research → design → plan → implement → review workflow adapted to your codebase and your team's SDLC.**
 
-Analyzes your codebase, aligns on design, creates detailed plans, implements features with automated verification, and guides structured review. Uses intentional compaction to manage context windows and maximize AI effectiveness.
+That is the entire setup. `/setup` reads your project — build system, test runner, linter, framework, database tooling, issue tracker, commit convention, forge — and writes six skills and eight agents into `.claude/`, phrased in your project's own vocabulary. Nothing to fill in, no config file to maintain, no templates to keep in sync.
 
-## Installation
+The payoff is velocity you can actually ship: a 35k-LOC feature landed in 7 hours against a 3–5 day estimate, with minimal PR revision. Roughly 5x — without lowering the review bar, because raising it is how you get there.
 
-This plugin is a **generator**. You install it once per machine, then run `/setup` in each project to produce that project's workflow files. Those files get committed, so teammates install nothing — see [For your teammates](#for-your-teammates).
+As the plugin improves, update it and re-run `/setup`. Your edits come with you — [see below](#upgrading--your-edits-come-with-you).
+
+---
+
+## Why put friction back in
+
+![No slop, all vibes — three charts contrasting lines of code against understanding of code, pre-AI, with AI and no friction, and with AI plus deliberate friction; below them the six workflow steps and the human checkpoint at each](../../docs/no-slop-all-vibes.png)
+
+Before coding agents, understanding was a byproduct of typing. You could not ship a system you did not understand, because writing it line by line *was* how you came to understand it. The two lines in the left panel move together because they were never really two lines.
+
+Agents severed that link. Code volume is now decoupled from comprehension — an agent produces more in an afternoon than a team absorbs in a week. The middle panel is what you get when you point one at a repo and stay out of its way: **accumulating code quicker than we are accumulating trust.**
+
+That gap is the whole problem, because trust is what actually ships. Code nobody understands cannot be reviewed honestly, cannot be debugged at 2am, and cannot be safely changed six months from now. Velocity that outruns understanding is not velocity. It is debt at a higher frame rate.
+
+The fix is not slowing the agent down. It is putting a human back at the specific points where understanding gets created, and writing down what was understood so the next context can pick it up. That is the bottom row of the diagram — six steps, each with a named human and something they have to actually read and agree to:
+
+| Step | Who | What the friction buys |
+| --- | --- | --- |
+| **Issue** | Team | Agreement on what the problem even is, before anyone opens an editor |
+| **Research** | Dev | A written account of how the code works *today* — no recommendations, no critique |
+| **Design** | Dev | The approach argued and settled while it is still cheap to change |
+| **Plan** | Dev | Vertical phases with explicit verification, so "done" is defined before work starts |
+| **Implement** | Dev | A pause between phases — tests green, manual check, then the next one |
+| **Review** | Team | Numbered stops on the diff naming what to decide, so understanding lands back with the team |
+
+Each phase leaves an artifact behind, and the artifact does double duty: it is the record of what was understood, and it is the input that seeds the next phase's fresh context. That is the compaction half of the workflow. The checkpoint is the friction half.
+
+The right panel is the payoff. Both lines climb. You do not trade speed for comprehension — the friction is what lets you keep both.
+
+**No slop, all vibes.**
+
+---
+
+## Install
 
 ### Claude Code
 
-Add the marketplace:
+Add the marketplace, then the plugin:
 
-```
+```bash
 /plugin marketplace add GaryGealy/context-engineering-workflows
-```
-
-Then install the plugin:
-
-```
 /plugin install research-plan-implement@research-plan-implement-workflow
 ```
 
@@ -36,134 +64,19 @@ VS Code's Agent Plugins resolver reads `.claude-plugin/marketplace.json` as one 
 
 Requires VS Code 1.108 or newer; on older builds the setting is named `github.copilot.chat.skillTool.enabled`.
 
-To browse it alongside your other plugins, open the Extensions view and filter by `@agentPlugins`. To subscribe to the whole marketplace rather than one plugin, add the repo to `chat.plugins.marketplaces` (or run **Chat: Manage Plugin Marketplaces**).
-
 ### Then, in your project
 
 ```bash
 cd my-project
+/setup      # generates the workflow, adapted to this repo
+/guide      # where am I, what's next
 ```
 
-```
-/setup     # generates this project's workflow files
-/guide     # orientation, any time
-```
+Start working:
 
-Name VS Code as a target during `/setup` and it also merges `chat.useAgentSkills` into `.vscode/settings.json` for you.
-
-### For your teammates
-
-They don't install the plugin. `/setup` writes real files into the repository:
-
-```
-.claude/skills/         # the phase commands
-.claude/agents/         # the research subagents
-.claude/scripts/        # herdr phase markers
-.vscode/settings.json   # chat.useAgentSkills, if VS Code is a target
-```
-
-Commit those and anyone who clones has the workflow. Claude Code picks it up automatically; VS Code picks it up too, since it scans `.claude/skills/` and `.claude/agents/` natively and the committed `.vscode/settings.json` supplies the setting. Run `/guide copilot` for what VS Code maps and what it drops.
-
-### Upgrading from v1
-
-If you installed v1 of this plugin, re-run `/setup` in your project to upgrade your generated workflow files to v2. The setup skill will detect existing files and ask which to regenerate.
-
-Note: v2 moves generated files from `.claude/commands/` to `.claude/skills/` to align with Claude Code's current conventions. Re-running `/setup` will create the new skill files alongside (or in place of) the old command files.
-
-## Quick Start
-
-1. Navigate to your project: `cd my-project`
-2. Run setup: `/setup`
-3. Learn the workflow: `/guide`
-4. Start researching: `/research-codebase "How does auth work?"`
-5. Align on design: `/design-doc thoughts/shared/research/2026-04-02-auth.md`
-
-## What You Get
-
-**Skills:**
-- `/guide` - Quick contextual orientation (where am I in the workflow? what's next?)
-- `/setup` - Generate project-specific workflow commands
-
-**Generated Skills** (after running `/setup`):
-- `/research-codebase` - Research using parallel sub-agents, create research documents
-- `/design-doc` - Align on design approach through collaborative discussion before planning
-- `/create-plan` - Create detailed implementation plans through interactive research
-- `/iterate-plan` - Update plans based on feedback or new discoveries
-- `/implement-plan` - Execute plans with automated verification and testing checkpoints
-- `/prepare-pr` - Commit changes, open the PR, and write its description as a structured review guide (or update an existing PR's description)
-- `/guide` - Quick contextual orientation (where am I? what's next?)
-
-**Generated Agents** (specialized AI assistants):
-- `codebase-locator` - Find WHERE code lives (files, directories, components)
-- `codebase-analyzer` - Analyze HOW code works (data flow, implementation details)
-- `codebase-pattern-finder` - Find similar patterns and examples to model after
-- `query-planner` - Decompose complex research questions into targeted sub-queries
-- `branch-ticket-detector` - Detect the ticket from your branch/worktree so `/research-codebase` works with no arguments (if an issue tracker is configured)
-- `web-search-researcher` - Research external docs and resources
-- `thoughts-locator` - Find documents in thoughts/ directory (optional)
-- `thoughts-analyzer` - Extract insights from thought documents (optional)
-
-**Generated Script:**
-- `scripts/herdr-phase.sh` - If you run inside [herdr](https://herdr.dev), each workflow skill tags its tab with a phase emoji (🔬 research · 🎨 design · 📋 plan · 🔨 implement · 🔍 review) so the session sidebar becomes a phase board. Safe no-op outside herdr — nothing to configure. Run `/guide herdr` for details.
-
-## Real-World Results
-
-- **300k LOC Rust codebase:** 1-hour bug fix by non-expert, PR approved without revision
-- **35k LOC feature:** 7 hours vs 3-5 days estimated, minimal PR revisions
-- **Key insight:** Upfront research and design investment pays off exponentially
-
-## How It Works
-
-This plugin generates a complete "research → design → plan → implement → review" workflow in your project's `.claude/` directory by:
-
-1. **Analyzing your project** - Reads your `package.json`, `Cargo.toml`, `go.mod`, or `pyproject.toml` to understand your stack
-2. **Adapting intelligently** - Uses Claude's reasoning (not brittle templates) to customize commands for your tools
-3. **Generating workflow** - Creates skills and agents that work natively with your project's build system
-
-**No templates. No hardcoded rules.**
-
-## Usage
-
-### Quick Start
-
-1. Navigate to your project directory
-2. Run the setup skill:
-   ```bash
-   /setup
-   ```
-3. Answer a few questions about your preferences
-4. Start using the generated skills!
-
-### What Gets Generated
-
-The plugin creates this structure in your project:
-
-```
-.claude/
-├── skills/
-│   ├── research-codebase/
-│   │   └── SKILL.md
-│   ├── design/
-│   │   └── SKILL.md
-│   ├── create-plan/
-│   │   └── SKILL.md
-│   ├── iterate-plan/
-│   │   └── SKILL.md
-│   ├── implement-plan/
-│   │   └── SKILL.md
-│   ├── prepare-pr/
-│   │   └── SKILL.md
-│   └── guide/
-│       └── SKILL.md
-└── agents/
-    ├── codebase-analyzer.md
-    ├── codebase-locator.md
-    ├── codebase-pattern-finder.md
-    ├── query-planner.md
-    ├── branch-ticket-detector.md # If an issue tracker is configured
-    ├── thoughts-analyzer.md      # If thoughts/ enabled
-    ├── thoughts-locator.md       # If thoughts/ enabled
-    └── web-search-researcher.md
+```bash
+/research-codebase "How does user authentication work?"
+/design-doc .rpi/2026-04-02-auth-research.md
 ```
 
 ### Editors
@@ -174,379 +87,190 @@ The generated files run in **Claude Code** and **VS Code Copilot chat** from a s
 
 The tradeoff is per-skill model pinning. Claude Code-only installs keep it — research and planning on opus at high effort, `/guide` on haiku. In Copilot every skill runs on the model selected in chat, so choose it before starting a research or planning pass.
 
-Copilot may also need one setting, which `/setup` merges into `.vscode/settings.json` when you name it as a target:
+Name VS Code as a target during `/setup` and it merges `chat.useAgentSkills` into `.vscode/settings.json` for you. Run `/guide copilot` for the full picture, including what remains unverified about tool-name translation.
 
-```json
-{ "chat.useAgentSkills": true }
+---
+
+## What you get
+
+`/setup` and `/guide` ship with the plugin. Everything below is generated into your repo and is yours to edit.
+
+**Skills**
+
+| Skill | What it does |
+| --- | --- |
+| `/research-codebase` | Fans out parallel sub-agents to document how something works today |
+| `/design-doc` | Settles the approach through discussion, ~200 lines plus a concrete mockup |
+| `/create-plan` | Turns a design or ticket into vertical phases with per-phase verification |
+| `/implement-plan` | Executes phase by phase, runs your real checks, pauses for manual testing |
+| `/prepare-pr` | Commits, opens the PR, and lands a numbered review guide as inline stops |
+| `/guide` | Contextual orientation — where am I in the workflow, what's next |
+
+**Agents**
+
+| Agent | What it does |
+| --- | --- |
+| `codebase-locator` | Finds *where* code lives |
+| `codebase-analyzer` | Explains *how* it works |
+| `codebase-pattern-finder` | Finds similar patterns worth modeling after |
+| `query-planner` | Decomposes a research question into targeted sub-queries |
+| `branch-ticket-detector` | Reads the ticket off your branch, so `/research-codebase` works bare |
+| `web-search-researcher` | Researches external docs |
+| `artifact-locator` | Finds prior research, designs, plans, and tickets |
+| `artifact-analyzer` | Pulls the decisions and constraints out of one of them |
+
+**Script** — `scripts/herdr-phase.sh`, for [herdr](https://herdr.dev) users. Harmless if you aren't one; see [tooling](#bring-your-own-tooling).
+
+---
+
+## The five phases
+
+```
+/research-codebase  🔬   What exists today, written down. No opinions.
+/design-doc         🎨   What we're going to do, argued and settled.
+/create-plan        📋   Vertical phases, each independently verifiable.
+/implement-plan     🔨   Phase by phase. Tests alongside code. Pause between.
+/prepare-pr         🔍   PR opened, diff annotated with numbered stops.
 ```
 
-Current VS Code documents `chat.agentSkillsLocations` instead and lists `.claude/skills` among its defaults, with skills on by default since 1.109 — so on a current build this may be a no-op. It is harmless, and kept for older ones.
+Each writes to `.rpi/`, flat, with the type as the filename's last segment:
 
-Type `/` in the Copilot chat input and the phase skills appear as slash commands. Run `/guide copilot` for the full picture, including what remains unverified about tool-name translation.
-
-### Example: TypeScript/SvelteKit Project
-
-**Before running setup:**
-
-```json
-// package.json
-{
-  "scripts": {
-    "test:unit": "vitest run",
-    "lint": "eslint .",
-    "format": "prettier --write .",
-    "build": "vite build"
-  }
-}
+```
+.rpi/
+├── 2026-01-05-auth-research.md    # /research-codebase
+├── 2026-01-05-auth-design.md      # /design-doc
+├── 2026-01-05-auth-design.html    #   ...and its mockup, when the work has a shape
+├── 2026-01-05-auth-plan.md        # /create-plan
+└── 2026-01-05-auth-review.md      # /implement-plan
 ```
 
-**After running setup:**
+A dated name sorts one feature's whole chain together, which is the order you read them in. A directory only this workflow writes to takes a one-line `.gitignore` entry without stepping on anything else. Setup asks before settling on a root, so `.output/`, `notes/`, or anything else works — the naming convention stays either way, since `/prepare-pr` finds a plan's review metadata by swapping `-plan` for `-review`.
 
-Generated skills will use your actual scripts:
+Revising a plan is a direct edit — there is no command for it. Keep it internally consistent, and leave a completed phase's `### Completion` block alone: it is a record, and a later phase reads it as its only memory of the earlier one.
 
-- Tests: `npm run test:unit` (not generic `npm test`)
-- Linting: `npm run lint`
-- Formatting: `npm run format`
-- Build: `npm run build`
-- Database: `npx prisma@6 db push` (if Prisma detected)
+### About review stops
 
-### Example: Rust Project
+`/prepare-pr` does not write a prose review guide. It builds one numbered list of **stops** — each a file, a line or range, a type, and a claim to test — and renders it in up to three places:
 
-**Before running setup:**
+- **Inline review comments on the PR**, one resolvable thread per stop, posted as a single `COMMENT` review
+- **A numbered index in the description**, capped at 60 lines for the whole thing
+- **A [tuicr](https://tuicr.dev) session**, if you walk it with the author
 
-```toml
-# Cargo.toml
-[package]
-name = "my-api"
-```
+Stop types carry intent: `issue`, `note`, `suggestion`, and `yagni` — the last for an abstraction, config, or layer with one caller that could be inlined until it has two. `--no-stops` keeps the whole guide in the description, which is also what setup generates for forges without inline review comments.
 
-**After running setup:**
+---
 
-Generated skills will use Rust tooling:
+## Bring your own tooling
 
-- Tests: `cargo test`
-- Linting: `cargo clippy`
-- Formatting: `cargo fmt`
-- Build: `cargo build`
+`/setup` shapes the workflow around your SDLC, not the other way around — your build system, test runner, issue tracker, forge, commit convention, review norms, deploy gate. **Tell your agent what you use and it wires that into the phases.** The generated skills are plain markdown in your repo, so anything you can describe to an agent, they can be taught.
 
-### Example: Python/Django Project
+**You don't need any particular tool for this to work.** Nothing below is required, and skipping all of it costs you nothing.
 
-**Before running setup:**
+Two "agent-native" tools are wired in already, because we reach for them daily. Both are optional and both degrade quietly:
 
-```toml
-# pyproject.toml
-[tool.poetry]
-dependencies = { django = "^4.0" }
-```
+- **[herdr](https://herdr.dev)** — a terminal multiplexer for coding agents. Each phase tags its tab with a glyph (🔬 🎨 📋 🔨 🔍), turning the sidebar into a phase board across every worktree you have open. The script installs unconditionally and is a silent no-op outside herdr, so there's nothing to disable if you don't run it.
+- **[tuicr](https://tuicr.dev)** — a terminal PR reviewer. Because stops are posted as GitHub review threads, `tuicr pr <n>` renders them natively with no seeding step, and resolving a thread ticks it off in both places. If it isn't installed, `/prepare-pr` says so once and moves on — the stops are on the PR either way.
 
-**After running setup:**
+Design tooling works the same way. `/design-doc` produces a self-contained HTML mockup by default; name [Paper](https://paper.design), [impeccable](https://impeccable.style), Figma, or whatever your team actually opens, and it routes the artifact through that instead.
 
-Generated skills will use Django patterns:
+So does everything else — your linter, your migration tool, your deploy check, your org's PR template, the review checklist that currently lives in someone's head. Setup asks for custom verification commands and folds them into the phases that need them.
 
-- Tests: `pytest tests/unit`
-- Linting: `ruff check .`
-- Formatting: `black .`
-- Migrations: `python manage.py migrate`
+None of this is a plugin API. The skills are files; describing your tooling to the agent that writes them is the extension mechanism.
 
-## Understanding the Workflow
+### Upgrading — your edits come with you
 
-This plugin implements **intentional compaction**—a strategy for managing AI agent context windows by distilling progress into structured artifacts (research docs, design docs, plans) before starting fresh contexts.
-
-**Why it matters:** Your context window is your ONLY lever to affect output quality without retraining models.
-
-### The Five Phases
-
-1. **Research** - Explore codebase without polluting main context
-2. **Design** - Align on approach before committing to an implementation path
-3. **Plan** - Create exact implementation specification
-4. **Implement** - Execute phase-by-phase with testing-aware verification
-5. **Review** - Commit, open the PR, and write its description as a structured review guide
-
-**Run `/guide` to learn how to use this workflow effectively.**
-
-## Typical Workflow
-
-### 1. Research the Codebase
+This is why the extension story works. Update the plugin and re-run `/setup`:
 
 ```bash
-/research-codebase "How does user authentication work?"
+/plugin marketplace update research-plan-implement-workflow
+/setup
 ```
 
-This spawns parallel agents to:
+Setup pins your installed version, reads the changelog between it and the current release, and **shows you the delta before touching a file** — new skills, retired ones, what changed in the ones you have.
 
-- Locate auth-related files
-- Analyze how authentication is implemented
-- Find usage patterns and examples
-- Create a research document in `thoughts/shared/research/`
+Then it upgrades *on top of your modifications*. Your commands, your conventions, your domain guidance, whole sections you wrote that match no template — those are carried into the regenerated files. Where it genuinely cannot tell your work from an older template's residue, it shows you the specific lines and asks. It does not guess, because guessing wrong in the "that's stale" direction deletes your work.
 
-### 2. Align on Design
+Two upgrades reach further and always ask first: moving your artifacts root (v4.1 and earlier used `thoughts/shared/`), which relocates, renames, and relinks every cross-reference; and renamed skills or agents, where local edits have to be carried across before the old file goes.
 
-```bash
-/design-doc thoughts/shared/research/2026-04-02-auth-research.md
-```
+---
 
-This:
+## What it adapts to
 
-- Reviews the research document
-- Asks clarifying questions about approach and constraints
-- Explores tradeoffs between implementation options
-- Produces a concrete reference artifact where the work has a shape worth rendering — a self-contained HTML mockup for UI work, real request/response payloads for an API, a schema diff for a data model change
-- Creates a design doc in `thoughts/shared/designs/` that the plan will reference
+Detection is reasoning over your config files, not a lookup table — but these are the paths that are well-worn:
 
-### 3. Create Implementation Plan
+| | |
+| --- | --- |
+| **Languages** | TypeScript/JavaScript (Node, Deno, Bun), Python, Go, Rust |
+| **Frameworks** | SvelteKit, Next.js, Django, FastAPI, Axum, and generic defaults |
+| **Build systems** | npm/yarn/pnpm scripts, Makefile, Cargo, Poetry, Go modules |
+| **Databases** | Prisma, Drizzle, SQLAlchemy, Django ORM, Diesel |
+| **Forges** | GitHub via `gh` (inline stops), GitLab and others (guide in the description) |
+| **Trackers** | GitHub Issues, GitLab, Linear, local ticket files, or none |
 
-```bash
-/create-plan thoughts/tickets/add-oauth-support.md
-```
+What adaptation means in practice: a SvelteKit repo gets `npm run test:unit` because that is the script that exists, not a generic `npm test`; a Rust repo gets `cargo clippy`; a Django repo gets `makemigrations` → `migrate`. The commit convention is detected once at setup from your actual history, with a real subject line as the example, rather than assuming Conventional Commits every time.
 
-This:
-
-- Reads the ticket and any referenced design docs
-- Researches relevant code patterns
-- Asks clarifying questions
-- Creates detailed plan in `thoughts/shared/plans/`
-
-### 4. Iterate on Plan
-
-```bash
-/iterate-plan thoughts/shared/plans/2025-01-05-add-oauth.md
-```
-
-Update the plan based on feedback, new discoveries, or changed requirements.
-
-### 5. Implement the Plan
-
-```bash
-/implement-plan thoughts/shared/plans/2025-01-05-add-oauth.md
-```
-
-This:
-
-- Reads the plan
-- Implements each phase with testing in mind from the start
-- Runs automated verification (tests, linting, builds)
-- Pauses for manual testing between phases
-- Updates checkboxes in the plan as progress is made
-
-### 6. Prepare PR
-
-```bash
-/prepare-pr            # commit, push, open a PR for the current branch
-/prepare-pr 123        # update the description of existing PR #123
-```
-
-This:
-
-- Commits any outstanding changes and pushes the branch
-- Analyzes the diff (current branch vs main)
-- Categorizes changes as critical vs mechanical
-- Maps test coverage across changed files
-- Opens the PR with a description written as a structured review guide (suggested reading order)
-- Can instead point at an existing PR number and rewrite its description
-
-## Supported Project Types
-
-Currently adapts intelligently to:
-
-### Languages
-
-- TypeScript/JavaScript (Node.js, Deno, Bun)
-- Python
-- Go
-- Rust
-
-### Frameworks
-
-- SvelteKit
-- Next.js
-- Django
-- FastAPI
-- Generic frameworks (with sensible defaults)
-
-### Build Systems
-
-- npm/yarn/pnpm scripts
-- Makefile
-- Cargo
-- Poetry
-- Go modules
-
-### Databases
-
-- Prisma
-- Drizzle
-- SQLAlchemy
-- Django ORM
-- Diesel
+---
 
 ## Philosophy
 
-This plugin generates workflows that follow these principles:
+1. **Documentarian approach** — research documents what EXISTS, not what SHOULD BE
+2. **Design before planning** — settle the approach while changing it is still cheap
+3. **Parallel sub-agents** — fan out concurrently; sequential research is the failure mode
+4. **Interactive planning** — defined checkpoints where a human confirms, batched, not a drip
+5. **Testing-aware implementation** — tests are built into each phase, not appended
+6. **Automated + manual verification** — an explicit split between what an agent can prove and what needs you
+7. **The smallest thing that works** — existing helper, then stdlib, then an installed dependency, before new code
+8. **Comments default to none** — rationale lives in the design doc and the plan, not narrated into the source
+9. **Review is navigation, not a verdict** — numbered stops naming what to decide, on the lines they are about
 
-1. **Documentarian Approach** - Research and document what EXISTS, not what SHOULD BE
-2. **Design Before Planning** - Align on approach before committing to an implementation path
-3. **Parallel Sub-Agents** - Spawn specialized agents concurrently for efficiency
-4. **Interactive Planning** - Iterative, collaborative plan creation with user feedback
-5. **Testing-Aware Implementation** - Tests are not an afterthought; they're built into each phase
-6. **Automated + Manual Verification** - Clear separation of what can be automated vs requires human testing
-
-## Customization
-
-### After Generation
-
-All generated files are standard markdown in `.claude/` - you can edit them freely:
-
-- Add project-specific guidance
-- Customize success criteria
-- Add more agents
-- Modify workflows
-
-### Preserving Customizations
-
-When you re-run `/setup`, it will:
-
-1. Detect existing `.claude/` files
-2. Ask which files to regenerate
-3. Preserve your custom sections
-
-### Sharing with Team
-
-Commit `.claude/` to version control so your team gets the same workflow:
-
-```bash
-git add .claude/
-git commit -m "Add research/design/plan/implement/review workflow"
-git push
-```
+---
 
 ## Troubleshooting
 
-### "I couldn't detect your project type"
+**"I couldn't detect your project type."** Detection looks for `package.json`, `Cargo.toml`, `go.mod`, `pyproject.toml`, or `requirements.txt`. With none of them present it asks you to name your stack.
 
-The plugin looks for:
+**"Reference templates not found."** The plugin is not installed correctly — confirm `skills/setup/reference/` exists under the plugin directory.
 
-- `package.json` (Node/TypeScript)
-- `Cargo.toml` (Rust)
-- `go.mod` (Go)
-- `pyproject.toml` or `requirements.txt` (Python)
+**Generated skills don't match my project.** Re-run `/setup` with corrections, or edit the files directly — they are yours. If detection got something wrong that it should have caught, please file an issue.
 
-If none exist, it will ask you to manually specify your stack.
+**My artifacts are still in `thoughts/shared/`.** Nothing breaks; an upgrade only moves them if you ask. Re-run `/setup` and pick `.rpi/` or your own root when it asks, and it relocates, renames, and relinks. Keeping what you have is equally supported.
 
-### "Reference templates not found"
+**`/guide` fails with `no matches found`.** Fixed in v5.0.0 — zsh aborts an unmatched glob before the command runs, so `2>/dev/null` never applied. Upgrade.
 
-This means the plugin isn't installed correctly. Ensure:
+**Upgrading from v1.** Generated files moved from `.claude/commands/` to `.claude/skills/`. Re-run `/setup`, then delete the old `commands/` files once the skills are confirmed working.
 
-1. Plugin is in Claude's plugins directory
-2. `skills/setup/reference/` directory exists
-3. Reference templates are present
-
-### Generated skills don't match my project
-
-The plugin adapts based on what it finds in config files. If it gets something wrong:
-
-1. Re-run `/setup` with correct info
-2. Manually edit the generated `.claude/` files
-3. File an issue so we can improve detection
-
-### Upgrading from v1 to v2
-
-Generated files moved from `.claude/commands/` to `.claude/skills/`. Re-run `/setup` to generate the new skill files. You can safely delete the old `commands/` files once the new skills are confirmed working.
-
-## Examples
-
-### Research Example
-
-```bash
-/research-codebase "How do we handle database migrations?"
-```
-
-**Output:**
-
-- Research document at `thoughts/shared/research/2026-04-02-database-migrations.md`
-- Includes file references, code examples, and architecture notes
-- Documents current state without recommendations
-
-### Design Example
-
-```bash
-/design-doc thoughts/shared/research/2026-04-02-database-migrations.md
-```
-
-**Process:**
-
-1. Reviews existing research
-2. Asks about constraints (downtime tolerance, rollback requirements, etc.)
-3. Explores migration strategy options
-4. Creates design doc at `thoughts/shared/designs/2026-04-02-migration-strategy.md`
-
-### Planning Example
-
-```bash
-/create-plan "Add two-factor authentication"
-```
-
-**Process:**
-
-1. Asks clarifying questions
-2. Researches existing auth code
-3. Proposes implementation phases
-4. Creates plan at `thoughts/shared/plans/2026-04-02-add-2fa.md`
-
-### Implementation Example
-
-```bash
-/implement-plan thoughts/shared/plans/2026-04-02-add-2fa.md
-```
-
-**Process:**
-
-1. Reads plan
-2. Implements Phase 1 with tests alongside code
-3. Runs tests: `npm run test:unit`
-4. Runs linting: `npm run lint`
-5. Pauses for manual testing
-6. Continues to Phase 2 after confirmation
-
-### Prepare PR Example
-
-```bash
-/prepare-pr
-```
-
-**Process:**
-
-1. Commits any outstanding changes and pushes the branch
-2. Diffs current branch against main
-3. Categorizes each changed file (critical / mechanical / tests)
-4. Maps test coverage across the changes
-5. Opens the PR with a description written as a review guide (suggested reading order)
-6. Or, given a PR number, rewrites that existing PR's description instead
+---
 
 ## Contributing
 
-Contributions welcome! Areas we'd love help with:
+Contributions welcome, particularly:
 
-- Additional language support (Java, C#, PHP, etc.)
+- Additional language support (Java, C#, PHP)
 - Framework-specific guidance improvements
 - Better project detection heuristics
 - Documentation improvements
 
+---
+
 ## Attribution
 
-This workflow is inspired by and adapted from multiple sources in the AI-assisted development community.
+This repository is a fork of [lucasnad27/claude-plugins](https://github.com/lucasnad27/claude-plugins), where the `research-plan-implement` plugin was created by [Lucas Culbertson](https://github.com/lucasnad27). The fork adds VS Code Copilot chat as a supported editor and tracks upstream.
 
-**Primary inspiration:**
-- **HumanLayer** - Original research → plan → implement pattern and intentional compaction strategy
-  - **Website:** [humanlayer.dev](https://humanlayer.dev)
-  - **GitHub:** [humanlayer/humanlayer](https://github.com/humanlayer/humanlayer)
-  - **AI Engineering Talk:** [YouTube](https://youtu.be/rmvDxxNubIg?si=WtKgAdi6MydW8u-i) - Deep dive on context engineering for coding agents
-  - [Advanced Context Engineering for Coding Agents](https://github.com/humanlayer/advanced-context-engineering-for-coding-agents) - Detailed guide on the principles behind this workflow
+Inspired by and adapted from several sources in the AI-assisted development community.
 
-**Additional influences:**
-- **CRISPY / Dex** - Design-before-planning discipline and structured review phases
-- **Simon Willison** - Practical AI-assisted development patterns and the value of explicit workflow documentation
+**Primary inspiration — HumanLayer.** The original research → plan → implement pattern and the intentional compaction strategy.
 
-The intentional compaction strategy and multi-phase workflow originated from HumanLayer's work on optimizing AI agent effectiveness through context window management, expanded with design alignment and review phases drawn from the broader AI engineering community.
+- [humanlayer.dev](https://humanlayer.dev) · [humanlayer/humanlayer](https://github.com/humanlayer/humanlayer)
+- [AI Engineering talk](https://youtu.be/rmvDxxNubIg?si=WtKgAdi6MydW8u-i) — deep dive on context engineering for coding agents
+- [Advanced Context Engineering for Coding Agents](https://github.com/humanlayer/advanced-context-engineering-for-coding-agents)
+
+**Additional influences**
+
+- **CRISPY / Dex** — design-before-planning discipline and structured review phases
+- **Simon Willison** — practical AI-assisted development patterns and the value of explicit workflow documentation
+- **[ponytail](https://github.com/DietrichGebert/ponytail)** (MIT, by DietrichGebert) — the reuse-before-writing ladder in `/create-plan`, root-cause-over-symptom in `/implement-plan`, and treating a one-caller abstraction as a reviewable finding (the `yagni` stop type in `/prepare-pr`)
+
+The intentional compaction strategy and multi-phase workflow originated from HumanLayer's work on optimizing agent effectiveness through context window management, expanded here with design alignment and review phases drawn from the broader community.
 
 ## License
 

@@ -33,7 +33,7 @@ When this command is invoked:
    1. The design document (from /design-doc) — required
    2. Optionally, the research doc or ticket reference
 
-   Tip: /create-plan thoughts/shared/designs/2026-01-05-auth-redesign.md
+   Tip: /create-plan .rpi/2026-01-05-auth-redesign-design.md
    ```
 
    Then wait for the user's input.
@@ -74,7 +74,7 @@ Get user approval on the outline before writing the full plan.
 
 ### Step 3: Write the Plan
 
-Write the plan to `thoughts/shared/plans/YYYY-MM-DD-description.md`
+Write the plan to `.rpi/YYYY-MM-DD-description-plan.md`
 
 **Filename format:** `YYYY-MM-DD-[ENG-XXXX-]description.md`
 - YYYY-MM-DD is today's date
@@ -87,13 +87,19 @@ Write the plan to `thoughts/shared/plans/YYYY-MM-DD-description.md`
 
 ```
 I've created the implementation plan at:
-`thoughts/shared/plans/YYYY-MM-DD-description.md`
+`.rpi/YYYY-MM-DD-description-plan.md`
 
 Please spot-check it — the design decisions are already aligned,
 so this is about verifying the phasing and testing approach make sense.
 ```
 
 Iterate based on feedback.
+
+## Plan the smallest thing that works
+
+Phases specify what gets built, so this is where speculative work gets locked in. Before specifying new code for a phase, check in order: does this codebase already have a helper, util, or pattern that covers it; does the standard library or the framework cover it; does an already-installed dependency cover it.
+
+An interface with one implementation, a config value nobody sets, a layer with one caller, an abstraction for a second case that doesn't exist yet — all cheap to delete from a plan and expensive to delete from a merged PR. If the design implies one, put it under **What We're NOT Doing** and let the user overrule you.
 
 ## Vertical Phase Design
 
@@ -166,10 +172,24 @@ It exists because implementation phases are often run by separate agents with fr
 
 Keep it distinct from the review metadata `/implement-plan` writes alongside the plan. The split is by audience:
 
-- **Completion block** — what changed *relative to the plan*. Read by the next phase and by `/iterate-plan`.
+- **Completion block** — what changed *relative to the plan*. Read by the next phase, and by whoever revises the plan later.
 - **Review metadata** — per-file Critical / Mechanical / Tests triage. Read by `/prepare-pr`.
 
 The same fact rarely belongs in both.
+
+**Never edit a filled-in `### Completion` block.** This holds for you, for a later agent, and for a hand edit. It's the record of what a finished phase actually did, often written by an agent that has since exited, and later phases read it as their only memory of earlier ones. If a change invalidates something a completed phase recorded, say so in the *new* phase's spec rather than rewriting history — a rewritten block is indistinguishable from a true one, and the next fresh agent will act on it.
+
+## Revising an existing plan
+
+Plans get revised mid-flight; that's normal and it isn't a separate phase. Edit the plan directly and keep it internally consistent:
+
+- **A new phase** follows the existing phase pattern, including an empty `### Completion` block with `Status: not started`.
+- **A scope change** updates "What We're NOT Doing" in the same pass.
+- **An approach change** updates "Implementation Approach."
+- **Completed phases are history.** Carry their Completion blocks across intact, even when restructuring around them.
+- **A revision that changes what the interface shows goes back to `/design-doc`**, so the plan and its reference artifact can't disagree.
+
+Edit surgically — preserve what doesn't need changing, keep `file:line` references accurate, and hold new content to the original's bar: specific paths, measurable criteria, real verification commands. Research only what the specific change requires; rewording a criterion or splitting a phase needs none.
 
 ## Important Guidelines
 

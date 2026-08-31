@@ -19,13 +19,13 @@ You provide contextual orientation for the research-design-plan-implement workfl
 ### Current Workspace State
 
 Recent research docs:
-!`ls -lt thoughts/shared/research/ 2>/dev/null | head -3`
+!`ls -lt .rpi 2>/dev/null | grep -E -- '-research\.md$' | head -3`
 
 Recent design docs:
-!`ls -lt thoughts/shared/designs/ 2>/dev/null | head -3`
+!`ls -lt .rpi 2>/dev/null | grep -E -- '-design\.md$' | head -3`
 
 Recent plan docs:
-!`ls -lt thoughts/shared/plans/ 2>/dev/null | head -3`
+!`ls -lt .rpi 2>/dev/null | grep -E -- '-plan\.md$' | head -3`
 
 Git status:
 !`git status --short 2>/dev/null`
@@ -61,8 +61,8 @@ Tip: [One-line tip relevant to current phase]
 - **Ready for design:** "This is your highest-leverage review moment — corrections here save hundreds of lines of rework."
 - **Ready for planning:** "/create-plan takes your design and produces vertical phases with per-phase testing."
 - **In implementation:** "Each phase should be testable on its own. If it's not, the plan may need vertical restructuring."
-- **Ready for review:** "Run /prepare-pr to commit, open the PR, and write its description as a review guide for what matters in the diff."
-- **In review:** "The PR description highlights what's critical vs mechanical. Point /prepare-pr at an existing PR number to refresh its description."
+- **Ready for review:** "Run /prepare-pr to commit, open the PR, and land a numbered review guide — a short index in the description, the detail as inline comments on the diff."
+- **In review:** "Each stop is a resolvable thread; resolving one ticks it off. Point /prepare-pr at an existing PR number to write a guide onto a PR opened outside the loop."
 
 ### Orientation Rules
 
@@ -78,4 +78,6 @@ If $ARGUMENTS is provided, it's a topic name. Read `topics.md` in this skill's d
 
 **Available topics:** overview, research, design, plan, implement, review, herdr, copilot, context, patterns, tips, examples
 
-If the topic isn't recognized, show the list of available topics.
+Topics are named for the *phase*, so a skill name is an accepted alias — `design-doc` → `design`, `research-codebase` → `research`, `create-plan` → `plan`, `implement-plan` → `implement`, `prepare-pr` → `review`. Resolve the alias and show the topic; don't make the user guess again.
+
+If the topic still isn't recognized, show the list of available topics.

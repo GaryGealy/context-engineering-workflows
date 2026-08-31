@@ -12,6 +12,7 @@ allowed-tools:
   - Bash(git push:*)
   - Bash(git tag:*)
   - Bash(git describe:*)
+  - Bash(claude plugin tag:*)
   - Bash(gh pr create:*)
   - Bash(gh pr view:*)
   - Bash(gh pr merge:*)
@@ -39,6 +40,11 @@ Every plugin has its **version declared in two separate files** that must stay i
 
 If these drift apart, Claude Code's `/plugin` will silently stop offering updates to users, even though the plugin code has moved on. Users appear stuck on an old version with no error message. **Always bump both in the same commit.**
 
+## Step 0: Smoke-test main first
+
+Don't bump a version you haven't run. Load the working tree into a real project for one
+session — see `CLAUDE.md` for the `--plugin-dir` recipe and the name-collision footgun.
+
 ## Step 1: Determine version type
 
 Based on changes since the last release, decide the SemVer bump:
@@ -57,10 +63,15 @@ git status                     # confirm clean working tree
 git log --oneline -20          # review recent changes
 ```
 
-If tags exist for this plugin, review commits since the last release. Tag naming convention in this repo: `<plugin-name>-vX.Y.Z` (e.g., `research-plan-implement-v2.0.0`). Since the marketplace hosts multiple plugins, a per-plugin tag prefix prevents collisions.
+If tags exist for this plugin, review commits since the last release. Tag convention is
+`<plugin-name>--vX.Y.Z`, matching what `claude plugin tag` generates. The per-plugin prefix
+keeps plugins from colliding in a multi-plugin marketplace.
+
+Tags through `research-plan-implement-v4.1.0` use a single dash and are left as they are —
+their GitHub Releases hang off those exact names. The glob below matches both forms.
 
 ```bash
-git describe --tags --abbrev=0 --match="<plugin-name>-v*" 2>/dev/null  # latest tag for this plugin, if any
+git describe --tags --abbrev=0 --match="<plugin-name>-*v*" 2>/dev/null  # latest tag for this plugin, if any
 ```
 
 If no prior tag exists, review the full history of `plugins/<plugin-name>/` to craft release notes.
@@ -134,14 +145,17 @@ After the PR is merged:
 ```bash
 git checkout main
 git pull origin main
-git tag -a <plugin-name>-vX.Y.Z -m "Release <plugin-name> vX.Y.Z"
-git push origin <plugin-name>-vX.Y.Z
+claude plugin tag plugins/<plugin-name> --push -m "Release <plugin-name> v%s"
 ```
+
+`claude plugin tag` re-checks that `plugin.json` and the marketplace entry agree before it
+tags, so it catches a botched Step 4 at the last moment. Run it with `--dry-run` first if you
+want to see the tag name without creating it.
 
 ## Step 9: Create GitHub Release
 
 ```bash
-gh release create <plugin-name>-vX.Y.Z \
+gh release create <plugin-name>--vX.Y.Z \
   --title "<plugin-name> vX.Y.Z" \
   --notes "$(sed -n '/## \['"X.Y.Z"'\]/,/## \[/p' plugins/<plugin-name>/CHANGELOG.md | sed '$d')"
 ```
@@ -161,6 +175,7 @@ The first command refreshes the marketplace manifest cache (this is where the du
 
 ## Quick reference: release checklist
 
+- [ ] Smoke-tested from the working tree in a real project
 - [ ] Version type decided (MAJOR/MINOR/PATCH)
 - [ ] Release branch created from fresh `main`
 - [ ] `marketplace.json` plugin entry version bumped
@@ -169,6 +184,6 @@ The first command refreshes the marketplace manifest cache (this is where the du
 - [ ] CHANGELOG updated with dated entry
 - [ ] PR opened with CHANGELOG entry as body
 - [ ] PR merged
-- [ ] Tag `<plugin-name>-vX.Y.Z` created and pushed
+- [ ] Tag `<plugin-name>--vX.Y.Z` created and pushed
 - [ ] GitHub Release created
 - [ ] Update instructions shared with users

@@ -35,7 +35,7 @@ If they're already on a feature branch, that's fine — just make sure they know
 
 ## Step 1: Analyze the project
 
-Read `detection.md`, then inspect the project: language, framework, package manager, test/lint/format/build/typecheck commands, database tooling, issue tracker, and whether `thoughts/` exists.
+Read `detection.md`, then inspect the project: language, framework, package manager, test/lint/format/build/typecheck commands, database tooling, issue tracker, and where workflow artifacts should live.
 
 Present what you found, marking anything you couldn't determine.
 
@@ -47,9 +47,9 @@ Ask for whatever you couldn't detect, batched into as few turns as possible — 
 
 ## Step 3: Ask preferences
 
-1. **Thoughts directory** — use an existing `thoughts/`, or create one? What structure (`shared/research/` and `shared/plans/`, or custom)?
+1. **Artifacts directory** — where research, designs, plans, and review metadata get written. Default to `.rpi/`; state it rather than asking an open question, and let them name a different root if they want one. It's flat: the type is the filename's last segment (`-research`, `-design`, `-plan`, `-review`), so nothing nests. Don't offer to customize the naming.
 2. **Additional commands** — any custom verification commands or project-specific testing notes to fold in?
-3. **Gitignore** — if `thoughts/` isn't ignored, recommend adding it: these are working artifacts, not source, and keeping them out of git keeps PRs clean. If thoughts files are already tracked, offer `git rm --cached -r thoughts/` to untrack without deleting.
+3. **Gitignore** — recommend ignoring the artifacts root: these are working notes, not source, and keeping them out of git keeps PRs clean. One line, `.rpi/`. If artifacts are already tracked, offer `git rm --cached -r .rpi/` to untrack without deleting.
 4. **Editors** — will this workflow run in Claude Code, VS Code Copilot chat, or both? This one is load-bearing, not cosmetic: naming VS Code strips `model:` and `effort:` from every generated skill and agent, because a skill carrying `model:` hangs Copilot chat until VS Code is restarted (see `adaptation.md`). Claude Code-only installs keep those fields and the per-skill model pinning they buy; VS Code installs run everything on the model selected in chat. It also decides whether setup writes `.vscode/settings.json`. Lead with whatever you detected, and say what the tradeoff costs if they pick both.
 5. **Confirm** — ready to generate?
 
@@ -57,17 +57,15 @@ Ask for whatever you couldn't detect, batched into as few turns as possible — 
 
 All paths below are relative to this skill's directory (`${CLAUDE_SKILL_DIR}`), not the target project.
 
-**Skills** (`reference/skills/*/SKILL.md`): research-codebase, design, create-plan, iterate-plan, implement-plan, prepare-pr, guide
+**Skills** (`reference/skills/*/SKILL.md`): research-codebase, design-doc, create-plan, implement-plan, prepare-pr, guide
 
-**Agents** (`reference/agents/*.md`): codebase-analyzer, codebase-locator, codebase-pattern-finder, query-planner, web-search-researcher
+**Agents** (`reference/agents/*.md`): codebase-analyzer, codebase-locator, codebase-pattern-finder, query-planner, web-search-researcher, artifact-locator, artifact-analyzer
 
-**Conditional agents:**
-- thoughts-analyzer, thoughts-locator — only if `thoughts/` is enabled
-- branch-ticket-detector — only if an issue tracker is configured
+**Conditional agent:** branch-ticket-detector — only if an issue tracker is configured
 
 **Script:** `reference/scripts/herdr-phase.sh` — copied verbatim, never adapted
 
-Some skill directories also carry a `template.md` or `review-metadata-template.md`. These are progressive-disclosure files the generated skill loads on demand — copy them alongside their SKILL.md.
+Some skill directories also carry a sibling file — `template.md`, `review-metadata-template.md`, `topics.md`, `tuicr-walkthrough.md`. These are progressive-disclosure files the generated skill loads on demand — copy them alongside their SKILL.md.
 
 ## Step 5: Adapt each template
 
@@ -81,9 +79,8 @@ Read `adaptation.md` and work through the templates. The core of this skill is h
 │   ├── research-codebase/SKILL.md
 │   ├── design-doc/SKILL.md + template.md
 │   ├── create-plan/SKILL.md + template.md
-│   ├── iterate-plan/SKILL.md
 │   ├── implement-plan/SKILL.md + review-metadata-template.md
-│   ├── prepare-pr/SKILL.md
+│   ├── prepare-pr/SKILL.md + tuicr-walkthrough.md
 │   └── guide/SKILL.md + topics.md
 ├── scripts/
 │   └── herdr-phase.sh                # verbatim, chmod +x
@@ -93,8 +90,8 @@ Read `adaptation.md` and work through the templates. The core of this skill is h
     ├── codebase-pattern-finder.md
     ├── query-planner.md
     ├── web-search-researcher.md
-    ├── thoughts-analyzer.md          # if thoughts/ enabled
-    ├── thoughts-locator.md           # if thoughts/ enabled
+    ├── artifact-locator.md
+    ├── artifact-analyzer.md
     └── branch-ticket-detector.md     # if an issue tracker is configured
 ```
 
@@ -127,8 +124,8 @@ The phase skills invoke the script via `"$(git rev-parse --show-toplevel)/.claud
 Created research-design-plan-implement workflow in .claude/
 
 Generated files:
-- 7 skills: /research-codebase, /design-doc, /create-plan, /iterate-plan, /implement-plan, /prepare-pr, /guide
-- [N] agents: query-planner, codebase-locator, codebase-analyzer, pattern-finder, web-search-researcher, [+thoughts agents if enabled]
+- 6 skills: /research-codebase, /design-doc, /create-plan, /implement-plan, /prepare-pr, /guide
+- [N] agents: query-planner, codebase-locator, codebase-analyzer, pattern-finder, web-search-researcher, artifact-locator, artifact-analyzer[, branch-ticket-detector]
 - 1 settings merge: .vscode/settings.json — chat.useAgentSkills (only if VS Code Copilot is a target)
 - model:/effort: frontmatter — [kept for Claude Code | stripped, since VS Code Copilot is a target]
 - 1 script: scripts/herdr-phase.sh — tags each tab with its workflow phase in the herdr sidebar (no-op outside herdr; run /guide herdr to learn more)
@@ -140,6 +137,7 @@ Adapted for your project:
 - Build command: [detected command]
 - Database: [detected tool and commands]
 - Issue tracking: [detected system]
+- Artifacts directory: [chosen root] (flat; type is the filename suffix)
 
 Workflow:
   /research-codebase -> /design-doc -> /create-plan -> /implement-plan -> /prepare-pr
@@ -147,9 +145,9 @@ Workflow:
 
 Quick start:
   /research-codebase "How does authentication work?"
-  /design-doc thoughts/shared/research/2026-01-05-auth-flow.md
-  /create-plan thoughts/shared/designs/2026-01-05-auth-redesign.md
-  /implement-plan thoughts/shared/plans/2026-01-05-auth-redesign.md
+  /design-doc .rpi/2026-01-05-auth-flow-research.md
+  /create-plan .rpi/2026-01-05-auth-redesign-design.md
+  /implement-plan .rpi/2026-01-05-auth-redesign-plan.md
   /prepare-pr
 
 These files are yours now — edit them freely as you learn what your team needs.
@@ -186,8 +184,9 @@ IMPLEMENT (/implement-plan)
 
 REVIEW (/prepare-pr)
    Commits outstanding work and opens the PR
-   Writes the PR description as a review guide
-   Guides human attention through the diff: critical vs mechanical
+   Lands a numbered review guide: a short index in the description,
+   the detail as inline comments anchored to the diff
+   Optionally walks the PR with you in tuicr, stop by stop
 
 ORIENTATION (/guide)
    Run anytime to see where you are and what's next
@@ -196,30 +195,29 @@ Key Success Factors:
   Always research before designing
   Design is your highest-leverage review moment
   Plans use vertical slices with per-phase testing
-  Run /prepare-pr to commit, open the PR, and write its review-guide description
+  Run /prepare-pr to commit, open the PR, and land the review guide as inline stops
   Run /guide if you forget where you are
 
 Attribution:
   Inspired by HumanLayer's research on AI-assisted development
   Informed by talks from Dex (CRISPY) and Simon Willison (TDD/conformance)
+  Reuse-before-writing, root-cause-over-symptom, and the yagni stop type
+    adapted from ponytail (MIT) - github.com/DietrichGebert/ponytail
   Website: humanlayer.dev
   GitHub: github.com/humanlayer/humanlayer
 ```
 
-## Step 9: Create thoughts/ (optional)
+## Step 9: Create the artifacts directory
 
-If the user wants `thoughts/` and it doesn't exist:
+`mkdir -p` the chosen root if it doesn't exist. There's nothing to create inside it — the skills write flat files named for their type:
 
 ```
-thoughts/
-├── shared/
-│   ├── research/
-│   ├── designs/
-│   ├── plans/
-│   └── review-metadata/
-└── [username]/
-    ├── tickets/
-    └── notes/
+.rpi/
+├── 2026-01-05-auth-research.md
+├── 2026-01-05-auth-design.md
+├── 2026-01-05-auth-design.html      # optional mockup from /design-doc
+├── 2026-01-05-auth-plan.md
+└── 2026-01-05-auth-review.md
 ```
 
 ## Success criteria

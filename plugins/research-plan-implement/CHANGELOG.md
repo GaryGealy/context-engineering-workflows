@@ -3,6 +3,167 @@
 All notable changes to the `research-plan-implement` plugin are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com).
 
+## [Unreleased]
+
+Merges upstream `research-plan-implement` v5.0.0 from
+[lucasnad27/claude-plugins](https://github.com/lucasnad27/claude-plugins). Upstream renamed
+`/design` to `/design-doc` independently; this fork already shipped that rename in its own
+5.0.0 below, so the entry for it is not repeated here. Everything else is new to this fork.
+
+Three independent changes ship together.
+
+**Where artifacts live.** `thoughts/shared/` was inherited from HumanLayer's original
+workflow, where it named a place for an agent's working notes. Two things were wrong
+with it. The name described a mood rather than a content type, and the
+directory-per-type hierarchy meant four `mkdir`s and four globs to express something a
+filename already says. Artifacts now live flat in `.rpi/`, and the agents that read them
+no longer have a directory name baked into their own.
+
+**How much prose the workflow produces.** The previous version was too willing to write
+it. `/prepare-pr` wrote PR descriptions long enough that the "read this carefully"
+section stopped being read carefully, and `/implement-plan` finished each phase holding
+the whole design rationale in context and parked it in the source as comments. Both are
+now bounded.
+
+**How many skills there are.** `/iterate-plan` described revising a plan as a workflow
+phase. It isn't one — editing a file is not a phase, and every step the skill described
+was either generic agent behavior or a restatement of `/create-plan`. It's gone, and the
+two rules worth keeping moved into `/create-plan`.
+
+### Changed
+
+- **Default artifacts directory is `.rpi/`, and it's flat.** The type moved from
+  the directory into the filename's last segment:
+
+  ```
+  thoughts/shared/plans/2026-01-05-auth.md  ->  .rpi/2026-01-05-auth-plan.md
+  ```
+
+  Names are `YYYY-MM-DD-[TICKET-]description-{research,design,plan,review}.md`.
+  Date-first sorts one feature's whole chain together, which is the order you
+  actually read them in. A hidden root that only this workflow writes to also
+  takes a one-line `.gitignore` entry — under a shared directory you'd be
+  ignoring by glob and silently catching hand-written docs with it.
+- `/implement-plan` and `/prepare-pr` locate review metadata by **swapping a
+  plan's `-plan` suffix for `-review`** rather than mirroring a basename across
+  two directories. Same deterministic lookup, one less directory.
+- `thoughts-locator` and `thoughts-analyzer` are now **`artifact-locator` and
+  `artifact-analyzer`**. The location is the user's to choose, so the agent names
+  no longer assert one. `/research-codebase` and `/iterate-plan` reference the
+  new names.
+- The two agents are **always generated**. They were previously conditional on a
+  `thoughts/` directory the workflow wrote to regardless, so the condition never
+  meant anything.
+- `artifact-locator` categorizes by filename suffix instead of by directory, and
+  carries the one caveat a hidden root introduces: an unscoped search skips
+  `.rpi/`, so the directory has to be named explicitly (`path: ".rpi"`). Scoped
+  that way it reads normally even when gitignored.
+- Setup states the `.rpi/` default rather than asking how to structure a
+  directory, and takes an override for the root only. The naming convention is
+  fixed — the metadata lookup above depends on both ends agreeing.
+- The gitignore recommendation is one line, `.rpi/`.
+- **`/prepare-pr` builds one numbered list of stops instead of a prose review
+  guide.** A stop is a file, a line or range, a type, and a *claim to test* — not a
+  description of what the code does. The list is built once and rendered in up to
+  three places:
+  - **Inline review comments on the PR** — the detail, anchored to the line it's
+    about, posted as one `COMMENT` review via `gh api .../pulls/<n>/reviews`. Each
+    stop becomes a resolvable thread, so a reviewer ticks stops off as they go.
+  - **A numbered index in the PR description** — one line per stop, capped at
+    **60 lines for the whole description**. Mechanical files get one line, not an
+    inventory; "Suggested Review Order" is gone because the numbering *is* the order.
+  - **A tuicr session**, when the author walks it.
+  - Stop types carry intent: `issue`, `note`, `suggestion`, and `yagni` — the last
+    for an abstraction, config, or layer with one caller that could be inlined until
+    it has two.
+  - `--no-stops` keeps the whole guide in the description. That's also the behavior
+    `/setup` generates for projects on a forge without inline review comments.
+- **`/implement-plan` defaults to writing no comments.** A comment now has to clear
+  two tests before it's written: would a competent reader be *surprised*, and is it
+  under three lines. Narration, history ("previously X, now Y"), symmetry notes,
+  justification of the ordinary, and restated design decisions are called out by name
+  as things not to write. Every phase ends with a re-read that deletes the comments
+  that don't clear both bars. A deliberate simplification with a known ceiling goes in
+  the phase's `### Completion` block under **Waived or unproven**, where `/prepare-pr`
+  already looks — not into a source comment.
+- **`/implement-plan` fixes root causes, not symptoms.** A phase that names a bug names
+  a symptom; the skill now checks every caller of the function it's about to touch
+  first, on the grounds that one guard in the shared function is both the smaller diff
+  and the real fix.
+- **`/create-plan` plans the smallest thing that works.** Before specifying new code for
+  a phase it checks, in order, for an existing helper or pattern in the codebase, the
+  standard library or framework, and an already-installed dependency. An interface with
+  one implementation or a config value nobody sets goes under **What We're NOT Doing**
+  for the user to overrule.
+- `/guide`'s `review` topic and phase tips describe the stop model.
+  - Aliases, scripts, and team docs that invoke `/design` need updating by hand.
+
+### Added
+
+- **Upgrade asks before moving anything.** An existing install picks one of
+  three: keep the root it has, adopt `.rpi/`, or name its own. Setup recovers the
+  current root by grepping the installed skills rather than assuming
+  `thoughts/shared/`.
+- Choosing to move **relocates, renames, and relinks**. Because the type moves
+  from the directory into the filename, a prefix swap isn't enough: every
+  cross-reference — plan to its design and research, review metadata to its plan,
+  design doc to its `.html` mockup — is rewritten per type. The migration handles
+  untracked files (the old default recommended gitignoring `thoughts/`, so most
+  of them are), skips rather than overwrites an occupied destination, reports
+  anything that isn't `.md` or `.html`, and leaves everything outside the
+  workflow's own directories alone.
+- **`prepare-pr/tuicr-walkthrough.md`** — a progressive-disclosure sibling for walking a
+  PR with the author in [tuicr](https://github.com/agavra/tuicr), stop by stop. Because
+  the stops are posted as GitHub review threads, `tuicr pr <n>` renders them natively
+  and there is no seeding step; resolving a thread ticks it off in both places. Covers
+  session discovery, the six ways a stop silently disappears (a resolved thread, a reviewed
+  hunk, hidden reviewed files, an exclusion filter, a stale in-memory copy, and `dd` — the
+  only one that actually deletes anything), applying fixes mid-walk, and a local-seeding
+  fallback for walks with no PR or a non-GitHub forge. Entirely optional — if `tuicr`
+  isn't installed the skill says so once and moves on, and the stops are on the PR either
+  way. Written against tuicr 0.24.0.
+
+- **Commit convention is detected once at setup**, with a real example subject line from the
+  repo's own history, and `/prepare-pr` uses it instead of re-inferring one per PR. Conventional
+  Commits was the standing guess and plenty of repos don't use it.
+
+### Removed
+
+- **`/iterate-plan`.** Six skills now instead of seven. Its two rules worth keeping moved
+  into `/create-plan` under **Revising an existing plan**:
+  - Keep the plan internally consistent when you edit it — a new phase carries an empty
+    `### Completion` block, a scope change updates "What We're NOT Doing", and a revision
+    that changes what the interface shows goes back to `/design-doc`.
+  - **Never edit a filled-in `### Completion` block.** This is the one that had to move.
+    A completed phase's block is a record, often written by an agent that has since
+    exited, and the next fresh agent reads it as its only memory of that phase — a
+    rewritten block is indistinguishable from a true one. The rule lived only inside
+    `/iterate-plan`, so the people most likely to break it, anyone editing a plan by
+    hand, were the people who never saw it.
+
+  Upgrades will not delete the skill for you; `upgrade.md` lists it under retired files
+  and asks. An install that keeps it keeps offering a command nothing else references.
+
+### Fixed
+
+- **`/guide`'s workspace probes failed under zsh.** `ls -lt .rpi/*-research.md 2>/dev/null`
+  aborts with `no matches found` when nothing matches, because zsh fails an unmatched glob
+  before the command runs — so the redirect never applies. Bash's default hides it, which is
+  why it survived. Every fresh install hit it on the first `/guide`, when `.rpi/` is
+  necessarily empty. The three probes now filter `ls` output instead of globbing.
+- **`/guide <skill-name>` didn't resolve to a topic.** Topics are named for the phase
+  (`design`, `review`), so the skill names users had just been trained to type — `design-doc`
+  most of all, having just been renamed — missed and got the topic list back. Skill names are
+  now accepted as aliases.
+
+### Notes
+
+- Ideas adapted from [ponytail](https://github.com/DietrichGebert/ponytail) (MIT): the
+  reuse-before-writing ladder, root-cause-over-symptom, and treating an abstraction with
+  one caller as a reviewable finding. Ponytail's `ponytail:` marker convention was
+  deliberately *not* adopted — the `### Completion` block and review metadata already
+  carry deliberate shortcuts into the PR, and a second mechanism for the same job would
+  drift from the first.
 ## [5.0.0] - 2026-08-27
 
 Breaking: a workflow command changed name. `/design` is now `/design-doc`.
