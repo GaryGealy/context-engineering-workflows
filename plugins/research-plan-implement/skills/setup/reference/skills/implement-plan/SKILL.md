@@ -122,7 +122,7 @@ The next phase is likely a fresh agent with no memory of yours, and the plan is 
 
 Keep this distinct from the review metadata below. The split is by audience:
 
-- **Completion block** — what changed *relative to the plan*. Read by the next phase and by `/iterate-plan`.
+- **Completion block** — what changed *relative to the plan*. Read by the next phase, and by whoever revises the plan later. Once filled in it is a record, not a draft — never edit a completed phase's block.
 - **Review metadata** — per-file Critical / Mechanical / Tests triage. Read by `/prepare-pr`.
 
 If a plan predates this convention and has no `### Completion` blocks, don't retrofit them mid-implementation — record the same information in your review-metadata section instead.
@@ -209,7 +209,7 @@ When things don't match the plan exactly:
 
   Options:
   1. Adapt and continue (if the change is contained)
-  2. Run /iterate-plan to update the plan
+  2. Revise the plan, then continue against the revised version
   ```
 
 The plan is your guide, but your judgment matters. Small adaptations are fine. Structural changes need alignment.

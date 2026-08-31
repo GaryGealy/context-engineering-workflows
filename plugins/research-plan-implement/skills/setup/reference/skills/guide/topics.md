@@ -278,12 +278,7 @@ One artifact, three places it appears:
 /prepare-pr
 ```
 
-**Iterating on a Plan:**
-```bash
-/iterate-plan .rpi/2026-01-05-feature-plan.md
-# "Split Phase 2 into two phases"
-# "Update success criteria based on testing"
-```
+**Revising a Plan:** edit it directly — there's no separate command. Keep it consistent (new phases get an empty `### Completion` block; a scope change updates "What We're NOT Doing") and leave completed phases' Completion blocks alone.
 
 ## Topic: tips
 
@@ -380,7 +375,7 @@ When you run inside [herdr](https://herdr.dev), each phase skill tags its own ta
 
 **Glyphs:** 🔬 research · 🎨 design · 📋 plan · 🔨 implement · 🔍 review
 
-**How it works:** each phase skill (`/research-codebase`, `/design-doc`, `/create-plan`, `/iterate-plan`, `/implement-plan`, `/prepare-pr`) runs `.claude/scripts/herdr-phase.sh <phase>` as its first action. It rewrites *this tab's* label, swapping any prior phase glyph for the new one — so `336-global-sidebar` becomes `🎨 336-global-sidebar` during design, then `🔨 336-global-sidebar` during implementation. It persists until the next phase skill overwrites it.
+**How it works:** each phase skill (`/research-codebase`, `/design-doc`, `/create-plan`, `/implement-plan`, `/prepare-pr`) runs `.claude/scripts/herdr-phase.sh <phase>` as its first action. It rewrites *this tab's* label, swapping any prior phase glyph for the new one — so `336-global-sidebar` becomes `🎨 336-global-sidebar` during design, then `🔨 336-global-sidebar` during implementation. It persists until the next phase skill overwrites it.
 
 **Manual override** — set or clear a tab's phase without invoking a skill:
 

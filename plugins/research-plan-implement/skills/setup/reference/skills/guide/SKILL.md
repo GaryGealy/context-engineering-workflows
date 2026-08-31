@@ -19,13 +19,13 @@ You provide contextual orientation for the research-design-plan-implement workfl
 ### Current Workspace State
 
 Recent research docs:
-!`ls -lt .rpi/*-research.md 2>/dev/null | head -3`
+!`ls -lt .rpi 2>/dev/null | grep -- '-research.md' | head -3`
 
 Recent design docs:
-!`ls -lt .rpi/*-design.md 2>/dev/null | head -3`
+!`ls -lt .rpi 2>/dev/null | grep -- '-design.md' | head -3`
 
 Recent plan docs:
-!`ls -lt .rpi/*-plan.md 2>/dev/null | head -3`
+!`ls -lt .rpi 2>/dev/null | grep -- '-plan.md' | head -3`
 
 Git status:
 !`git status --short 2>/dev/null`
@@ -78,4 +78,6 @@ If $ARGUMENTS is provided, it's a topic name. Read `topics.md` in this skill's d
 
 **Available topics:** overview, research, design, plan, implement, review, herdr, context, patterns, tips, examples
 
-If the topic isn't recognized, show the list of available topics.
+Topics are named for the *phase*, so a skill name is an accepted alias — `design-doc` → `design`, `research-codebase` → `research`, `create-plan` → `plan`, `implement-plan` → `implement`, `prepare-pr` → `review`. Resolve the alias and show the topic; don't make the user guess again.
+
+If the topic still isn't recognized, show the list of available topics.

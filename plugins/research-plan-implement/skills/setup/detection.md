@@ -26,6 +26,7 @@ Also check where workflow artifacts should live. `.rpi/` is the default root; no
 - Database tooling and its migration workflow (Prisma, SQLAlchemy/Alembic, Django ORM, Diesel, Drizzle)
 - Directory structure conventions
 - Issue tracker
+- Commit message convention (see below)
 - Existing artifacts directory, if any
 
 ## Detecting the issue tracker
@@ -37,9 +38,29 @@ Install hints if a CLI is missing:
 - GitHub: https://cli.github.com
 - GitLab: https://gitlab.com/gitlab-org/cli
 
+## Detecting the commit convention
+
+`/prepare-pr` writes commit messages, and inferring the convention fresh on every PR is where it
+gets this wrong — Conventional Commits is the common guess and plenty of repos don't use it.
+Resolve it once, here.
+
+```bash
+git log --no-merges --format=%s -30
+```
+
+Read the subjects and record **which convention, plus one real example from this repo**. The
+example is the part that carries; a label alone still leaves room to guess wrong.
+
+- `feat(scope): lowercase summary` → Conventional Commits. Note whether scopes are actually used.
+- `Add the fallow health check` → imperative sentence case, no type prefix.
+- Anything with a ticket key (`PROJ-12: …`, `[#451] …`) → record the position and bracket style.
+
+If the last 30 subjects disagree with each other, say so rather than picking a winner, and ask.
+A repo with no convention is a real answer — write "no convention; match surrounding history."
+
 ## Presenting findings
 
-Show what you found as a compact list — language, framework, package manager, test/lint/format/build/typecheck commands, database, issue tracking, and the artifacts directory. Mark anything you couldn't determine as needing input rather than guessing.
+Show what you found as a compact list — language, framework, package manager, test/lint/format/build/typecheck commands, database, issue tracking, the commit convention with its example, and the artifacts directory. Mark anything you couldn't determine as needing input rather than guessing.
 
 ## Filling gaps
 

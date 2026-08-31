@@ -97,7 +97,7 @@ Skip this entire step in update mode.
 2. **If there are uncommitted changes:**
    - Group them into a sensible commit, or a few if the work is clearly separable.
    - Run the project's verification commands first and report results — don't commit on top of a red build without flagging it.
-   - Propose a commit message following the repo's existing convention (`git log --oneline -10`).
+   - Propose a commit message in this project's convention — Conventional Commits, e.g. `fix(auth): refresh the token before it expires`. Confirm it still holds against `git log --no-merges --format=%s -10`, and follow the history if it has moved.
    - **Confirm the message with the user**, then commit.
    - Never add a "Co-authored-by" or "Generated with" trailer unless the repo's own history shows that convention.
 

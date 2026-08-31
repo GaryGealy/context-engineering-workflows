@@ -172,10 +172,24 @@ It exists because implementation phases are often run by separate agents with fr
 
 Keep it distinct from the review metadata `/implement-plan` writes alongside the plan. The split is by audience:
 
-- **Completion block** — what changed *relative to the plan*. Read by the next phase and by `/iterate-plan`.
+- **Completion block** — what changed *relative to the plan*. Read by the next phase, and by whoever revises the plan later.
 - **Review metadata** — per-file Critical / Mechanical / Tests triage. Read by `/prepare-pr`.
 
 The same fact rarely belongs in both.
+
+**Never edit a filled-in `### Completion` block.** This holds for you, for a later agent, and for a hand edit. It's the record of what a finished phase actually did, often written by an agent that has since exited, and later phases read it as their only memory of earlier ones. If a change invalidates something a completed phase recorded, say so in the *new* phase's spec rather than rewriting history — a rewritten block is indistinguishable from a true one, and the next fresh agent will act on it.
+
+## Revising an existing plan
+
+Plans get revised mid-flight; that's normal and it isn't a separate phase. Edit the plan directly and keep it internally consistent:
+
+- **A new phase** follows the existing phase pattern, including an empty `### Completion` block with `Status: not started`.
+- **A scope change** updates "What We're NOT Doing" in the same pass.
+- **An approach change** updates "Implementation Approach."
+- **Completed phases are history.** Carry their Completion blocks across intact, even when restructuring around them.
+- **A revision that changes what the interface shows goes back to `/design-doc`**, so the plan and its reference artifact can't disagree.
+
+Edit surgically — preserve what doesn't need changing, keep `file:line` references accurate, and hold new content to the original's bar: specific paths, measurable criteria, real verification commands. Research only what the specific change requires; rewording a criterion or splitting a phase needs none.
 
 ## Important Guidelines
 

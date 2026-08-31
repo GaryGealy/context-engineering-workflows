@@ -52,8 +52,8 @@ UPDATED skills:
   /create-plan — Slimmed down (design decisions moved to /design-doc), vertical phases
   /implement-plan — Testing-aware (TDD/conformance/manual), generates review metadata
 
-UNCHANGED:
-  /iterate-plan — Content unchanged
+REMOVED:
+  /iterate-plan — revising a plan is a direct edit, covered by /create-plan
 
 Your project adaptations will be preserved:
   - Test command: [extracted]
@@ -110,6 +110,28 @@ artifacts and rewrites the links between them, so nothing goes stale.
     the root cause rather than the reported symptom, and check for an existing
     helper / stdlib / installed dependency before specifying new code.
 
+/iterate-plan is gone. Revising a plan is a direct edit, not a workflow phase —
+every step it described was either generic agent behavior or a duplicate of
+/create-plan.
+
+  - The two rules worth keeping moved into /create-plan under "Revising an
+    existing plan", including the one that matters most: a filled-in
+    ### Completion block is a record and is never edited. That rule previously
+    lived only inside /iterate-plan, so anyone editing a plan by hand never saw it.
+  - The upgrade will not delete .claude/skills/iterate-plan/ for you — you'll be
+    asked. An install that keeps it keeps offering a command nothing references.
+  - Six skills now instead of seven.
+
+The commit convention is resolved once, at setup, instead of per PR.
+
+  - Setup reads `git log --no-merges --format=%s -30` and records the convention
+    plus a real example subject from your history. /prepare-pr uses that instead
+    of re-inferring one every time — Conventional Commits was the standing guess,
+    and plenty of repos don't use it.
+
+/research-codebase ends by offering the open questions rather than asking you to
+review the document, and names /design-doc as the next step.
+
 The /design skill is now /design-doc. Same inputs, same ~200-line artifact.
 
   - .claude/skills/design/ is replaced by .claude/skills/design-doc/. The old
@@ -135,7 +157,7 @@ matters if you start a fresh agent per phase; it's invisible if you don't.
 
   - Plans gained a ### Completion block per phase. /create-plan emits it empty,
     /implement-plan fills it in with deviations, waivers, and anything a later
-    phase has to know. /iterate-plan won't touch a filled-in one.
+    phase has to know. A filled-in block is a record — nothing edits it.
   - Review metadata is now written incrementally — each phase appends its own
     section as it finishes, instead of one agent writing the whole file after
     the last phase. The per-file triage is now written by the agent that wrote
@@ -241,10 +263,11 @@ Substitute the chosen root for `.rpi/` throughout if they named their own. Nothi
 2. Adapt each one using the extracted details (see `adaptation.md`)
 3. Write everything to `.claude/skills/` and `.claude/agents/`, including copying `reference/scripts/herdr-phase.sh` verbatim to `.claude/scripts/herdr-phase.sh` and `chmod +x`-ing it. Overwrite any existing copy so upgrades pick up script fixes. Refresh `.claude/.rpi-version` with the version you just generated from.
 4. Clean up retired files, **asking first**:
-   - `.claude/commands/{research-codebase,create-plan,iterate-plan,implement-plan}.md` — migrated to skills
+   - `.claude/commands/{research-codebase,create-plan,implement-plan}.md` — migrated to skills
+   - `.claude/skills/iterate-plan/` — removed in 5.0.0. Revising a plan is a direct edit now, and the rules it carried live in `/create-plan` ("Revising an existing plan"). It will not delete itself; an install that keeps it will keep offering a command nothing else references. Carry across any project-specific material first.
    - `.claude/commands/read-ticket.md` — retired; `branch-ticket-detector` fetches tickets now
    - `.claude/skills/review-changes/` — retired, folded into `/prepare-pr`
-   - `.claude/agents/{thoughts-locator,thoughts-analyzer}.md` — renamed to `artifact-locator` / `artifact-analyzer`. Carry any customization across into the new file before removing the old one, then check whether `/research-codebase` or `/iterate-plan` still name the old agents.
+   - `.claude/agents/{thoughts-locator,thoughts-analyzer}.md` — renamed to `artifact-locator` / `artifact-analyzer`. Carry any customization across into the new file before removing the old one, then check whether `/research-codebase` still names the old agents.
    - `.claude/skills/design/` — renamed to `design-doc/`; carry any customizations into the new directory before removing the old one
 5. Handle the gitignore for the artifacts directory if it isn't configured yet
 6. Show the summary and workflow tips (Steps 7-8 of the main skill)
@@ -279,8 +302,6 @@ The current templates were rewritten for the Claude 5 generation of models — s
 - **A ~120-line invented pagination example** in `codebase-pattern-finder`, plus a malformed code fence that swallowed its own guidelines section.
 - **`/design-doc`'s "CRITICAL: THIS IS NOT A PLAN"** block of `DO NOT` lines, now a positive definition of what a design doc is.
 - **`/implement-plan`'s "never use limit/offset"** instruction, removed — it fights the Read tool's own guidance.
-- **`/iterate-plan`'s "Example Interaction Flows"** and subagent-spawning tutorial, both cut.
 - **Joke descriptions** on `web-search-researcher` and `thoughts-analyzer` (now `artifact-analyzer`). Descriptions drive dispatch, so these were rewritten to describe what the agent actually does.
-- **Hardcoded `npm` commands** in `/iterate-plan`'s success-criteria section, in a template that's supposed to be tooling-neutral. If the user's install has these and the project isn't Node, that's a bug to fix, not a customization to keep.
 
 Anything else that diverges from the templates is far more likely to be theirs. Treat this list as exhaustive for "safe to replace without asking."
