@@ -171,7 +171,8 @@ threads. Everything survives. This is why a walk can absorb fixes without restar
 exists only in the GitHub structs (`GhReviewComment.replyTo`). Someone "replying" to a stop in the
 TUI is really adding their own comment on the same line, sharing that stop's location exactly. In
 PR mode a real reply has to go through GitHub
-(`gh api repos/{owner}/{repo}/pulls/comments/<id>/replies`), which is also how you answer a
+(`gh api repos/{owner}/{repo}/pulls/<n>/comments/<id>/replies` — the PR number is required,
+and the shorter `pulls/comments/<id>/replies` form 404s), which is also how you answer a
 question a reviewer left on one of your stops.
 
 **`dd` destroys a stop, and nothing warns.** It's easy to hit while exploring, and it is the only
