@@ -38,6 +38,10 @@ Install hints if a CLI is missing:
 - GitHub: https://cli.github.com
 - GitLab: https://gitlab.com/gitlab-org/cli
 
+## Detecting the editors
+
+Which editors run the workflow decides one thing only: whether setup writes `.vscode/settings.json` (see `adaptation.md`). Look for `.vscode/` in the project and `~/.claude/` on the machine, and treat both as present-until-contradicted rather than exclusive — plenty of teams run both. Confirm in Step 3; don't infer silently.
+
 ## Detecting the commit convention
 
 `/prepare-pr` writes commit messages, and inferring the convention fresh on every PR is where it
