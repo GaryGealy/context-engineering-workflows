@@ -38,7 +38,7 @@ The right panel is the payoff: both lines climb. You do not trade speed for comp
 | `/prepare-pr` | 🔍 PR opened, diff annotated with numbered stops. |
 | `/guide` | Contextual orientation — where am I, what's next. |
 
-Extends to the tooling you already use — [herdr](https://herdr.dev) phase tags and [tuicr](https://tuicr.dev) PR walkthroughs are built in, and design tooling like [Paper](https://paper.design) or [impeccable](https://impeccable.style) wires in by just telling your agent about it.
+`/setup` shapes the workflow around the SDLC you already have — your build system, tracker, forge, review norms, deploy gate. A few agent-native tools we like are wired in and entirely optional: [herdr](https://herdr.dev) phase tags, [tuicr](https://tuicr.dev) PR walkthroughs, and design tooling like [Paper](https://paper.design) or [impeccable](https://impeccable.style). Use none of them and nothing breaks.
 
 ## Attribution
 

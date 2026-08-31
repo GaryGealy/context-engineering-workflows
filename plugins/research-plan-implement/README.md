@@ -93,7 +93,7 @@ Start working:
 | `artifact-locator` | Finds prior research, designs, plans, and tickets |
 | `artifact-analyzer` | Pulls the decisions and constraints out of one of them |
 
-**Script** — `scripts/herdr-phase.sh`, covered under tooling below.
+**Script** — `scripts/herdr-phase.sh`, for [herdr](https://herdr.dev) users. Harmless if you aren't one; see [tooling](#bring-your-own-tooling).
 
 ---
 
@@ -136,12 +136,18 @@ Stop types carry intent: `issue`, `note`, `suggestion`, and `yagni` — the last
 
 ## Bring your own tooling
 
-The generated skills are plain markdown in your repo, and `/setup` adapts them to more than your build system. **Tell your agent what tooling you use and it wires that tooling into the phases.**
+`/setup` shapes the workflow around your SDLC, not the other way around — your build system, test runner, issue tracker, forge, commit convention, review norms, deploy gate. **Tell your agent what you use and it wires that into the phases.** The generated skills are plain markdown in your repo, so anything you can describe to an agent, they can be taught.
 
-- **[herdr](https://herdr.dev)** — built in. Each phase tags its tab with a glyph (🔬 🎨 📋 🔨 🔍), so the session sidebar becomes a phase board across every worktree you have open. Installed unconditionally; a silent no-op outside herdr.
-- **[tuicr](https://tuicr.dev)** — built in. Because stops are posted as GitHub review threads, `tuicr pr <n>` renders them natively with no seeding step, and resolving a thread ticks it off in both places. Optional: if `tuicr` is not installed the skill says so once and moves on.
-- **Design tooling — [Paper](https://paper.design), [impeccable](https://impeccable.style), Figma, whatever you use.** Mention it at setup and `/design-doc` produces its concrete artifact through that tool instead of defaulting to a self-contained HTML mockup.
-- **Anything else** — your linter, your migration tool, your issue tracker, your deploy check, your org's PR template. Setup asks for custom verification commands and folds them into the phases that need them.
+**You don't need any particular tool for this to work.** Nothing below is required, and skipping all of it costs you nothing.
+
+Two "agent-native" tools are wired in already, because we reach for them daily. Both are optional and both degrade quietly:
+
+- **[herdr](https://herdr.dev)** — a terminal multiplexer for coding agents. Each phase tags its tab with a glyph (🔬 🎨 📋 🔨 🔍), turning the sidebar into a phase board across every worktree you have open. The script installs unconditionally and is a silent no-op outside herdr, so there's nothing to disable if you don't run it.
+- **[tuicr](https://tuicr.dev)** — a terminal PR reviewer. Because stops are posted as GitHub review threads, `tuicr pr <n>` renders them natively with no seeding step, and resolving a thread ticks it off in both places. If it isn't installed, `/prepare-pr` says so once and moves on — the stops are on the PR either way.
+
+Design tooling works the same way. `/design-doc` produces a self-contained HTML mockup by default; name [Paper](https://paper.design), [impeccable](https://impeccable.style), Figma, or whatever your team actually opens, and it routes the artifact through that instead.
+
+So does everything else — your linter, your migration tool, your deploy check, your org's PR template, the review checklist that currently lives in someone's head. Setup asks for custom verification commands and folds them into the phases that need them.
 
 None of this is a plugin API. The skills are files; describing your tooling to the agent that writes them is the extension mechanism.
 
