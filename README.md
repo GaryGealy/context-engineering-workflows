@@ -38,7 +38,7 @@ The right panel is the payoff: both lines climb. You do not trade speed for comp
 | `/prepare-pr` | 🔍 PR opened, diff annotated with numbered stops. |
 | `/guide` | Contextual orientation — where am I, what's next. |
 
-Extends to the tooling you already use — [herdr](https://herdr.dev) phase tags and [tuicr](https://github.com/agavra/tuicr) PR walkthroughs are built in, and design tooling like Paper or `impeccable` wires in by just telling your agent about it.
+Extends to the tooling you already use — [herdr](https://herdr.dev) phase tags and [tuicr](https://tuicr.dev) PR walkthroughs are built in, and design tooling like [Paper](https://paper.design) or [impeccable](https://impeccable.style) wires in by just telling your agent about it.
 
 ## Attribution
 

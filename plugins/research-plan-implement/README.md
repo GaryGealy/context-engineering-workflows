@@ -128,7 +128,7 @@ Revising a plan is a direct edit — there is no command for it. Keep it interna
 
 - **Inline review comments on the PR**, one resolvable thread per stop, posted as a single `COMMENT` review
 - **A numbered index in the description**, capped at 60 lines for the whole thing
-- **A [tuicr](https://github.com/agavra/tuicr) session**, if you walk it with the author
+- **A [tuicr](https://tuicr.dev) session**, if you walk it with the author
 
 Stop types carry intent: `issue`, `note`, `suggestion`, and `yagni` — the last for an abstraction, config, or layer with one caller that could be inlined until it has two. `--no-stops` keeps the whole guide in the description, which is also what setup generates for forges without inline review comments.
 
@@ -139,8 +139,8 @@ Stop types carry intent: `issue`, `note`, `suggestion`, and `yagni` — the last
 The generated skills are plain markdown in your repo, and `/setup` adapts them to more than your build system. **Tell your agent what tooling you use and it wires that tooling into the phases.**
 
 - **[herdr](https://herdr.dev)** — built in. Each phase tags its tab with a glyph (🔬 🎨 📋 🔨 🔍), so the session sidebar becomes a phase board across every worktree you have open. Installed unconditionally; a silent no-op outside herdr.
-- **[tuicr](https://github.com/agavra/tuicr)** — built in. Because stops are posted as GitHub review threads, `tuicr pr <n>` renders them natively with no seeding step, and resolving a thread ticks it off in both places. Optional: if `tuicr` is not installed the skill says so once and moves on.
-- **Design tooling — Paper, `impeccable`, Figma, whatever you use.** Mention it at setup and `/design-doc` produces its concrete artifact through that tool instead of defaulting to a self-contained HTML mockup.
+- **[tuicr](https://tuicr.dev)** — built in. Because stops are posted as GitHub review threads, `tuicr pr <n>` renders them natively with no seeding step, and resolving a thread ticks it off in both places. Optional: if `tuicr` is not installed the skill says so once and moves on.
+- **Design tooling — [Paper](https://paper.design), [impeccable](https://impeccable.style), Figma, whatever you use.** Mention it at setup and `/design-doc` produces its concrete artifact through that tool instead of defaulting to a self-contained HTML mockup.
 - **Anything else** — your linter, your migration tool, your issue tracker, your deploy check, your org's PR template. Setup asks for custom verification commands and folds them into the phases that need them.
 
 None of this is a plugin API. The skills are files; describing your tooling to the agent that writes them is the extension mechanism.
