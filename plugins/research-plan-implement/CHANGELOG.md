@@ -5,27 +5,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com).
 
 ## [5.0.0] - Unreleased
 
-> **Release gate — do not cut this release until the README is rewritten.**
-> Two things are owed:
->
-> 1. **The workflow description is stale.** The README still describes v4's
->    `/prepare-pr` as writing "the PR description as a review guide" — in six places —
->    with no mention of stops, inline review comments, the tuicr walkthrough, or the
->    comment discipline. Its Philosophy section predates all of it too.
-> 2. **Ponytail is owed credit, and doesn't have it yet.** The Notes below record what
->    was adapted, but a changelog entry is not attribution a reader will find. Add
->    [ponytail](https://github.com/DietrichGebert/ponytail) (MIT, by DietrichGebert) to
->    the README's **Attribution → Additional influences** list, alongside CRISPY/Dex and
->    Simon Willison — and to the attribution block `/setup` prints in Step 8, which is
->    the copy users actually see. Credit the specific borrowings, not the whole skill:
->    the reuse-before-writing ladder, root-cause-over-symptom, and treating a
->    one-caller abstraction as a reviewable finding.
->
-> Do both, then run `/cut-a-release`. If you'd rather ship first, say so explicitly and
-> open an issue for the README instead of letting this note rot — but the attribution
-> is the half that shouldn't wait for a docs pass.
-
-Two independent changes ship together.
+Three independent changes ship together.
 
 **Where artifacts live.** `thoughts/shared/` was inherited from HumanLayer's original
 workflow, where it named a place for an agent's working notes. Two things were wrong
@@ -39,6 +19,11 @@ it. `/prepare-pr` wrote PR descriptions long enough that the "read this carefull
 section stopped being read carefully, and `/implement-plan` finished each phase holding
 the whole design rationale in context and parked it in the source as comments. Both are
 now bounded.
+
+**How many skills there are.** `/iterate-plan` described revising a plan as a workflow
+phase. It isn't one — editing a file is not a phase, and every step the skill described
+was either generic agent behavior or a restatement of `/create-plan`. It's gone, and the
+two rules worth keeping moved into `/create-plan`.
 
 ### Changed
 
@@ -133,11 +118,45 @@ now bounded.
   PR with the author in [tuicr](https://github.com/agavra/tuicr), stop by stop. Because
   the stops are posted as GitHub review threads, `tuicr pr <n>` renders them natively
   and there is no seeding step; resolving a thread ticks it off in both places. Covers
-  session discovery, the gotchas that make stops silently disappear (a reviewed hunk, an
-  exclusion filter, a stale in-memory copy), applying fixes mid-walk, and a local-seeding
+  session discovery, the six ways a stop silently disappears (a resolved thread, a reviewed
+  hunk, hidden reviewed files, an exclusion filter, a stale in-memory copy, and `dd` — the
+  only one that actually deletes anything), applying fixes mid-walk, and a local-seeding
   fallback for walks with no PR or a non-GitHub forge. Entirely optional — if `tuicr`
   isn't installed the skill says so once and moves on, and the stops are on the PR either
   way. Written against tuicr 0.24.0.
+
+- **Commit convention is detected once at setup**, with a real example subject line from the
+  repo's own history, and `/prepare-pr` uses it instead of re-inferring one per PR. Conventional
+  Commits was the standing guess and plenty of repos don't use it.
+
+### Removed
+
+- **`/iterate-plan`.** Six skills now instead of seven. Its two rules worth keeping moved
+  into `/create-plan` under **Revising an existing plan**:
+  - Keep the plan internally consistent when you edit it — a new phase carries an empty
+    `### Completion` block, a scope change updates "What We're NOT Doing", and a revision
+    that changes what the interface shows goes back to `/design-doc`.
+  - **Never edit a filled-in `### Completion` block.** This is the one that had to move.
+    A completed phase's block is a record, often written by an agent that has since
+    exited, and the next fresh agent reads it as its only memory of that phase — a
+    rewritten block is indistinguishable from a true one. The rule lived only inside
+    `/iterate-plan`, so the people most likely to break it, anyone editing a plan by
+    hand, were the people who never saw it.
+
+  Upgrades will not delete the skill for you; `upgrade.md` lists it under retired files
+  and asks. An install that keeps it keeps offering a command nothing else references.
+
+### Fixed
+
+- **`/guide`'s workspace probes failed under zsh.** `ls -lt .rpi/*-research.md 2>/dev/null`
+  aborts with `no matches found` when nothing matches, because zsh fails an unmatched glob
+  before the command runs — so the redirect never applies. Bash's default hides it, which is
+  why it survived. Every fresh install hit it on the first `/guide`, when `.rpi/` is
+  necessarily empty. The three probes now filter `ls` output instead of globbing.
+- **`/guide <skill-name>` didn't resolve to a topic.** Topics are named for the phase
+  (`design`, `review`), so the skill names users had just been trained to type — `design-doc`
+  most of all, having just been renamed — missed and got the topic list back. Skill names are
+  now accepted as aliases.
 
 ### Notes
 

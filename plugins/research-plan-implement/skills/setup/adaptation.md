@@ -8,6 +8,8 @@ Adapt each template by reasoning about what the project actually needs — read 
 
 **Commands.** Every `npm run test:unit`, `npm run lint`, `npm run format`, `npm run build`, and database command in the templates is a placeholder for whatever this project actually uses. Replace them with the detected commands, including in checklists and verification sections.
 
+**Commit convention.** `/prepare-pr`'s commit step carries `[CONVENTION]` and `[EXAMPLE]` markers. Replace both with what detection found, keeping the example a real subject line from this repo's history rather than an invented one. When detection found no convention — or subjects that disagree — write `no fixed convention; match the surrounding history` and delete the `, e.g. ...` clause rather than falling back to Conventional Commits, which is the guess this whole step exists to prevent. A bracket left in place ships as prose and will be read as an instruction.
+
 **Directory structure.** Adjust paths to the project's layout — `src/` vs `pkg/`/`internal/`, `tests/` vs `__tests__/`, framework-specific trees like `src/routes/`.
 
 **Framework guidance.** Where a template gives framework-specific advice, replace it with advice for the detected framework — SvelteKit load functions and form actions, Django models/views/urls, Next.js app router and server actions, Axum extractors and response types. Keep it generic if no framework is detected.

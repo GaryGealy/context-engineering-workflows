@@ -45,9 +45,8 @@ From v1, note that generated files moved from `.claude/commands/` to `.claude/sk
 - `/research-codebase` - Research using parallel sub-agents, create research documents
 - `/design-doc` - Align on design approach through collaborative discussion before planning
 - `/create-plan` - Create detailed implementation plans through interactive research
-- `/iterate-plan` - Update plans based on feedback or new discoveries
 - `/implement-plan` - Execute plans with automated verification and testing checkpoints
-- `/prepare-pr` - Commit changes, open the PR, and write its description as a structured review guide (or update an existing PR's description)
+- `/prepare-pr` - Commit changes, open the PR, and land a numbered review guide: a short index in the description, the detail as inline review comments anchored to the diff
 - `/guide` - Quick contextual orientation (where am I? what's next?)
 
 **Generated Agents** (specialized AI assistants):
@@ -104,8 +103,6 @@ The plugin creates this structure in your project:
 │   │   └── SKILL.md
 │   ├── create-plan/
 │   │   └── SKILL.md
-│   ├── iterate-plan/
-│   │   └── SKILL.md
 │   ├── implement-plan/
 │   │   └── SKILL.md
 │   ├── prepare-pr/
@@ -130,7 +127,7 @@ The skills write their artifacts to `.rpi/` by default — flat, with the type a
 ├── 2026-01-05-auth-research.md    # /research-codebase
 ├── 2026-01-05-auth-design.md      # /design-doc
 ├── 2026-01-05-auth-design.html    #   ...and its mockup, when the work has a shape
-├── 2026-01-05-auth-plan.md        # /create-plan, /iterate-plan
+├── 2026-01-05-auth-plan.md        # /create-plan
 └── 2026-01-05-auth-review.md      # /implement-plan
 ```
 
@@ -212,7 +209,7 @@ This plugin implements **intentional compaction**—a strategy for managing AI a
 2. **Design** - Align on approach before committing to an implementation path
 3. **Plan** - Create exact implementation specification
 4. **Implement** - Execute phase-by-phase with testing-aware verification
-5. **Review** - Commit, open the PR, and write its description as a structured review guide
+5. **Review** - Commit, open the PR, and land a numbered review guide as inline stops on the diff
 
 **Run `/guide` to learn how to use this workflow effectively.**
 
@@ -258,13 +255,11 @@ This:
 - Asks clarifying questions
 - Creates detailed plan at `.rpi/*-plan.md`
 
-### 4. Iterate on Plan
+### 4. Revise the Plan (as needed)
 
-```bash
-/iterate-plan .rpi/2025-01-05-add-oauth-plan.md
-```
-
-Update the plan based on feedback, new discoveries, or changed requirements.
+Edit the plan file directly — there's no separate command. Keep it internally consistent, and
+leave a completed phase's `### Completion` block alone; it's a record of what that phase did,
+and a later phase reads it as its only memory of the earlier one.
 
 ### 5. Implement the Plan
 
@@ -290,11 +285,13 @@ This:
 This:
 
 - Commits any outstanding changes and pushes the branch
-- Analyzes the diff (current branch vs main)
-- Categorizes changes as critical vs mechanical
-- Maps test coverage across changed files
-- Opens the PR with a description written as a structured review guide (suggested reading order)
-- Can instead point at an existing PR number and rewrite its description
+- Analyzes the diff (current branch vs the default branch)
+- Builds a numbered list of **stops** — each a file, a line or range, a type (`issue` / `note` / `suggestion` / `yagni`), and a claim to test
+- Posts them as inline review comments, so each stop is a resolvable thread a reviewer ticks off
+- Puts a numbered index in the PR description, capped at 60 lines, plus test coverage and anything deferred
+- Optionally walks the stops with you in [tuicr](https://github.com/agavra/tuicr), where the posted threads render natively
+- `--no-stops` keeps the whole guide in the description; that's also the default on forges without inline review comments
+- Can instead point at an existing PR number and write a guide onto it
 
 ## Supported Project Types
 
@@ -341,6 +338,9 @@ This plugin generates workflows that follow these principles:
 4. **Interactive Planning** - Iterative, collaborative plan creation with user feedback
 5. **Testing-Aware Implementation** - Tests are not an afterthought; they're built into each phase
 6. **Automated + Manual Verification** - Clear separation of what can be automated vs requires human testing
+7. **The Smallest Thing That Works** - Check for an existing helper, the stdlib, then an installed dependency before specifying new code; a one-caller abstraction is a reviewable finding
+8. **Comments Default To None** - Rationale lives in the design doc and the plan, not narrated into the source
+9. **Review Is Navigation, Not A Verdict** - The PR carries numbered stops naming what to decide, anchored to the lines they're about
 
 ## Customization
 
@@ -473,10 +473,11 @@ Generated files moved from `.claude/commands/` to `.claude/skills/`. Re-run `/se
 
 1. Commits any outstanding changes and pushes the branch
 2. Diffs current branch against main
-3. Categorizes each changed file (critical / mechanical / tests)
+3. Builds one numbered list of stops — a file, a line, a type, and a claim to test
 4. Maps test coverage across the changes
-5. Opens the PR with a description written as a review guide (suggested reading order)
-6. Or, given a PR number, rewrites that existing PR's description instead
+5. Opens the PR, posts the stops as inline review comments, and puts a numbered index in the description
+6. Optionally walks the stops with you in tuicr
+7. Or, given a PR number, writes the guide onto that existing PR instead
 
 ## Contributing
 
@@ -501,6 +502,7 @@ This workflow is inspired by and adapted from multiple sources in the AI-assiste
 **Additional influences:**
 - **CRISPY / Dex** - Design-before-planning discipline and structured review phases
 - **Simon Willison** - Practical AI-assisted development patterns and the value of explicit workflow documentation
+- **[ponytail](https://github.com/DietrichGebert/ponytail)** (MIT, by DietrichGebert) - The reuse-before-writing ladder in `/create-plan`, root-cause-over-symptom in `/implement-plan`, and treating a one-caller abstraction as a reviewable finding (the `yagni` stop type in `/prepare-pr`)
 
 The intentional compaction strategy and multi-phase workflow originated from HumanLayer's work on optimizing AI agent effectiveness through context window management, expanded with design alignment and review phases drawn from the broader AI engineering community.
 

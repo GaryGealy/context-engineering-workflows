@@ -51,7 +51,7 @@ Ask for whatever you couldn't detect, batched into as few turns as possible — 
 
 All paths below are relative to this skill's directory (`${CLAUDE_SKILL_DIR}`), not the target project.
 
-**Skills** (`reference/skills/*/SKILL.md`): research-codebase, design-doc, create-plan, iterate-plan, implement-plan, prepare-pr, guide
+**Skills** (`reference/skills/*/SKILL.md`): research-codebase, design-doc, create-plan, implement-plan, prepare-pr, guide
 
 **Agents** (`reference/agents/*.md`): codebase-analyzer, codebase-locator, codebase-pattern-finder, query-planner, web-search-researcher, artifact-locator, artifact-analyzer
 
@@ -73,7 +73,6 @@ Read `adaptation.md` and work through the templates. The core of this skill is h
 │   ├── research-codebase/SKILL.md
 │   ├── design-doc/SKILL.md + template.md
 │   ├── create-plan/SKILL.md + template.md
-│   ├── iterate-plan/SKILL.md
 │   ├── implement-plan/SKILL.md + review-metadata-template.md
 │   ├── prepare-pr/SKILL.md + tuicr-walkthrough.md
 │   └── guide/SKILL.md + topics.md
@@ -105,7 +104,7 @@ The phase skills invoke the script via `"$(git rev-parse --show-toplevel)/.claud
 Created research-design-plan-implement workflow in .claude/
 
 Generated files:
-- 7 skills: /research-codebase, /design-doc, /create-plan, /iterate-plan, /implement-plan, /prepare-pr, /guide
+- 6 skills: /research-codebase, /design-doc, /create-plan, /implement-plan, /prepare-pr, /guide
 - [N] agents: query-planner, codebase-locator, codebase-analyzer, pattern-finder, web-search-researcher, artifact-locator, artifact-analyzer[, branch-ticket-detector]
 - 1 script: scripts/herdr-phase.sh — tags each tab with its workflow phase in the herdr sidebar (no-op outside herdr; run /guide herdr to learn more)
 
@@ -180,6 +179,8 @@ Key Success Factors:
 Attribution:
   Inspired by HumanLayer's research on AI-assisted development
   Informed by talks from Dex (CRISPY) and Simon Willison (TDD/conformance)
+  Reuse-before-writing, root-cause-over-symptom, and the yagni stop type
+    adapted from ponytail (MIT) - github.com/DietrichGebert/ponytail
   Website: humanlayer.dev
   GitHub: github.com/humanlayer/humanlayer
 ```

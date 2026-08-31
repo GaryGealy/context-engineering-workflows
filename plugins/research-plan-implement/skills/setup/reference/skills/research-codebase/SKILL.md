@@ -183,15 +183,17 @@ Detection is a convenience, not a constraint — the user can always override th
 8. **Present findings:**
 
    - Present a concise summary of findings to the user
-   - Include the path to the research document
-   - Inform them about the Open Questions section:
+   - Include the path to the research document, and steer toward the open questions:
      ```
-     I've created a comprehensive research document at `.rpi/YYYY-MM-DD-description-research.md` — please review thoroughly.
+     Research doc: `.rpi/YYYY-MM-DD-description-research.md`. Scan over it to make sure you and I are aligned before moving to design — often, running through the open questions is all you really need to do.
 
-     When you're ready, I have some open questions based on this research. You can find them in the "Open Questions" section, or we can go through them together when you're ready.
+     Want to go through them now?
      ```
-   - Wait for the user to indicate they're ready to discuss open questions
-   - If the user wants to discuss open questions, use the AskUserQuestion tool to present them interactively
+   - The open questions are the point of this step, not the document. Don't ask the user to
+     read it thoroughly or wait for them to finish reviewing — offer the questions directly.
+   - Use the AskUserQuestion tool to walk them interactively; resolving them is what unblocks design
+   - **Next step in the workflow**: once the open questions are resolved, the next step is
+     `/design-doc` — not `/create-plan` and not direct implementation.
 
 9. **Handle follow-up questions:**
    - Add `last_updated_note: "Added follow-up research for [brief description]"` to frontmatter
