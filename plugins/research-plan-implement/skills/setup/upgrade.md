@@ -261,7 +261,7 @@ Substitute the chosen root for `.rpi/` throughout if they named their own. Nothi
 
 1. Read all reference templates (Step 4 of the main skill)
 2. Adapt each one using the extracted details (see `adaptation.md`)
-3. Write everything to `.claude/skills/` and `.claude/agents/`, including copying `reference/scripts/herdr-phase.sh` verbatim to `.claude/scripts/herdr-phase.sh` and `chmod +x`-ing it. Overwrite any existing copy so upgrades pick up script fixes. Refresh `.claude/.rpi-version` with the version you just generated from.
+3. Write everything to `.claude/skills/` and `.claude/agents/`, including copying `reference/scripts/herdr-phase.sh` verbatim to `.claude/scripts/herdr-phase.sh` and making it executable — as the three separate Bash calls in `adaptation.md`, not one chained command. Overwrite any existing copy so upgrades pick up script fixes. Refresh `.claude/.rpi-version` with the version you just generated from.
 4. Clean up retired files.
 
    **Removed skills are deleted with a notice**, not offered as a choice — nothing replaces them, so keeping one leaves a working command the rest of the workflow no longer references. Carry across any project-specific material first, then delete and say what you deleted and why.

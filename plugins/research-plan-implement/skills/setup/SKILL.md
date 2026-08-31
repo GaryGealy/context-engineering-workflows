@@ -89,6 +89,9 @@ Read `adaptation.md` and work through the templates. The core of this skill is h
     └── branch-ticket-detector.md     # if an issue tracker is configured
 ```
 
+Copy `herdr-phase.sh` with the three separate Bash calls in `adaptation.md` — chaining
+`mkdir && cp && chmod` gets refused under stricter permission settings.
+
 Write `.claude/.rpi-version` alongside them (see `upgrade.md` for what reads it):
 
 ```

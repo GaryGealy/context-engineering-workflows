@@ -43,7 +43,23 @@ Don't trim the gotchas to save space. Each one is a silent failure someone alrea
 
 ## The herdr-phase script
 
-`reference/scripts/herdr-phase.sh` is project-agnostic — no commands, paths, or tooling to adapt. Copy it **verbatim** to `.claude/scripts/herdr-phase.sh` and `chmod +x` it. Do not rewrite it. It no-ops outside herdr, so install it unconditionally; each phase skill already calls it.
+`reference/scripts/herdr-phase.sh` is project-agnostic — no commands, paths, or tooling to adapt. Copy it **verbatim**; do not rewrite it. It no-ops outside herdr, so install it unconditionally; each phase skill already calls it.
+
+Run the three steps as **three separate Bash calls**, not one chained command:
+
+```bash
+mkdir -p .claude/scripts
+```
+
+```bash
+cp "${CLAUDE_SKILL_DIR}/reference/scripts/herdr-phase.sh" .claude/scripts/herdr-phase.sh
+```
+
+```bash
+chmod +x .claude/scripts/herdr-phase.sh
+```
+
+Chaining them with `&&` reads as a single multi-operation command and gets refused under stricter permission settings, which strands setup at the last step with every other file already written.
 
 ## What must survive adaptation
 
