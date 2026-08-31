@@ -122,7 +122,7 @@ The next phase is likely a fresh agent with no memory of yours, and the plan is 
 
 Keep this distinct from the review metadata below. The split is by audience:
 
-- **Completion block** — what changed *relative to the plan*. Read by the next phase, and by whoever revises the plan later. Once filled in it is a record, not a draft — never edit a completed phase's block.
+- **Completion block** — what changed *relative to the plan*. Read by the next phase, and by whoever revises the plan later. Once filled in it is a record — see `/create-plan`, "Revising an existing plan".
 - **Review metadata** — per-file Critical / Mechanical / Tests triage. Read by `/prepare-pr`.
 
 If a plan predates this convention and has no `### Completion` blocks, don't retrofit them mid-implementation — record the same information in your review-metadata section instead.
