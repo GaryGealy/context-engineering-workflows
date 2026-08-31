@@ -38,9 +38,18 @@ Install hints if a CLI is missing:
 - GitHub: https://cli.github.com
 - GitLab: https://gitlab.com/gitlab-org/cli
 
-## Detecting the editors
+## Prefilling the Copilot question
 
-Which editors run the workflow decides one thing only: whether setup writes `.vscode/settings.json` (see `adaptation.md`). Look for `.vscode/` in the project and `~/.claude/` on the machine, and treat both as present-until-contradicted rather than exclusive — plenty of teams run both. Confirm in Step 3; don't infer silently.
+Step 3 asks one yes/no question — will these files ever be opened in VS Code Copilot chat — and your job here is to prefill the answer, not to decide it.
+
+Look for `.vscode/` in the project, a `.vscode/` entry in `.gitignore` (a team that ignores it still uses it), and `.github/prompts/` or `.github/chatmodes/` alongside. Any of those is evidence for **yes**. Nothing at all is evidence for **no**.
+
+Two things this deliberately does not do:
+
+- **It does not detect the editor you are running in.** `CLAUDECODE` and the `CLAUDE_CODE_*` variables tell you setup is running in Claude Code, and that is the wrong question — the generated files get committed and read by teammates on other editors. A repo is not Copilot-free because the person running setup happens not to use it. Don't branch on those variables.
+- **It does not treat the two editors as exclusive.** Plenty of teams run both, and "both" is not a third outcome: it produces the same files as Copilot alone.
+
+Carry the evidence into Step 3 as a stated default — "I see `.vscode/`, so I'll generate Copilot-safe files unless you say otherwise" — and let the user overrule it. Never infer silently.
 
 ## Detecting the commit convention
 

@@ -273,7 +273,7 @@ Substitute the chosen root for `.rpi/` throughout if they named their own. Nothi
    - `.claude/skills/review-changes/` — retired, folded into `/prepare-pr`
    - `.claude/agents/{thoughts-locator,thoughts-analyzer}.md` — renamed to `artifact-locator` / `artifact-analyzer`. Carry any customization across into the new file before removing the old one, then check whether `/research-codebase` still names the old agents.
    - `.claude/skills/design/` — renamed to `design-doc/`; carry any customizations into the new directory before removing the old one
-5. Ask whether they also run this workflow in VS Code Copilot chat.
+5. Ask Step 3's Copilot question — will these files ever be opened in VS Code Copilot chat, by them or a teammate? Prefill it from `detection.md` the same way, and ask it about the repository rather than the machine.
    - **If yes** — every install generated before this version carries `model:` and `effort:` in all its skills and agents, which hangs Copilot chat on invocation and needs a VS Code restart to clear. Say so plainly: this is the bug they may have been hitting. Regeneration alone is not enough to trust here — run the strip over the whole tree from the project root and check it exits clean:
 
      ```bash

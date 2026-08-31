@@ -398,7 +398,7 @@ VS Code scans `.claude/skills/` and `.claude/agents/` alongside its own `.github
 
 A skill whose frontmatter includes `model:` hangs Copilot chat the moment it is invoked — no output, no error, and every later command in that session is dead until VS Code is restarted. The key triggers it whatever the value: a Copilot-format id like `'Claude Opus 4.5 (copilot)'` hangs the same way `opus` does. VS Code's SKILL.md spec documents only `name`, `description`, `argument-hint`, `user-invocable`, and `disable-model-invocation`.
 
-Setup strips both fields when you name VS Code as a target, so a workflow generated for Copilot is already correct. If yours came from an install generated before Copilot was a setup target and `/research-codebase` hangs, that's this bug — re-run setup's upgrade path, or delete the two lines from each `.claude/skills/*/SKILL.md` by hand.
+Setup strips both fields when its Copilot question is answered yes, so a workflow generated that way is already correct. If yours came from an install generated before that question existed and `/research-codebase` hangs, that's this bug — re-run setup's upgrade path, or delete the two lines from each `.claude/skills/*/SKILL.md` by hand.
 
 What you give up is per-skill model pinning. In Claude Code these templates pin research and planning to opus at high effort and `/guide` to haiku; in Copilot every skill runs on whichever model you have selected in chat. Pick the model yourself before starting a research or planning pass.
 

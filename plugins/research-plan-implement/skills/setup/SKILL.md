@@ -50,7 +50,13 @@ Ask for whatever you couldn't detect, batched into as few turns as possible — 
 1. **Artifacts directory** — where research, designs, plans, and review metadata get written. Default to `.rpi/`; state it rather than asking an open question, and let them name a different root if they want one. It's flat: the type is the filename's last segment (`-research`, `-design`, `-plan`, `-review`), so nothing nests. Don't offer to customize the naming.
 2. **Additional commands** — any custom verification commands or project-specific testing notes to fold in?
 3. **Gitignore** — recommend ignoring the artifacts root: these are working notes, not source, and keeping them out of git keeps PRs clean. One line, `.rpi/`. If artifacts are already tracked, offer `git rm --cached -r .rpi/` to untrack without deleting.
-4. **Editors** — will this workflow run in Claude Code, VS Code Copilot chat, or both? This one is load-bearing, not cosmetic: naming VS Code strips `model:` and `effort:` from every generated skill and agent, because a skill carrying `model:` hangs Copilot chat until VS Code is restarted (see `adaptation.md`). Claude Code-only installs keep those fields and the per-skill model pinning they buy; VS Code installs run everything on the model selected in chat. It also decides whether setup writes `.vscode/settings.json`. Lead with whatever you detected, and say what the tradeoff costs if they pick both.
+4. **Copilot compatibility** — one yes/no question: *will these files ever be opened in VS Code Copilot chat, by them or a teammate?* Lead with the answer `detection.md` prefilled and let them correct it; don't ask it open-ended.
+
+   Ask it about the **repository, not this machine**. The generated files get committed, so the person running setup isn't necessarily the person who opens them — a repo generated in Claude Code and later opened in Copilot by a teammate is exactly the case this protects. If they aren't sure, yes is the safer answer.
+
+   Yes strips `model:` and `effort:` from every generated skill and agent, because a skill carrying `model:` hangs Copilot chat until VS Code is restarted (see `adaptation.md`), and writes `.vscode/settings.json`. No keeps both fields and the per-skill model pinning they buy — research and planning on opus at high effort, `/guide` on haiku. Say what yes costs before they answer: in Copilot every skill runs on whatever model is selected in chat, and there's no per-skill override.
+
+   There is no third answer. "Both editors" produces the same files as "Copilot only" — once Copilot is anywhere in the picture the fields have to go, so the question is binary by construction.
 5. **Confirm** — ready to generate?
 
 ## Step 4: Read the reference templates
@@ -95,7 +101,7 @@ Read `adaptation.md` and work through the templates. The core of this skill is h
     └── branch-ticket-detector.md     # if an issue tracker is configured
 ```
 
-If VS Code Copilot chat is one of the targets from Step 3, two things change — both covered in `adaptation.md`:
+If Step 3's Copilot question was answered yes, two things change — both covered in `adaptation.md`:
 
 1. **Strip `model:` and `effort:`** from every generated `SKILL.md` and agent file. Don't do this by hand while writing them — write the files normally, then run the script over the whole tree from the project root:
 

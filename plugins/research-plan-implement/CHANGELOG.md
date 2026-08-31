@@ -10,7 +10,12 @@ Format based on [Keep a Changelog](https://keepachangelog.com).
 - **VS Code Copilot chat as a setup target.** The generated files are plain
   `SKILL.md` and agent files, and VS Code scans `.claude/skills/` and
   `.claude/agents/` directly, so both editors load one copy. Step 3 now asks
-  which editors you use, because one difference is load-bearing.
+  one yes/no question — will these files ever be opened in Copilot chat —
+  because one difference is load-bearing. It asks about the repository, not
+  the machine running setup: the files get committed, so a teammate on the
+  other editor inherits whatever was generated. Setup prefills the answer
+  from the project (`.vscode/`, `.github/prompts/`) and lets the user
+  overrule it.
 - `/guide copilot` — what VS Code reads, the setting it wants, and what remains
   unverified about tool-name translation and agent `model:` values.
 

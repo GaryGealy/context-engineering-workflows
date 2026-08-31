@@ -81,13 +81,13 @@ Start working:
 
 ### Editors
 
-The generated files run in **Claude Code** and **VS Code Copilot chat** from a single copy — VS Code scans `.claude/skills/` and `.claude/agents/` alongside its own `.github/` equivalents. One difference is load-bearing, so `/setup` asks which editors you use.
+The generated files run in **Claude Code** and **VS Code Copilot chat** from a single copy — VS Code scans `.claude/skills/` and `.claude/agents/` alongside its own `.github/` equivalents. One difference is load-bearing, so `/setup` asks a single yes/no question: will these files ever be opened in Copilot chat? It asks about the repository rather than your machine — the files get committed, so a teammate on the other editor inherits whatever was generated.
 
 **Skills generated for VS Code carry no `model:` or `effort:` frontmatter.** A skill whose frontmatter includes `model:` hangs Copilot chat when invoked — no output, no error, and the session stays dead until VS Code restarts. The key does it regardless of value; VS Code's SKILL.md spec documents only `name`, `description`, `argument-hint`, `user-invocable`, and `disable-model-invocation`. Setup strips both fields when Copilot is a target, and the upgrade path strips them from installs generated before it was one.
 
 The tradeoff is per-skill model pinning. Claude Code-only installs keep it — research and planning on opus at high effort, `/guide` on haiku. In Copilot every skill runs on the model selected in chat, so choose it before starting a research or planning pass.
 
-Name VS Code as a target during `/setup` and it merges `chat.useAgentSkills` into `.vscode/settings.json` for you. Run `/guide copilot` for the full picture, including what remains unverified about tool-name translation.
+Answer yes during `/setup` and it also merges `chat.useAgentSkills` into `.vscode/settings.json` for you. Run `/guide copilot` for the full picture, including what remains unverified about tool-name translation.
 
 ---
 
