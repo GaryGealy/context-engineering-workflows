@@ -3,7 +3,7 @@
 All notable changes to the `research-plan-implement` plugin are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com).
 
-## [5.0.0] - Unreleased
+## [5.0.0] - 2026-08-31
 
 Three independent changes ship together.
 

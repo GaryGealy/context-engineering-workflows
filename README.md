@@ -1,43 +1,54 @@
 # Claude Code Plugins
 
-A collection of Claude Code plugins for enhanced development workflows.
+A marketplace of Claude Code plugins for AI-assisted development workflows.
 
-## Plugins
+## Research → Design → Plan → Implement → Review
 
-### Research → Design → Plan → Implement → Review
+**Install the plugin, run `/setup`, and you have a full workflow adapted to your codebase and your team's SDLC.**
 
-A comprehensive workflow plugin for managing AI agent context windows through intentional compaction.
+No templates to fill in and no config to maintain. `/setup` reads your build system, test runner, linter, framework, issue tracker, commit convention, and forge, then writes six skills and eight agents into `.claude/` phrased in your project's own vocabulary. As the plugin improves, update it and re-run `/setup` — your own edits are carried forward, not clobbered.
 
-**Key Features:**
-- 🔬 **Research** - Explore the codebase without polluting the main context
-- 🎨 **Design** - Align on approach before committing to an implementation path
-- 📋 **Plan** - Create vertical phases with per-phase testing
-- 🔨 **Implement** - Execute phase-by-phase with testing-aware verification
-- 🔍 **Review** - Open the PR and land a numbered review guide as inline stops on the diff
-- 📊 **Context Management** - Keep utilization at 40-60% for optimal results
-
-**Commands:**
-- `/research-codebase` - Research how features work
-- `/design-doc` - Align on approach before planning
-- `/create-plan` - Create implementation plans
-- `/implement-plan` - Execute plans with verification
-- `/prepare-pr` - Commit, open the PR, and land a numbered review guide
-- `/guide` - Contextual orientation: where am I, what's next
-- `/setup` - Generate project-specific workflow
-
-**Installation:**
 ```bash
-/plugin add lucasnad27/claude-plugins/research-plan-implement
+/plugin marketplace add lucasnad27/claude-plugins
+/plugin install research-plan-implement@research-plan-implement-workflow
 ```
+
+Then, in your project: `/setup`, then `/guide`.
+
+### Why put friction back in
+
+![No slop, all vibes — three charts contrasting lines of code against understanding of code, pre-AI, with AI and no friction, and with AI plus deliberate friction; below them the six workflow steps and the human checkpoint at each](docs/no-slop-all-vibes.png)
+
+Before coding agents, understanding was a byproduct of typing — you could not ship a system you did not understand, because writing it *was* how you understood it. Agents severed that link. Point one at a repo and stay out of its way and you get the middle panel: **accumulating code quicker than we are accumulating trust.**
+
+Trust is what actually ships. Code nobody understands cannot be reviewed honestly, debugged at 2am, or safely changed six months later. So this workflow puts a human back at the six points where understanding gets created — issue, research, design, plan, implement, review — and writes down what was understood so the next context can pick it up.
+
+The right panel is the payoff: both lines climb. You do not trade speed for comprehension. **No slop, all vibes.**
 
 [Read the full documentation →](plugins/research-plan-implement/README.md)
 
+### The phases
+
+| Skill | Phase |
+| --- | --- |
+| `/research-codebase` | 🔬 What exists today, written down. No opinions. |
+| `/design-doc` | 🎨 What we're going to do, argued and settled. |
+| `/create-plan` | 📋 Vertical phases, each independently verifiable. |
+| `/implement-plan` | 🔨 Phase by phase. Tests alongside code. Pause between. |
+| `/prepare-pr` | 🔍 PR opened, diff annotated with numbered stops. |
+| `/guide` | Contextual orientation — where am I, what's next. |
+
+`/setup` shapes the workflow around the SDLC you already have — your build system, tracker, forge, review norms, deploy gate. A few agent-native tools we like are wired in and entirely optional: [herdr](https://herdr.dev) phase tags, [tuicr](https://tuicr.dev) PR walkthroughs, and design tooling like [Paper](https://paper.design) or [impeccable](https://impeccable.style). Use none of them and nothing breaks.
+
 ## Attribution
 
-This workflow is inspired by [HumanLayer's](https://humanlayer.dev) research on context engineering for AI-assisted development:
+Inspired by [HumanLayer's](https://humanlayer.dev) research on context engineering for AI-assisted development:
+
 - **Website:** [humanlayer.dev](https://humanlayer.dev)
 - **GitHub:** [humanlayer/humanlayer](https://github.com/humanlayer/humanlayer)
 - **AI Engineering Talk:** [YouTube](https://youtu.be/rmvDxxNubIg?si=WtKgAdi6MydW8u-i)
+
+Full attribution, including [ponytail](https://github.com/DietrichGebert/ponytail), is in the [plugin README](plugins/research-plan-implement/README.md#attribution).
 
 ## License
 
