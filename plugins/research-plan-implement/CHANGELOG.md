@@ -3,6 +3,15 @@
 All notable changes to the `research-plan-implement` plugin are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com).
 
+## [5.0.1] - 2026-08-31
+
+### Fixed
+
+- **`/prepare-pr`'s tuicr walkthrough documented a reply endpoint that 404s.** Replying to
+  a review comment needs the PR number:
+  `gh api repos/{owner}/{repo}/pulls/<n>/comments/<id>/replies`. The shorter
+  `pulls/comments/<id>/replies` form it previously showed does not resolve.
+
 ## [5.0.0] - 2026-08-31
 
 Three independent changes ship together.
