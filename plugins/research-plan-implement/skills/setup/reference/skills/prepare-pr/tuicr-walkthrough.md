@@ -124,6 +124,12 @@ they mark a stop's hunk reviewed mid-walk, say plainly that the neighboring stop
 invisible. Marking reviewed is a fine ack channel for regions you've *finished* — suggest it as
 you leave a region, never as you enter one.
 
+**Reviewed files can also be hidden outright.** Since 0.23.0, `H` in the file tree (or
+`:set noreviewed` from any pane) hides every file already marked reviewed, and `show_reviewed =
+false` in config starts a session that way — with nobody having touched anything during the walk.
+It runs through the same `file_passes_filter()` gate as the exclusion filter, so a hidden file
+leaves the tree, the diff pane, and `{`/`}` and `[`/`]` navigation together.
+
 **An exclusion filter removes files from more than the tree.** With the file tree focused, `e`
 prompts for a regex that *excludes* matching files (`i` includes; `E`/`I` clear). Hidden files
 disappear from the diff pane, from `{`/`}` and `[`/`]` navigation, and from the header counts —
@@ -138,6 +144,9 @@ restart but survive `:e`.
 3. **An exclusion filter** — the count drops by exactly one file's worth. Check the tree's bottom
    border for active patterns.
 4. **A stale in-memory copy** — `:e` reconciles it. Cheapest to try, so try it first.
+5. **Hidden reviewed files** — `:set reviewed` brings them back. Suspect it when whole files, not
+   individual stops, are missing and nobody set a filter.
+6. **`dd`** — the only one that really deleted something. Conclude this last, never first.
 
 **The gutter may not be showing absolute numbers.** `:set relativenumber` exists. `:{N}` still
 jumps by absolute line, so your instructions keep working — but a number they read back off the
@@ -157,6 +166,20 @@ else it opens the focused file in `$EDITOR`.
 
 **`:e` does not destroy comments.** It re-reads the diff and, in PR mode, re-fetches remote
 threads. Everything survives. This is why a walk can absorb fixes without restarting — lean on it.
+
+**There are no threaded replies.** The local `Comment` struct carries no parent field — threading
+exists only in the GitHub structs (`GhReviewComment.replyTo`). Someone "replying" to a stop in the
+TUI is really adding their own comment on the same line, sharing that stop's location exactly. In
+PR mode a real reply has to go through GitHub
+(`gh api repos/{owner}/{repo}/pulls/comments/<id>/replies`), which is also how you answer a
+question a reviewer left on one of your stops.
+
+**`dd` destroys a stop, and nothing warns.** It's easy to hit while exploring, and it is the only
+cause in the list below that actually removes anything — every other one hides a stop that still
+exists. Rule the hiding causes out before concluding a comment was deleted; the CLI reports a
+deleted stop's peers and a hidden stop's peers identically. On a PR session, count from
+`review comments`, not `review list` — the listing's `comment_count` can report more than
+`comments` actually returns.
 
 ## Applying fixes mid-walk
 
